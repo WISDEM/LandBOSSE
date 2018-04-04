@@ -17,7 +17,7 @@ Install LandBOSSE with the following command.
 
 ## Run Unit Tests
 
-[describe how to run your unit tests] To check if installation was successful try to import the module
+To check if installation was successful try to import the module
 
     $ python
     > import rotorse.rotor
