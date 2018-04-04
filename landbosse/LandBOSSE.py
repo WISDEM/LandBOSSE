@@ -16,6 +16,7 @@ Calculates the following balance of system costs for land-based wind projects:
 
 import ErectionCost
 import ManagementCost
+import FoundationCost
 from itertools import product
 import pandas as pd
 import numpy as np
@@ -49,7 +50,6 @@ class Project(object):
 
 
 project_value = 1e8  # todo: change to use value calculated by all modules except management
-foundation_cost = 1e5  # todo: change to use value calculated by foundation module
 
 # model inputs
 # todo: replace with function call for user input
@@ -61,7 +61,9 @@ file_list = {'crane_specs': "/Users/aeberle/Documents/Wind FY18/Land based BOS/P
              'project': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/project.csv",
              'equip_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip_price.csv",
              'crew_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crew_price.csv",
-             'weather': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/weather_withtime.csv"}
+             'material_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/material_price.csv",
+             'weather': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/weather_withtime.csv",
+             'rsmeans': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/rsmeans_data.csv"}
 
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
 per_diem = 140  # USD per day
@@ -119,6 +121,11 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     data_csv = dict()
     for file in files:
         data_csv[file] = pd.DataFrame(pd.read_csv(files[file]))
+
+    # calculate foundation costs
+    foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
+                                                     num_turbines=num_turbines,
+                                                     construction_time=construction_time_months)
 
     # calculate management costs
     management_cost = ManagementCost.calculate_costs(project_value=project_value, foundation_cost=foundation_cost,
