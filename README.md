@@ -1,17 +1,16 @@
-# [YourCode]
+# LandBOSSE
 
-This is a starter repository to help in releasing your code as part of WISDEM.
-Everything in this file should be replaced with your own information.
+This is a design-based land-based wind power plant balance of system cost model.
 
-Author: [S. Andrew Ning](andrew.ning@nrel.gov)
+Author: [A. Eberle](annika.eberle@nrel.gov)
 
 ## Prerequisites
 
-[list prerequisites here] Fortran compiler, NumPy, SciPy
+Python, NumPy, SciPy
 
 ## Installation
 
-[describe how to install your module] Install CCBlade with the following command.
+Install LandBOSSE with the following command.
 
     $ python setup.py install
 
