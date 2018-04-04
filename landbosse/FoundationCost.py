@@ -50,12 +50,18 @@ Calculate the total foundation cost based on amount of equipment, amount of labo
 
 """
 import math
+import pandas as pd
+import numpy as np
 
 # constants
 kg_per_tonne = 1000
+cubicm_per_cubicft = 0.0283168
+steel_density = 8050  # kg / m^3
+cubicyd_per_cubicm = 1.30795
+ton_per_tonne = 0.907185
 
 
-def calculate_foundation_loads(component_data, rotor_diam, hub_height, turbine_rating):
+def calculate_foundation_loads(component_data):
     """
 
     :param component_data: data on components (weight, height, area, etc.)
@@ -111,7 +117,7 @@ def calculate_foundation_loads(component_data, rotor_diam, hub_height, turbine_r
     return foundation_loads
 
 
-def determine_foundation_size(foundation_loads, buoyant_design, type_of_tower):
+def determine_foundation_size(foundation_loads):
     """
     Calculates the radius of a round, raft foundation
     Assumes foundation made of concrete with 1 m thickness
@@ -133,6 +139,8 @@ def determine_foundation_size(foundation_loads, buoyant_design, type_of_tower):
     diam_base = 12  # diameter at base of tower in m
     R = math.sqrt(((F_vert / SF) / (math.pi * (diam_base / 2) ** 2)) / (density_material / SF * math.pi * t))
 
+    # https: // www.fema.gov / media - library - data / 20130726 - 1518 - 20490 - 6575 / 11_fema_p550_apndxd.pdf
+
     # check to make sure sliding loads are satisfied
     sliding_loads_ok = abs(math.tan(25) * F_vert) > F_d_tot
 
@@ -148,24 +156,50 @@ def determine_foundation_size(foundation_loads, buoyant_design, type_of_tower):
     return foundation_volume
 
 
-def estimate_material_needs(foundation_size, num_turbines):
+def estimate_material_needs(foundation_volume, num_turbines):
+    """
+    Estimate amount of material based on foundation size and number of turbines
+
+    :param foundation_volume: volume of foundation material in m^3
+    :param num_turbines: number of turbines
+    :return: table of material needs
+    """
+    # Data from Contech Anchor Deep foundation
+    # http: // www.conteches.com / Markets / Wind - Turbine - Foundations / Anchor - Deep - Foundation
+
+    volume_base = math.pi * (24 / 2) ** 2 * 5 * cubicm_per_cubicft
+    scaling_factor = foundation_volume / volume_base
+    steel_volume = scaling_factor * (math.pi * (0.0635/2) ** 2 * 15 * 15) * steel_density / kg_per_tonne * ton_per_tonne * num_turbines
+    concrete_volume = foundation_volume * cubicyd_per_cubicm * num_turbines
+
+    material_needs = pd.DataFrame([['Steel - rebar', steel_volume, 'ton (short)'],
+                                   ['Concrete 5000 psi', concrete_volume, 'cubic yards']],
+                                  columns=['Material type ID', 'Quantity of material', 'Units'])
+    return material_needs
+
+
+def estimate_construction_time(throughput_operations, material_needs, duration_construction):
     """
 
-    :param foundation_size:
-    :param num_turbines:
-    :return:
-    """
-
-
-def estimate_construction_time(foundation_size, num_turbines, hours_operation, duration_construction):
-    """
-
-    :param foundation_size:
-    :param num_turbines:
-    :param hours_operation:
+    :param material_needs:
     :param duration_construction:
     :return:
     """
+
+    foundation_construction_time = duration_construction * 1/3
+    operation_data = pd.merge(throughput_operations, material_needs, on=['Material type ID'])
+    operation_data['Number of days'] = operation_data['Quantity of material'] / operation_data['Daily output']
+    operation_data['Number of crews'] = np.ceil((operation_data['Number of days'] / 30) / foundation_construction_time)
+    operation_data['Cost USD without weather delays'] = operation_data['Quantity of material'] * operation_data['Rate USD per unit']
+
+    # if more than one crew needed to complete within construction duration then assume that all construction happens
+    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    operation_data['time_construct_bool'] = operation_data['Number of days'] > foundation_construction_time * 30
+    boolean_dictionary = {True: foundation_construction_time * 30, False: np.NAN}
+    operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
+    operation_data['Time construct days'] = operation_data[['time_construct_bool', 'Number of days']].min(axis=1)
+
+    return operation_data
 
 
 def calculate_weather_delay(weather_data, season_dict, season_construct, time_construct,
@@ -203,7 +237,7 @@ def estimate_equip(foundation_size, construction_time, weather_delay):
     """
 
 
-def calculate_costs(labor, equip, material, price_data):
+def calculate_costs(input_data, num_turbines, construction_time):
     """
 
     :param labor:
@@ -213,3 +247,11 @@ def calculate_costs(labor, equip, material, price_data):
     :return:
     """
 
+    foundation_loads = calculate_foundation_loads(component_data=input_data['components'])
+    foundation_volume = determine_foundation_size(foundation_loads=foundation_loads)
+    material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)
+    material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
+    material_data['Cost USD'] = material_data['Quantity of material'] * float(material_data['Material price USD per unit'])
+    operation_data = estimate_construction_time(throughput_operations=input_data['rsmeans'],
+                                                material_needs=material_vol,
+                                                duration_construction=construction_time)
