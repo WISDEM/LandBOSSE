@@ -97,7 +97,7 @@ def construction_permitting(foundation_cost, num_hwy_permits):
     """
 
     # todo: add relationship to site-specific regulations, environmental characteristics, and public infrastructure
-    building_permits = 0.02 * foundation_cost
+    building_permits = 0.02 * foundation_cost['Cost USD'].sum()
     highway_permits = 20000 * num_hwy_permits
 
     construction_permitting_cost = building_permits + highway_permits
