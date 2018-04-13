@@ -52,11 +52,12 @@ Calculate the total foundation cost based on amount of equipment, amount of labo
 import math
 import pandas as pd
 import numpy as np
+import WeatherDelay as WD
 
 # constants
 kg_per_tonne = 1000
 cubicm_per_cubicft = 0.0283168
-steel_density = 8050  # kg / m^3
+steel_density = 9490  # kg / m^3
 cubicyd_per_cubicm = 1.30795
 ton_per_tonne = 0.907185
 
@@ -103,15 +104,15 @@ def calculate_foundation_loads(component_data):
     M = F * L
 
     # get total lateral load (N) and moment (N * m)
-    F_d_tot = F.sum()
+    F_lat = F.sum()
     M_tot = M.sum()
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    F_vert = component_data['Weight tonne'].sum() * g * kg_per_tonne
+    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne
 
-    foundation_loads = {'F_vert': F_vert,
-                        'F_d_tot': F_d_tot,
+    foundation_loads = {'F_dead': F_dead,
+                        'F_lat': F_lat,
                         'M_tot': M_tot}
 
     return foundation_loads
@@ -122,38 +123,20 @@ def determine_foundation_size(foundation_loads):
     Calculates the radius of a round, raft foundation
     Assumes foundation made of concrete with 1 m thickness
 
-    :param foundation_loads: dictionary of foundation loads
+    :param foundation_loads: dictionary of foundation loads (forces in N; moments in N*m)
     :param buoyant_design: flag for buoyant design - currently unused
     :param type_of_tower: flag for type of tower - currently unused
     :return:
     """
 
-    F_vert = foundation_loads['F_vert']
-    F_d_tot = foundation_loads['F_d_tot']
+    # get foundation loads and convert N to kN
+    F_dead = foundation_loads['F_dead']
+    F_lat = foundation_loads['F_lat']
     M_tot = foundation_loads['M_tot']
 
-    # get radius of foundation based on vertical loads
-    t = 1  # assume foundation thickness equals 1 m
-    density_material = 2403  # density of concrete in kg / m^3
-    SF = 1.7  # safety factor
-    diam_base = 12  # diameter at base of tower in m
-    R = math.sqrt(((F_vert / SF) / (math.pi * (diam_base / 2) ** 2)) / (density_material / SF * math.pi * t))
+    foundation_cubic_meters = 1.012 * (0.0000034 * M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead)) + 168) / cubicyd_per_cubicm
 
-    # https: // www.fema.gov / media - library - data / 20130726 - 1518 - 20490 - 6575 / 11_fema_p550_apndxd.pdf
-
-    # check to make sure sliding loads are satisfied
-    sliding_loads_ok = abs(math.tan(25) * F_vert) > F_d_tot
-
-    # check to make sure overturning moment is satisfied
-    overturn_ok = (F_vert * diam_base / 2) > M_tot
-
-    if overturn_ok & sliding_loads_ok:
-        foundation_volume = math.pi * R ** 2 * t
-    else:
-        # todo: develop methodology for calculating size based on sliding and overturning loads
-        print('Error calculating foundation size')
-
-    return foundation_volume
+    return foundation_cubic_meters
 
 
 def estimate_material_needs(foundation_volume, num_turbines):
@@ -164,15 +147,11 @@ def estimate_material_needs(foundation_volume, num_turbines):
     :param num_turbines: number of turbines
     :return: table of material needs
     """
-    # Data from Contech Anchor Deep foundation
-    # http: // www.conteches.com / Markets / Wind - Turbine - Foundations / Anchor - Deep - Foundation
 
-    volume_base = math.pi * (24 / 2) ** 2 * 5 * cubicm_per_cubicft
-    scaling_factor = foundation_volume / volume_base
-    steel_volume = scaling_factor * (math.pi * (0.0635/2) ** 2 * 15 * 15) * steel_density / kg_per_tonne * ton_per_tonne * num_turbines
-    concrete_volume = foundation_volume * cubicyd_per_cubicm * num_turbines
+    steel_mass = foundation_volume * 0.012 * steel_density / kg_per_tonne * ton_per_tonne * num_turbines
+    concrete_volume = foundation_volume * 0.99 * cubicyd_per_cubicm * num_turbines
 
-    material_needs = pd.DataFrame([['Steel - rebar', steel_volume, 'ton (short)'],
+    material_needs = pd.DataFrame([['Steel - rebar', steel_mass, 'ton (short)'],
                                    ['Concrete 5000 psi', concrete_volume, 'cubic yards']],
                                   columns=['Material type ID', 'Quantity of material', 'Units'])
     return material_needs
@@ -216,28 +195,26 @@ def calculate_weather_delay(weather_data, season_dict, season_construct, time_co
     :return:
     """
 
+    weather_window = WD.create_weather_window(weather_data=weather_data,
+                                              season_id=season_dict,
+                                              season_construct=season_construct,
+                                              time_construct=time_construct)
 
-def estimate_labor(foundation_size, construction_time, weather_delay):
-    """
+    # compute weather delay
+    wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
+                                         start_delay=start_delay,
+                                         mission_time=duration_construction,
+                                         critical_wind_speed=critical_wind_speed)
+    wind_delay = pd.DataFrame(wind_delay)
 
-    :param foundation_size:
-    :param construction_time:
-    :param weather_delay:
-    :return:
-    """
+    # if greater than 4 hour delay, then shut down for full day (10 hours)
+    wind_delay[(wind_delay > 4)] = 10
+    wind_delay_time = float(wind_delay.sum())
 
-
-def estimate_equip(foundation_size, construction_time, weather_delay):
-    """
-
-    :param foundation_size:
-    :param construction_time:
-    :param weather_delay:
-    :return:
-    """
+    return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time):
+def calculate_costs(input_data, num_turbines, construction_time, season_id, season_construct, time_construct):
     """
 
     :param labor:
@@ -251,7 +228,37 @@ def calculate_costs(input_data, num_turbines, construction_time):
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads)
     material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)
     material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
-    material_data['Cost USD'] = material_data['Quantity of material'] * float(material_data['Material price USD per unit'])
+    material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(material_data['Material price USD per unit'])
+
     operation_data = estimate_construction_time(throughput_operations=input_data['rsmeans'],
                                                 material_needs=material_vol,
                                                 duration_construction=construction_time)
+
+    wind_delay = calculate_weather_delay(weather_data=input_data['weather'],
+                                         season_dict=season_id,
+                                         season_construct=season_construct,
+                                         time_construct=time_construct,
+                                         duration_construction=max(operation_data['Time construct days']),
+                                         start_delay=0,
+                                         critical_wind_speed=13)
+
+    wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'])
+
+    labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
+    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
+
+    print('C')
+    foundation_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
+
+    material_costs = pd.DataFrame(columns=['Operation ID', 'Type of cost', 'Cost USD'])
+    material_costs['Operation ID'] = material_data['Material type ID']
+    material_costs['Type of cost'] = 'Materials'
+    material_costs['Cost USD'] = material_data['Cost USD']
+
+    foundation_cost = foundation_cost.append(material_costs)
+
+    total_foundation_cost = foundation_cost.groupby(by=['Type of cost']).sum().reset_index()
+    total_foundation_cost['Phase of construction'] = 'Foundations'
+
+    return total_foundation_cost
+
