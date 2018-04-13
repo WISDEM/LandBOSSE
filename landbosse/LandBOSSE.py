@@ -122,10 +122,23 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     for file in files:
         data_csv[file] = pd.DataFrame(pd.read_csv(files[file]))
 
+    # create data frame to store cost data for each module
+    bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
+    bos_cost['Cost USD'] = np.nan
+
     # calculate foundation costs
     foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
                                                      num_turbines=num_turbines,
-                                                     construction_time=construction_time_months)
+                                                     construction_time=construction_time_months,
+                                                     season_id=season_month,
+                                                     season_construct=season,
+                                                     time_construct=time_construct)
+
+    # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
+    bos_cost.loc[bos_cost['Phase of construction'].isin(foundation_cost['Phase of construction']) &
+                 bos_cost['Type of cost'].isin(foundation_cost['Type of cost']), ['Cost USD']] = foundation_cost.loc[
+        foundation_cost['Phase of construction'].isin(bos_cost['Phase of construction']) &
+        foundation_cost['Type of cost'].isin(bos_cost['Type of cost']), ['Cost USD']].values
 
     # calculate management costs
     management_cost = ManagementCost.calculate_costs(project_value=project_value, foundation_cost=foundation_cost,
@@ -134,6 +147,9 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                                      markup_constants=markup_constants,
                                                      num_turbines=num_turbines,
                                                      project_size=project_size)
+    bos_cost = save_cost_data(phase='Management',
+                              phase_cost=management_cost,
+                              bos_cost=bos_cost)
 
     # calculate erection costs
     erection_cost = ErectionCost.calculate_costs(project_data=data_csv,
@@ -141,24 +157,13 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                                  season_construct=season,
                                                  hour_day=operational_hour_dict,
                                                  time_construct=time_construct)
+    bos_cost = save_cost_data(phase='Erection',
+                              phase_cost=erection_cost,
+                              bos_cost=bos_cost)
 
-
-    # store cost data for each phase
-    phase_list['Erection'] = erection_cost
-    phase_list['Management'] = management_cost
-    phase_list['Development'] = pd.DataFrame([[development]], columns=['Development cost USD'])
-    phase_list['Collection system'] = pd.DataFrame([[development]], columns=['Collection system cost USD'])  # todo: replace with function call for collection system module
-    phase_list['Transmission and interconnection'] = pd.DataFrame([[development]], columns=['Transmission and interconnection cost USD'])  # todo: replace with function call for transmission and interconnection module
-    phase_list['Roads'] = pd.DataFrame([[development]], columns=['Roads cost USD'])  # todo: replace with function call for roads module
-    phase_list['Foundations'] = pd.DataFrame([[development]], columns=['Foundations cost USD'])  # todo: replace with function call for foundations module
-
-    # create data frame to store cost data for each module
-    bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
-    bos_cost['Cost USD'] = np.nan
-
-    # save cost to bos cost data frame
-    for phase in phase_list:
-        bos_cost = save_cost_data(phase=phase, phase_cost=list_of_phases[phase], bos_cost=bos_cost)
+    bos_cost = save_cost_data(phase='Development',
+                              phase_cost=pd.DataFrame([[development]], columns=['Development cost USD']),
+                              bos_cost=bos_cost)
 
     print('Final cost matrix:')
     print(bos_cost)
