@@ -126,13 +126,16 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
         include_change = weather_delay['Hour delay bool'].where(weather_delay.index.isin(index_change))
         include_change = include_change.dropna()  # drops NaNs
         include_change = (include_change == 1).reset_index(drop=True)  # resets indices
-        include_change.iloc[-1] = ~(include_change.iloc[-1])  # removes last value that was added to pad data from diff
+        if len(include_change) != 0:
+            include_change.iloc[-1] = ~(include_change.iloc[-1])  # removes last value that was added to pad data from diff
 
-        # calculate the number of hours for each consecutive delay > 1 hr
-        if weather_delay.iloc[-2]['Hour delay bool'] == True:
-            greater_than_1hr = np.diff(index_change)[include_change[:-1]]
+            # calculate the number of hours for each consecutive delay > 1 hr
+            if weather_delay.iloc[-2]['Hour delay bool'] == True:
+                greater_than_1hr = np.diff(index_change)[include_change[:-1]]
+            else:
+                greater_than_1hr = np.diff(index_change)[include_change]
         else:
-            greater_than_1hr = np.diff(index_change)[include_change]
+            greater_than_1hr = []
 
         # calculate the number of single hour delays
         count_1hr = weather_delay['Hour delay bool'].where(weather_delay['Hour delay bool'] == False).count()
