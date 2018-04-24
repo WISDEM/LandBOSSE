@@ -110,8 +110,9 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
         # fix value that got removed due to differencing
         # because selecting values that == 1 then if hour delay diff [1] == 1, hour delay bool should be true
         # otherwise remains false
-        if weather_delay['Hour delay diff'][1] == 1:
-            weather_delay.loc[weather_delay.index == 0, 'Hour delay bool'] = True
+        if len(weather_delay['Hour delay diff']) > 1:
+            if weather_delay['Hour delay diff'][1] == 1:
+                weather_delay.loc[weather_delay.index == 0, 'Hour delay bool'] = True
 
         # add extra row at end of data frame to make sure the last data point is counted
         extra_row = pd.DataFrame([['NaN', ~(weather_delay.iloc[-1]['Hour delay bool'])]], columns=['Hour delay diff', 'Hour delay bool'])
