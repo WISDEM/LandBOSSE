@@ -235,7 +235,6 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window)
     labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
     labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
 
-    print('C')
     foundation_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
     material_costs = pd.DataFrame(columns=['Operation ID', 'Type of cost', 'Cost USD'])
