@@ -162,6 +162,12 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
         foundation_cost['Phase of construction'].isin(bos_cost['Phase of construction']) &
         foundation_cost['Type of cost'].isin(bos_cost['Type of cost']), ['Cost USD']].values
 
+    # set values in bos_cost data frame - since formatting is already correct for road_cost, then overwrite values
+    bos_cost.loc[bos_cost['Phase of construction'].isin(road_cost['Phase of construction']) &
+                 bos_cost['Type of cost'].isin(road_cost['Type of cost']), ['Cost USD']] = road_cost.loc[
+        road_cost['Phase of construction'].isin(bos_cost['Phase of construction']) &
+        road_cost['Type of cost'].isin(bos_cost['Type of cost']), ['Cost USD']].values
+
     # calculate management costs
     management_cost = ManagementCost.calculate_costs(project_value=project_value, foundation_cost=foundation_cost,
                                                      num_hwy_permits=num_hwy_permits,
