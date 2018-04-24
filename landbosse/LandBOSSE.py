@@ -196,6 +196,9 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     print('Final cost matrix:')
     print(bos_cost)
 
+    print('Total cost by phase:')
+    print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
+
     return bos_cost
 
 

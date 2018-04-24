@@ -230,7 +230,7 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window)
                                          start_delay=0,
                                          critical_wind_speed=13)
 
-    wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'])
+    wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'].dropna())
 
     labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
     labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
