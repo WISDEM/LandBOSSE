@@ -123,10 +123,10 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     # define project parameters
     project_data = data_csv['project'].where(data_csv['project']['Project ID'] == 'Conventional')
     project_data = project_data.dropna(thresh=1)
-    num_turbines = project_data['Number of turbines']
-    turbine_spacing = project_data['Turbine spacing (times rotor diameter)']
-    rotor_diameter = project_data['Rotor diameter m']
-    turbine_rating_kilowatt = project_data['Turbine rating MW'] * kilowatt_per_megawatt
+    num_turbines = project_data['Number of turbines'][0]
+    turbine_spacing = project_data['Turbine spacing (times rotor diameter)'][0]
+    rotor_diameter = project_data['Rotor diameter m'][0]
+    turbine_rating_kilowatt = project_data['Turbine rating MW'][0] * kilowatt_per_megawatt
     project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
     road_length_m = (np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter
     road_width_ft = 16  # feet
@@ -137,19 +137,16 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     bos_cost['Cost USD'] = np.nan
 
     # create weather window for project
-    #weather_window = WD.create_weather_window(weather_data=data_csv['weather'],
-    #                                          season_id=season_dict,
-    #                                          season_construct=season_construct,
-    #                                          time_construct=time_construct)
+    weather_window = WD.create_weather_window(weather_data=data_csv['weather'],
+                                              season_id=season_dict,
+                                              season_construct=season_construct,
+                                              time_construct=time_construct)
 
     # calculate road costs
-    road_volume = RoadsCost.calculate_volume_material(road_length=road_length_m,
-                                                      road_width=road_width_ft,
-                                                      road_thickness=road_thickness_in)
-
-    road_cost = RoadsCost.calculate_costs(road_volume=road_volume,
-                                          material_price=data_csv['material_price'],
-                                          rsmeans_data=data_csv['rsmeans'],
+    road_cost = RoadsCost.calculate_costs(road_length=road_length_m,
+                                          road_width=road_width_ft,
+                                          road_thickness=road_thickness_in,
+                                          input_data=data_csv,
                                           construction_time=construction_time_months,
                                           weather_window=weather_window)
 

@@ -19,7 +19,6 @@ Get weather data
 Get road thickness
 
 [Estimate road length based on turbine spacing and project size]
-Calculate project size based on number of turbines and turbine rating
 
 [Get regional values from database/lookup tables for the following parameters
     Land cover
@@ -29,8 +28,6 @@ Calculate project size based on number of turbines and turbine rating
 
 [Estimate road thickness based on soil type]
 Calculate volume of road based on road thickness, road width, and road length
-
-[Lookup equipment size based on project size]
 
 Calculate road labor, equipment, and material requirements by type
     Calculate engineering hours for road survey based on terrain complexity and road length
@@ -57,8 +54,18 @@ Sum road costs over all types to get total costs
 Return total road costs
 """
 
+import pandas as pd
+import numpy as np
+import WeatherDelay as WD
 
-def calculate_volume_material(road_length, road_width, road_thickness):
+# conversion factors
+meters_per_foot = 0.3
+meters_per_inch = 0.025
+cubic_yards_per_cubic_meter = 1.30795
+square_feet_per_square_meter = 10.7639
+
+
+def calculate_road_properties(road_length, road_width, road_thickness):
     """
     Calculates the volume of road materials need based on length, width, and thickness of roads
 
@@ -68,56 +75,135 @@ def calculate_volume_material(road_length, road_width, road_thickness):
     :return: road volume in cubic meters
     """
 
-    road_volume = road_length * road_width * road_thickness
+    road_volume = road_length * (road_width * meters_per_foot) * (road_thickness * meters_per_inch)
 
-    return road_volume
+    road_properties = {'road_volume': road_volume,
+                       'depth_to_subgrade_m': 0.1,
+                       'crane_path_width_m': 9.14,  # todo: replace with actual crane path width from erection module
+                       'road_length_m': road_length,
+                       'road_thickness_m': (road_thickness * meters_per_inch),
+                       'road_width_m': (road_width * meters_per_foot),
+                       'material_volume': road_volume * cubic_yards_per_cubic_meter * 1.39 # material volume is about 1.4 times greater than road volume due to compaction
+                       }
 
-
-def lookup_equipment_size(project_size, road_length):
-    """
-    Gets equipment size needed for a given project size and road length
-
-    For now this function does not use inputs to calculate equipment size,
-    assumes one size for all projects and road lengths
-
-    :param project_size:
-    :param road_length:
-    :return: equipment multiplier
-    """
+    return road_properties
 
 
-def estimate_construction_time(rsmeans_data, duration_construction, road_volume):
+def estimate_construction_time(throughput_operations, road_properties, duration_construction):
     """
 
-    :param rsmeans_data:
+    :param material_needs:
     :param duration_construction:
-    :param road_volume:
     :return:
     """
 
-def calculate_weather_delay(weather_data, season_dict, season_construct, time_construct,
-                            duration_construction, start_delay, critical_wind_speed):
+    road_construction_time = duration_construction * 1/5
+
+    # select operations for roads module that have data
+    operation_data = throughput_operations.where(throughput_operations['Module'] == 'Roads').dropna(thresh=4)
+
+    # create list of unique material units for operations
+    list_units = operation_data['Units'].unique()
+
+    topsoil_volume = (road_properties['crane_path_width_m'] + 1.5) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
+    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter
+    material_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * 1.39
+    rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * road_properties['road_thickness_m'] / 0.1 / 100000
+
+    material_quantity_dict = {'cubic yard': topsoil_volume,
+                              'embankment cubic yards': embankment_volume,
+                              'loose cubic yard': material_volume,
+                              'Each (100000 square feet)': rough_grading_area}
+
+    material_needs = pd.DataFrame(columns=['Units', 'Quantity of material'])
+    for unit in list_units:
+        unit_quantity = pd.DataFrame([[unit, material_quantity_dict[unit]]], columns=['Units', 'Quantity of material'])
+        material_needs = material_needs.append(unit_quantity)
+
+    operation_data = pd.merge(operation_data, material_needs, on=['Units']).dropna(thresh=3)
+    operation_data = operation_data.where((operation_data['Daily output']).isnull() == False).dropna(thresh=4)
+
+    operation_data['Number of days'] = operation_data['Quantity of material'] / operation_data['Daily output']
+    operation_data['Number of crews'] = np.ceil((operation_data['Number of days'] / 30) / road_construction_time)
+    operation_data['Cost USD without weather delays'] = operation_data['Quantity of material'] * operation_data['Rate USD per unit']
+
+    # if more than one crew needed to complete within construction duration then assume that all construction happens
+    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    operation_data['time_construct_bool'] = operation_data['Number of days'] > road_construction_time * 30
+    boolean_dictionary = {True: road_construction_time * 30, False: np.NAN}
+    operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
+    operation_data['Time construct days'] = operation_data[['time_construct_bool', 'Number of days']].min(axis=1)
+
+    return operation_data
+
+
+def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed):
     """
 
-    :param weather_data:
-    :param season_dict:
-    :param season_construct:
-    :param time_construct:
+    :param weather_window:
     :param duration_construction:
     :param start_delay:
     :param critical_wind_speed:
     :return:
     """
 
+    # compute weather delay
+    wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
+                                         start_delay=start_delay,
+                                         mission_time=duration_construction,
+                                         critical_wind_speed=critical_wind_speed)
+    wind_delay = pd.DataFrame(wind_delay)
 
-def calculate_costs(road_volume, material_price, rsmeans_data, construction_time, weather_delay, equip_multiplier):
+    # if greater than 4 hour delay, then shut down for full day (10 hours)
+    wind_delay[(wind_delay > 4)] = 10
+    wind_delay_time = float(wind_delay.sum())
+
+    return wind_delay_time
+
+
+def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window):
     """
 
     :param road_volume:
-    :param material_price:
-    :param rsmeans_data:
+    :param input_data:
     :param construction_time:
-    :param weather_delay:
-    :param equip_multiplier:
+    :param weather_window:
     :return:
     """
+
+    # material_vol = estimate_material_needs(foundation_volume=t, num_turbines=num_turbines)
+    road_properties = calculate_road_properties(road_length=road_length, road_thickness=road_thickness, road_width=road_width)
+    material_name = input_data['rsmeans']['Material type ID'].where(input_data['rsmeans']['Module'] == 'Roads').dropna().unique()
+    material_vol = pd.DataFrame([[material_name[0], road_properties['material_volume'], 'Loose cubic yard']],
+                                columns=['Material type ID', 'Quantity of material', 'Units'])
+    material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
+    material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(
+        material_data['Material price USD per unit'])
+
+    operation_data = estimate_construction_time(throughput_operations=input_data['rsmeans'],
+                                                road_properties=road_properties,
+                                                duration_construction=construction_time)
+
+    wind_delay = calculate_weather_delay(weather_window=weather_window,
+                                         duration_construction=max(operation_data['Time construct days']),
+                                         start_delay=0,
+                                         critical_wind_speed=13)
+
+    wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'])
+
+    labor_equip_data = pd.merge(operation_data[['Operation ID', 'Units', 'Quantity of material']], input_data['rsmeans'], on=['Units', 'Operation ID'])
+    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
+
+    road_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
+
+    material_costs = pd.DataFrame(columns=['Operation ID', 'Type of cost', 'Cost USD'])
+    material_costs['Operation ID'] = material_data['Material type ID']
+    material_costs['Type of cost'] = 'Materials'
+    material_costs['Cost USD'] = material_data['Cost USD']
+
+    road_cost = road_cost.append(material_costs)
+
+    total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
+    total_road_cost['Phase of construction'] = 'Roads'
+
+    return total_road_cost
