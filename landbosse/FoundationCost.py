@@ -181,24 +181,15 @@ def estimate_construction_time(throughput_operations, material_needs, duration_c
     return operation_data
 
 
-def calculate_weather_delay(weather_data, season_dict, season_construct, time_construct,
-                            duration_construction, start_delay, critical_wind_speed):
+def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed):
     """
 
-    :param weather_data:
-    :param season_dict:
-    :param season_construct:
-    :param time_construct:
+    :param weather_window:
     :param duration_construction:
     :param start_delay:
     :param critical_wind_speed:
     :return:
     """
-
-    weather_window = WD.create_weather_window(weather_data=weather_data,
-                                              season_id=season_dict,
-                                              season_construct=season_construct,
-                                              time_construct=time_construct)
 
     # compute weather delay
     wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
@@ -214,7 +205,7 @@ def calculate_weather_delay(weather_data, season_dict, season_construct, time_co
     return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time, season_id, season_construct, time_construct):
+def calculate_costs(input_data, num_turbines, construction_time, weather_window):
     """
 
     :param labor:
@@ -234,10 +225,7 @@ def calculate_costs(input_data, num_turbines, construction_time, season_id, seas
                                                 material_needs=material_vol,
                                                 duration_construction=construction_time)
 
-    wind_delay = calculate_weather_delay(weather_data=input_data['weather'],
-                                         season_dict=season_id,
-                                         season_construct=season_construct,
-                                         time_construct=time_construct,
+    wind_delay = calculate_weather_delay(weather_window=weather_window,
                                          duration_construction=max(operation_data['Time construct days']),
                                          start_delay=0,
                                          critical_wind_speed=13)

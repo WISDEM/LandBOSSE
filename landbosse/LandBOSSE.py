@@ -13,10 +13,11 @@ Calculates the following balance of system costs for land-based wind projects:
 - Transmission and interconnection
 """
 
-
+import WeatherDelay as WD
 import ErectionCost
 import ManagementCost
 import FoundationCost
+import RoadsCost
 from itertools import product
 import pandas as pd
 import numpy as np
@@ -69,11 +70,8 @@ development_cost = 5e6  # value input by the user (generally ranges from $3-10 m
 per_diem = 140  # USD per day
 season_construct = ['spring', 'summer']
 time_construct = 'normal'
-num_turbines = 100
-turbine_rating_kilowatt = 2000
 construction_time_months = 6
 num_hwy_permits = 1  # assuming number of highway permits = 1
-project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
 
 # Financial parameters
 markup_constants = {'contingency': 0.03,
@@ -103,7 +101,7 @@ type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials'
 
 
 # create object that contains the properties of a land-based wind project
-project = Project(project_value, num_turbines, turbine_rating_kilowatt, construction_time_months)
+#project = Project(project_value, num_turbines, turbine_rating_kilowatt, construction_time_months)
 
 
 def calculate_bos_cost(files, season, season_month, development, list_of_phases):
@@ -120,19 +118,46 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     # read csv files and load data into dictionary
     data_csv = dict()
     for file in files:
-        data_csv[file] = pd.DataFrame(pd.read_csv(files[file]))
+        data_csv[file] = pd.DataFrame(pd.read_csv(files[file], engine='python'))
+
+    # define project parameters
+    project_data = data_csv['project'].where(data_csv['project']['Project ID'] == 'Conventional')
+    project_data = project_data.dropna(thresh=1)
+    num_turbines = project_data['Number of turbines']
+    turbine_spacing = project_data['Turbine spacing (times rotor diameter)']
+    rotor_diameter = project_data['Rotor diameter m']
+    turbine_rating_kilowatt = project_data['Turbine rating MW'] * kilowatt_per_megawatt
+    project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
+    road_length_m = (np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter
+    road_width_ft = 16  # feet
+    road_thickness_in = 8  # inches
 
     # create data frame to store cost data for each module
     bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
     bos_cost['Cost USD'] = np.nan
 
+    # create weather window for project
+    #weather_window = WD.create_weather_window(weather_data=data_csv['weather'],
+    #                                          season_id=season_dict,
+    #                                          season_construct=season_construct,
+    #                                          time_construct=time_construct)
+
+    # calculate road costs
+    road_volume = RoadsCost.calculate_volume_material(road_length=road_length_m,
+                                                      road_width=road_width_ft,
+                                                      road_thickness=road_thickness_in)
+
+    road_cost = RoadsCost.calculate_costs(road_volume=road_volume,
+                                          material_price=data_csv['material_price'],
+                                          rsmeans_data=data_csv['rsmeans'],
+                                          construction_time=construction_time_months,
+                                          weather_window=weather_window)
+
     # calculate foundation costs
     foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
                                                      num_turbines=num_turbines,
                                                      construction_time=construction_time_months,
-                                                     season_id=season_month,
-                                                     season_construct=season,
-                                                     time_construct=time_construct)
+                                                     weather_window=weather_window)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
     bos_cost.loc[bos_cost['Phase of construction'].isin(foundation_cost['Phase of construction']) &
@@ -153,10 +178,10 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
 
     # calculate erection costs
     erection_cost = ErectionCost.calculate_costs(project_data=data_csv,
-                                                 season_id=season_month,
-                                                 season_construct=season,
                                                  hour_day=operational_hour_dict,
-                                                 time_construct=time_construct)
+                                                 time_construct=time_construct,
+                                                 weather_window=weather_window)
+
     bos_cost = save_cost_data(phase='Erection',
                               phase_cost=erection_cost,
                               bos_cost=bos_cost)

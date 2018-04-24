@@ -351,7 +351,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop):
     return cost_chosen
 
 
-def calculate_costs(project_data, season_id, season_construct, hour_day, time_construct):
+def calculate_costs(project_data, hour_day, time_construct, weather_window):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
@@ -364,11 +364,6 @@ def calculate_costs(project_data, season_id, season_construct, hour_day, time_co
      :return:
     """
     crane_specs = calculate_erection_operation_time(project_data=project_data)
-
-    weather_window = WD.create_weather_window(weather_data=project_data['weather'],
-                                              season_id=season_id,
-                                              season_construct=season_construct,
-                                              time_construct=time_construct)
 
     cranes_wind_delay = calculate_wind_delay_by_component(crane_specs=crane_specs,
                                                           weather_window=weather_window)
