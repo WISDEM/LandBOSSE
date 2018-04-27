@@ -104,10 +104,11 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     # create list of unique material units for operations
     list_units = operation_data['Units'].unique()
 
+    lift_depth_m = 0.2
     topsoil_volume = (road_properties['crane_path_width_m'] + 1.5) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
-    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / 0.1)
+    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m)
     material_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * 1.39
-    rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / 0.1) / 100000
+    rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m) / 100000
 
     material_quantity_dict = {'cubic yard': topsoil_volume,
                               'embankment cubic yards': embankment_volume,
