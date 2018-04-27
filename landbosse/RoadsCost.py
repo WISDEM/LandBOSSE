@@ -1,6 +1,7 @@
 """
 RoadsCost.py
 Created by Annika Eberle and Owen Roberts on Apr. 3, 2018
+Last updated April 27, 2018
 
 Calculates cost of constructing roads for land-based wind projects
 
@@ -29,33 +30,30 @@ Get road thickness
 [Estimate road thickness based on soil type]
 Calculate volume of road based on road thickness, road width, and road length
 
-Calculate road labor, equipment, and material requirements by type
-    Calculate engineering hours for road survey based on terrain complexity and road length
-    Calculate man hours and equipment hours for clearing and grubbing based on terrain complexity, road length, and land cover
-    Calculate man hours and equipment hours for stormwater pollution measures and culverts based on terrain complexity, road length, and weather
+Calculate road labor and equipment costs by operation and type using RSMeans data
+    [Calculate engineering hours for road survey based on terrain complexity and road length]
+    [Calculate man hours and equipment hours for clearing and grubbing based on terrain complexity, road length, and land cover]
+    [Calculate man hours and equipment hours for stormwater pollution measures and culverts based on terrain complexity, road length, and weather]
     Calculate man hours and equipment hours for compaction of soil based on road length, road thickness, soil type, road width, and equipment size
     Calculate man hours and equipment hours for mass material movement based on land cover, terrain complexity, and road length
     Calculate man hours and equipment hours for rock placement based on equipment size, distance to quarry, and volume of road
     Calculate man hours and equipment hours for compaction of rock based on road length, road thickness, and rock type
     Calculate man hours and equipment hours for final grading based on road length
-    Calculate man hours and equipment hours for road maintenance based on road thickness, road length, and weather
-    Calculate man hours and equipment hours for decompaction of crane paths based on road length
+    [Calculate man hours and equipment hours for road maintenance based on road thickness, road length, and weather]
+    [Calculate man hours and equipment hours for decompaction of crane paths based on road length]
     Calculate quantity of materials based on volume of materials
 
-Calculate road costs by type
-    Calculate labor costs using man hours by crew type and labor prices by crew type
-    Calculate fuel costs using equipment hours by equipment type and fuel prices by equipment type
-    Calculate equipment costs using equipment hours by equipment type and equipment prices by equipment type
+Calculate material costs by type
     Calculate material costs using quantity of materials by material type and material prices by material type
-    Calculate costs for fencing, gates, utility drops, etc. based on project size
 
-Sum road costs over all types to get total costs
+Sum road costs over all operations and material types to get total costs by type of cost (e.g., material vs. equipment)
 
-Return total road costs
+Return total road costs by type of cost
 """
 
 import pandas as pd
 import numpy as np
+import math
 import WeatherDelay as WD
 
 # conversion factors
@@ -92,9 +90,10 @@ def calculate_road_properties(road_length, road_width, road_thickness):
 def estimate_construction_time(throughput_operations, road_properties, duration_construction):
     """
 
-    :param material_needs:
-    :param duration_construction:
-    :return:
+    :param throughput_operations: data frame with operation data including throughput for each operation
+    :param road_properties: properties of the road, including the thickness, width, length, volume, depth to subgrade
+    :param duration_construction: the length of construction time for the entire project (in months)
+    :return: data frame with the total construction time for each operation
     """
 
     road_construction_time = duration_construction * 1/5
@@ -106,9 +105,9 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     list_units = operation_data['Units'].unique()
 
     topsoil_volume = (road_properties['crane_path_width_m'] + 1.5) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
-    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter
+    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / 0.1)
     material_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * 1.39
-    rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * road_properties['road_thickness_m'] / 0.1 / 100000
+    rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / 0.1) / 100000
 
     material_quantity_dict = {'cubic yard': topsoil_volume,
                               'embankment cubic yards': embankment_volume,
@@ -140,11 +139,11 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
 def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed):
     """
 
-    :param weather_window:
-    :param duration_construction:
-    :param start_delay:
-    :param critical_wind_speed:
-    :return:
+    :param weather_window: data frame with weather data for time window associated with construction period
+    :param duration_construction: the length of construction time for the entire project (in months)
+    :param start_delay: the delay from the start of the weather window for the operation of interest
+    :param critical_wind_speed: the critical wind speed for determining wind delay
+    :return: the total wind delay (in hours) as estimated based on the input parameters
     """
 
     # compute weather delay
@@ -164,11 +163,13 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
 def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window):
     """
 
-    :param road_volume:
-    :param input_data:
-    :param construction_time:
-    :param weather_window:
-    :return:
+    :param road_length: float of road length in meters
+    :param road_width: float of road width in meters
+    :param road_thickness: float of road thickness in meters
+    :param input_data: data frame with input data from csv files (includes RSMeans data, project data, etc.)
+    :param construction_time: the length of construction time for the entire project (in months)
+    :param weather_window: data frame with weather data for time window associated with construction period
+    :return: data frame with total road costs by phase of construction
     """
 
     # material_vol = estimate_material_needs(foundation_volume=t, num_turbines=num_turbines)
