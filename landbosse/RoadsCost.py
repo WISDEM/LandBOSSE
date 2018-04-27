@@ -63,13 +63,14 @@ cubic_yards_per_cubic_meter = 1.30795
 square_feet_per_square_meter = 10.7639
 
 
-def calculate_road_properties(road_length, road_width, road_thickness):
+def calculate_road_properties(road_length, road_width, road_thickness, crane_width):
     """
     Calculates the volume of road materials need based on length, width, and thickness of roads
 
     :param road_length: float of road length in meters
-    :param road_width: float of road width in meters
-    :param road_thickness: float of road thickness in meters
+    :param road_width: float of road width in feet
+    :param road_thickness: float of road thickness in inches
+    :param crane_width: float of crane width in meters
     :return: road volume in cubic meters
     """
 
@@ -77,7 +78,7 @@ def calculate_road_properties(road_length, road_width, road_thickness):
 
     road_properties = {'road_volume': road_volume,
                        'depth_to_subgrade_m': 0.1,
-                       'crane_path_width_m': 9.14,  # todo: replace with actual crane path width from erection module
+                       'crane_path_width_m': crane_width + 1.5,  # todo: replace with actual crane path width from erection module
                        'road_length_m': road_length,
                        'road_thickness_m': (road_thickness * meters_per_inch),
                        'road_width_m': (road_width * meters_per_foot),
@@ -105,13 +106,15 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     list_units = operation_data['Units'].unique()
 
     lift_depth_m = 0.2
-    topsoil_volume = (road_properties['crane_path_width_m'] + 1.5) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
-    embankment_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m)
+    topsoil_volume = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
+    embankment_volume_crane = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
+    embankment_volume_road = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m)
     material_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * 1.39
     rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m) / 100000
 
     material_quantity_dict = {'cubic yard': topsoil_volume,
-                              'embankment cubic yards': embankment_volume,
+                              'embankment cubic yards crane': embankment_volume_crane,
+                              'embankment cubic yards road': embankment_volume_road,
                               'loose cubic yard': material_volume,
                               'Each (100000 square feet)': rough_grading_area}
 
@@ -161,20 +164,24 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     return wind_delay_time
 
 
-def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window):
+def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window,
+                    crane_width_m):
     """
 
     :param road_length: float of road length in meters
-    :param road_width: float of road width in meters
-    :param road_thickness: float of road thickness in meters
+    :param road_width: float of road width in feet
+    :param road_thickness: float of road thickness in inches
     :param input_data: data frame with input data from csv files (includes RSMeans data, project data, etc.)
     :param construction_time: the length of construction time for the entire project (in months)
     :param weather_window: data frame with weather data for time window associated with construction period
+    :param crane_width_m: float of crane width in meters
     :return: data frame with total road costs by phase of construction
     """
 
-    # material_vol = estimate_material_needs(foundation_volume=t, num_turbines=num_turbines)
-    road_properties = calculate_road_properties(road_length=road_length, road_thickness=road_thickness, road_width=road_width)
+    road_properties = calculate_road_properties(road_length=road_length,
+                                                road_thickness=road_thickness,
+                                                road_width=road_width,
+                                                crane_width=crane_width_m)
     material_name = input_data['rsmeans']['Material type ID'].where(input_data['rsmeans']['Module'] == 'Roads').dropna().unique()
     material_vol = pd.DataFrame([[material_name[0], road_properties['material_volume'], 'Loose cubic yard']],
                                 columns=['Material type ID', 'Quantity of material', 'Units'])

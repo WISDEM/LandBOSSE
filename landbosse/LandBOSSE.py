@@ -131,6 +131,7 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     road_length_m = (np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter
     road_width_ft = 16  # feet
     road_thickness_in = 8  # inches
+    crane_width_m = 10.7  # meters
 
     # create data frame to store cost data for each module
     bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
@@ -148,7 +149,8 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                           road_thickness=road_thickness_in,
                                           input_data=data_csv,
                                           construction_time=construction_time_months,
-                                          weather_window=weather_window)
+                                          weather_window=weather_window,
+                                          crane_width_m=crane_width_m)
 
     # calculate foundation costs
     foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
