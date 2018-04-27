@@ -128,7 +128,7 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     rotor_diameter = project_data['Rotor diameter m'][0]
     turbine_rating_kilowatt = project_data['Turbine rating MW'][0] * kilowatt_per_megawatt
     project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
-    road_length_m = (np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter
+    road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter) / 2
     road_width_ft = 16  # feet
     road_thickness_in = 8  # inches
     crane_width_m = 10.7  # meters
@@ -143,6 +143,8 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                               season_construct=season_construct,
                                               time_construct=time_construct)
 
+    operational_hrs_per_day = operational_hour_dict[time_construct]
+
     # calculate road costs
     road_cost = RoadsCost.calculate_costs(road_length=road_length_m,
                                           road_width=road_width_ft,
@@ -150,13 +152,15 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                           input_data=data_csv,
                                           construction_time=construction_time_months,
                                           weather_window=weather_window,
-                                          crane_width_m=crane_width_m)
+                                          crane_width_m=crane_width_m,
+                                          operational_hrs_per_day=operational_hrs_per_day)
 
     # calculate foundation costs
     foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
                                                      num_turbines=num_turbines,
                                                      construction_time=construction_time_months,
-                                                     weather_window=weather_window)
+                                                     weather_window=weather_window,
+                                                     operational_hrs_per_day=operational_hrs_per_day)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
     bos_cost.loc[bos_cost['Phase of construction'].isin(foundation_cost['Phase of construction']) &

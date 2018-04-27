@@ -181,20 +181,26 @@ def estimate_construction_time(throughput_operations, material_needs, duration_c
     return operation_data
 
 
-def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed):
+def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed,
+                            operational_hrs_per_day):
+    """
+    Calculates wind delay for foundations.
+
+    :param weather_window: data frame with weather data for time window associated with construction period
+    :param duration_construction: the length of construction time for the entire project (in months)
+    :param start_delay: the delay from the start of the weather window for the operation of interest
+    :param critical_wind_speed: the critical wind speed for determining wind delay
+    :param operational_hrs_per_day: number of hours of operation per day
+    :return: the total wind delay (in hours) as estimated based on the input parameters
     """
 
-    :param weather_window:
-    :param duration_construction:
-    :param start_delay:
-    :param critical_wind_speed:
-    :return:
-    """
+    # convert days of work to hours of work
+    mission_time_hrs = duration_construction * operational_hrs_per_day
 
     # compute weather delay
     wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
                                          start_delay=start_delay,
-                                         mission_time=duration_construction,
+                                         mission_time=mission_time_hrs,
                                          critical_wind_speed=critical_wind_speed)
     wind_delay = pd.DataFrame(wind_delay)
 
@@ -205,13 +211,14 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time, weather_window):
+def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day):
     """
 
-    :param labor:
-    :param equip:
-    :param material:
-    :param price_data:
+    :param input_data:
+    :param num_turbines:
+    :param construction_time:
+    :param weather_window:
+    :param operational_hrs_per_day:
     :return:
     """
 
@@ -228,7 +235,8 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window)
     wind_delay = calculate_weather_delay(weather_window=weather_window,
                                          duration_construction=max(operation_data['Time construct days']),
                                          start_delay=0,
-                                         critical_wind_speed=13)
+                                         critical_wind_speed=13,
+                                         operational_hrs_per_day=operational_hrs_per_day)
 
     wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'].dropna())
 

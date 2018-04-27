@@ -78,7 +78,7 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
 
     :param weather_window: filtered weather window containing data specific to season and time of construction
     :param start_delay: delay of mission from start of weather window
-    :param mission_time: length of mission (i.e., time that it takes to complete operation)
+    :param mission_time: length of mission (i.e., time that it takes to complete operation) in hours
     :param critical_wind_speed: wind speed at which operation must be shutdown
     :return: list containing the number of hours for each wind delay encountered during mission
              count of list = number of weather delays; value in list = duration of weather delay)
