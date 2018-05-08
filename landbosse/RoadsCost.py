@@ -201,12 +201,12 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
                                                 duration_construction=construction_time)
 
     wind_delay = calculate_weather_delay(weather_window=weather_window,
-                                         duration_construction=max(operation_data['Time construct days']),
+                                         duration_construction=operation_data['Time construct days'].max(skipna=True),
                                          start_delay=0,
                                          critical_wind_speed=13,
                                          operational_hrs_per_day=operational_hrs_per_day)
 
-    wind_multiplier = 1 + wind_delay / max(operation_data['Time construct days'])
+    wind_multiplier = 1 + (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
 
     labor_equip_data = pd.merge(operation_data[['Operation ID', 'Units', 'Quantity of material']], input_data['rsmeans'], on=['Units', 'Operation ID'])
     labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
