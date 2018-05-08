@@ -134,7 +134,7 @@ def determine_foundation_size(foundation_loads):
     F_lat = foundation_loads['F_lat']
     M_tot = foundation_loads['M_tot']
 
-    foundation_cubic_meters = 1.012 * (0.0000034 * M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead)) + 168) / cubicyd_per_cubicm
+    foundation_cubic_meters = 1.012 * (0.0000034 * M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead)) + 168) / cubicyd_per_cubicm * (1.2)
 
     return foundation_cubic_meters
 
@@ -148,11 +148,13 @@ def estimate_material_needs(foundation_volume, num_turbines):
     :return: table of material needs
     """
 
-    steel_mass = foundation_volume * 0.012 * steel_density / kg_per_tonne * ton_per_tonne * num_turbines
-    concrete_volume = foundation_volume * 0.99 * cubicyd_per_cubicm * num_turbines
+    steel_mass = (foundation_volume * 0.015 * steel_density / kg_per_tonne * ton_per_tonne * num_turbines) * 1.1
+    concrete_volume = foundation_volume * 0.985 * cubicyd_per_cubicm * num_turbines
 
     material_needs = pd.DataFrame([['Steel - rebar', steel_mass, 'ton (short)'],
-                                   ['Concrete 5000 psi', concrete_volume, 'cubic yards']],
+                                   ['Concrete 5000 psi', concrete_volume, 'cubic yards'],
+                                   ['Excavated dirt', foundation_volume * 3.2 * cubicyd_per_cubicm * num_turbines, 'cubic_yards'],
+                                   ['Backfill', foundation_volume * 3.2 * cubicyd_per_cubicm * num_turbines, 'cubic_yards']],
                                   columns=['Material type ID', 'Quantity of material', 'Units'])
     return material_needs
 
@@ -166,7 +168,8 @@ def estimate_construction_time(throughput_operations, material_needs, duration_c
     """
 
     foundation_construction_time = duration_construction * 1/3
-    operation_data = pd.merge(throughput_operations, material_needs, on=['Material type ID'])
+    operation_data = throughput_operations.where(throughput_operations['Module'] == 'Foundations').dropna(thresh=4)
+    operation_data = pd.merge(material_needs, operation_data, on=['Material type ID'], how='outer')
     operation_data['Number of days'] = operation_data['Quantity of material'] / operation_data['Daily output']
     operation_data['Number of crews'] = np.ceil((operation_data['Number of days'] / 30) / foundation_construction_time)
     operation_data['Cost USD without weather delays'] = operation_data['Quantity of material'] * operation_data['Rate USD per unit']
@@ -241,7 +244,10 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     wind_multiplier = 1 + (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
 
     labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
-    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
+    per_diem = operation_data['Number of workers'] * operation_data['Number of crews'] * (operation_data['Time construct days'] + round(operation_data['Time construct days'] / 7)) * 144
+    where_are_NaNs = np.isnan(per_diem)
+    per_diem[where_are_NaNs] = 0
+    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier + per_diem
 
     foundation_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
@@ -251,6 +257,10 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     material_costs['Cost USD'] = material_data['Cost USD']
 
     foundation_cost = foundation_cost.append(material_costs)
+
+    # calculate mobilization cost as percentage of total foundation cost
+    mob_cost = pd.DataFrame([['Mobilization', 'Mobilization', foundation_cost['Cost USD'].sum() * 0.1]], columns=['Operation ID', 'Type of cost', 'Cost USD'])
+    foundation_cost = foundation_cost.append(mob_cost)
 
     total_foundation_cost = foundation_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_foundation_cost['Phase of construction'] = 'Foundations'
