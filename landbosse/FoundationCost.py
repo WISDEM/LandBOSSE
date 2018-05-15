@@ -134,7 +134,7 @@ def determine_foundation_size(foundation_loads):
     F_lat = foundation_loads['F_lat']
     M_tot = foundation_loads['M_tot']
 
-    foundation_cubic_meters = 1.012 * (0.0000034 * M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead)) + 168) / cubicyd_per_cubicm * (1.2)
+    foundation_cubic_meters = 1.012 * (0.0000034 * (M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead))) + 168) / cubicyd_per_cubicm
 
     return foundation_cubic_meters
 
