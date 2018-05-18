@@ -181,21 +181,31 @@ def calculate_erection_operation_time(project_data):
     possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * turbine_num
 
     # calculate erection time
-    possible_cranes['Operation time hr'] = possible_cranes['Lift height m'] / possible_cranes['Hoist speed m per min'] * hr_per_min * turbine_num
+    possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes['Hoist speed m per min'] * hr_per_min)
+                                            + (possible_cranes['Cycle time installation hrs'])
+                                            ) * turbine_num
 
     # store setup time
     possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * turbine_num
 
-    # erection_time = possible_cranes.groupby(['Crane name', 'Boom system', 'Operation'])['Erection time hr'].sum()
-    # travel_time = possible_cranes.groupby(['Crane name', 'Boom system', 'Operation'])['Travel time hr'].max()
-    # setup_time = possible_cranes.groupby(['Crane name', 'Boom system', 'Operation'])['Setup time hr'].max() * turbine_num
-    # rental_time_without_weather = erection_time + travel_time + setup_time
+    erection_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                             'Boom system', 'Operation'])['Operation time hr'].sum()
+    travel_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                           'Boom system', 'Operation'])['Travel time hr'].max()
+    setup_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                          'Boom system', 'Operation'])['Setup time hr'].max()
+    rental_time_without_weather = erection_time + travel_time + setup_time
 
-    possible_cranes['Total time per operation without weather'] = possible_cranes['Setup time hr'] + \
-                                                                  possible_cranes['Travel time hr'] + \
-                                                                  possible_cranes['Operation time hr']
+    operation_time = rental_time_without_weather.reset_index()
+    operation_time = operation_time.rename(columns={0: 'Operation time all turbines hrs'})
 
-    return possible_cranes
+    #possible_cranes['Total time per operation without weather'] =
+
+        # possible_cranes['Setup time hr'] + \
+        #                                                           possible_cranes['Travel time hr'] + \
+        #                                                           possible_cranes['Operation time hr']
+
+    return possible_cranes, operation_time
 
 
 def calculate_wind_delay_by_component(crane_specs, weather_window):
@@ -242,7 +252,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window):
     return crane_specs
 
 
-def aggregate_erection_costs(crane_data, project_data, hour_day, construct_time):
+def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day, construct_time):
     """
     Aggregates labor, equipment, mobilization and fuel costs for erection.
 
@@ -253,9 +263,12 @@ def aggregate_erection_costs(crane_data, project_data, hour_day, construct_time)
              2) utilizing separate cranes for base and topping
     """
 
-    crane_data['Total time per op with weather'] = crane_data['Total time per operation without weather'] * (1 + crane_data['Wind delay percent'])
+    average_wind_delay = crane_data.groupby(['Crane name', 'Boom system', 'Operation'])['Wind delay percent'].mean().reset_index()
+    join_wind_operation = pd.merge(operation_time, average_wind_delay, on=['Crane name', 'Boom system', 'Operation'])
 
-    possible_crane_cost = pd.merge(crane_data, project_data['equip_price'], on=['Equipment name', 'Crane capacity tonne'])
+    join_wind_operation['Total time per op with weather'] = join_wind_operation['Operation time all turbines hrs'] * (1 + join_wind_operation['Wind delay percent'])
+
+    possible_crane_cost = pd.merge(join_wind_operation, project_data['equip_price'], on=['Equipment name', 'Crane capacity tonne'])
 
     possible_crane_cost['Equipment rental cost USD'] = possible_crane_cost['Total time per op with weather'] * possible_crane_cost['Equipment price USD per hour']
 
@@ -267,14 +280,14 @@ def aggregate_erection_costs(crane_data, project_data, hour_day, construct_time)
     crew_cost['Per diem all workers'] = crew_cost['Per diem USD per day'] * crew_cost['Number of workers']
 
     # group crew costs by crew type and operation
-    crew_cost_grouped = crew_cost.groupby(['Crew type ID', 'Operation']).sum().reset_index()
+    crew_cost_grouped = crew_cost.groupby(['Crew type ID', 'Operation', 'Crew type']).sum().reset_index()
 
     # merge crane data with grouped crew costs
     possible_crane_cost = pd.merge(possible_crane_cost, crew_cost_grouped, on=['Crew type ID', 'Operation'])
 
     # calculate labor costs
     labor_day_operation = round(possible_crane_cost['Total time per op with weather'] / hour_day[construct_time])
-    possible_crane_cost['Labor cost USD'] = crew_cost['Hourly rate USD per hour'] * possible_crane_cost['Hourly rate for all workers'] + labor_day_operation * crew_cost['Per diem all workers']
+    possible_crane_cost['Labor cost USD'] = possible_crane_cost['Total time per op with weather'] * possible_crane_cost['Hourly rate for all workers'] + labor_day_operation * crew_cost['Per diem all workers']
 
     # calculate fuel costs
     project = project_data['project'].where(project_data['project']['Project ID'] == 'Conventional')
@@ -282,8 +295,17 @@ def aggregate_erection_costs(crane_data, project_data, hour_day, construct_time)
     possible_crane_cost['Fuel cost USD'] = possible_crane_cost['Fuel consumption gal per day'] * float(project['Fuel cost USD per gal']) * labor_day_operation
 
     # calculate costs if top and base cranes are the same
-    possible_crane_topbase = possible_crane_cost.where(possible_crane_cost['Crane bool Base'] == possible_crane_cost['Crane bool Top']).dropna()
-    possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name', 'Boom system'])['Labor cost USD', 'Equipment rental cost USD', 'Fuel cost USD'].sum().reset_index() # must group together because can't use separate cranes in this case
+    base_cranes = possible_crane_cost[possible_crane_cost['Operation'] == 'Base']
+    crane_topbase_bool = possible_crane_cost['Crane name'].isin(base_cranes['Crane name'])
+    boom_topbase_bool = possible_crane_cost['Boom system'].isin(base_cranes['Boom system'])
+    possible_crane_topbase = possible_crane_cost[boom_topbase_bool & crane_topbase_bool]
+    possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name',
+                                                                 'Boom system'])['Labor cost USD',
+                                                                                 'Equipment rental cost USD',
+                                                                                 'Fuel cost USD'].sum().reset_index()
+
+    #possible_crane_topbase = possible_crane_cost.where(possible_crane_cost['Crane bool Base'] == possible_crane_cost['Crane bool Top']).dropna()
+    #possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name', 'Boom system'])['Labor cost USD', 'Equipment rental cost USD', 'Fuel cost USD'].sum().reset_index() # must group together because can't use separate cranes in this case
 
     # group crane spec data for mobilization
     mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])['Mobilization cost USD'].max().reset_index()
@@ -363,12 +385,13 @@ def calculate_costs(project_data, hour_day, time_construct, weather_window):
     :param time_construct: string that describes operational time (e.g., normal vs. long hours)
      :return:
     """
-    crane_specs = calculate_erection_operation_time(project_data=project_data)
+    [crane_specs, operation_time] = calculate_erection_operation_time(project_data=project_data)
 
     cranes_wind_delay = calculate_wind_delay_by_component(crane_specs=crane_specs,
                                                           weather_window=weather_window)
 
     [separate_basetop, same_basetop] = aggregate_erection_costs(crane_data=cranes_wind_delay,
+                                                                operation_time=operation_time,
                                                                 project_data=project_data,
                                                                 hour_day=hour_day,
                                                                 construct_time=time_construct)
