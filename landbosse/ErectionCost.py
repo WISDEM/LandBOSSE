@@ -317,7 +317,7 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     topbase_same_crane_cost['Total cost USD'] = topbase_same_crane_cost['Labor cost USD'] + \
                                                 topbase_same_crane_cost['Equipment rental cost USD'] + \
                                                 topbase_same_crane_cost['Fuel cost USD'] + \
-                                                topbase_same_crane_cost['Mobilization cost USD']
+                                                topbase_same_crane_cost['Mobilization cost USD'] * 2  # for mobilization and demobilizaton
 
 
     # calculate costs if top and base use separate cranes
@@ -330,7 +330,7 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     separate_topbase_crane_cost['Total cost USD'] = separate_topbase_crane_cost['Labor cost USD'] + \
                                                     separate_topbase_crane_cost['Equipment rental cost USD'] + \
                                                     separate_topbase_crane_cost['Fuel cost USD'] + \
-                                                    separate_topbase_crane_cost['Mobilization cost USD']
+                                                    separate_topbase_crane_cost['Mobilization cost USD'] * 2  # for mobilization and demobilizaton 
 
     return separate_topbase_crane_cost, topbase_same_crane_cost
 
