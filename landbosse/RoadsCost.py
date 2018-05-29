@@ -63,7 +63,7 @@ cubic_yards_per_cubic_meter = 1.30795
 square_feet_per_square_meter = 10.7639
 
 
-def calculate_road_properties(road_length, road_width, road_thickness, crane_width):
+def calculate_road_properties(road_length, road_width, road_thickness, crane_width, num_turbines):
     """
     Calculates the volume of road materials need based on length, width, and thickness of roads
 
@@ -71,18 +71,28 @@ def calculate_road_properties(road_length, road_width, road_thickness, crane_wid
     :param road_width: float of road width in feet
     :param road_thickness: float of road thickness in inches
     :param crane_width: float of crane width in meters
+    :param num_turbines: number of turbines
     :return: road volume in cubic meters
     """
 
+    # units of cubic meters
     road_volume = road_length * (road_width * meters_per_foot) * (road_thickness * meters_per_inch)
 
-    road_properties = {'road_volume': road_volume,
+    # cubic meters for crane pad and maintenance ring for each turbine
+    # (from old BOS model - AI - Access Roads & Site Imp. tab cell J33)
+    crane_pad_volume = 125
+
+    # conversion factor for converting packed cubic yards to loose cubic yards
+    # material volume is about 1.4 times greater than road volume due to compaction
+    yards_loose_per_yards_packed = 1.39
+
+    road_properties = {'road_volume': road_volume + crane_pad_volume * num_turbines,  # in cubic meters
                        'depth_to_subgrade_m': 0.1,
                        'crane_path_width_m': crane_width + 1.5,  # todo: replace with actual crane path width from erection module
                        'road_length_m': road_length,
                        'road_thickness_m': (road_thickness * meters_per_inch),
                        'road_width_m': (road_width * meters_per_foot),
-                       'material_volume': road_volume * cubic_yards_per_cubic_meter * 1.39 # material volume is about 1.4 times greater than road volume due to compaction
+                       'material_volume': (road_volume * cubic_yards_per_cubic_meter * yards_loose_per_yards_packed)
                        }
 
     return road_properties
@@ -109,7 +119,7 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     topsoil_volume = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
     embankment_volume_crane = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
     embankment_volume_road = road_properties['road_volume'] * cubic_yards_per_cubic_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m)
-    material_volume = road_properties['road_volume'] * cubic_yards_per_cubic_meter * 1.39
+    material_volume = road_properties['material_volume']
     rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m) / 100000
 
     material_quantity_dict = {'cubic yard': topsoil_volume,
@@ -171,7 +181,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
 
 
 def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window,
-                    crane_width_m, operational_hrs_per_day):
+                    crane_width_m, operational_hrs_per_day, num_turbines, rotor_diam, access_roads, per_diem_rate):
     """
 
     :param road_length: float of road length in meters
@@ -182,16 +192,22 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     :param weather_window: data frame with weather data for time window associated with construction period
     :param crane_width_m: float of crane width in meters
     :param operational_hrs_per_day: number of hours of operation per day
+    :param num_turbines: number of turbines
+    :param rotor_diam: rotor diameter in meters
+    :param access_roads: number of access roads for project
+    :param per_diem_rate: per diem (USD per day)
     :return: data frame with total road costs by phase of construction
     """
 
     road_properties = calculate_road_properties(road_length=road_length,
                                                 road_thickness=road_thickness,
                                                 road_width=road_width,
-                                                crane_width=crane_width_m)
+                                                crane_width=crane_width_m,
+                                                num_turbines=num_turbines)
     material_name = input_data['rsmeans']['Material type ID'].where(input_data['rsmeans']['Module'] == 'Roads').dropna().unique()
     material_vol = pd.DataFrame([[material_name[0], road_properties['material_volume'], 'Loose cubic yard']],
                                 columns=['Material type ID', 'Quantity of material', 'Units'])
+
     material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
     material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(
         material_data['Material price USD per unit'])
@@ -209,16 +225,31 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     wind_multiplier = 1 + (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
 
     labor_equip_data = pd.merge(operation_data[['Operation ID', 'Units', 'Quantity of material']], input_data['rsmeans'], on=['Units', 'Operation ID'])
-    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier
+    labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit']
+                                   + round(labor_equip_data['Quantity of material'] *
+                                           labor_equip_data['Per Diem Hours (per unit)'] / operational_hrs_per_day / 6
+                                           ) * 7 * per_diem_rate) * wind_multiplier
 
     road_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
-    material_costs = pd.DataFrame(columns=['Operation ID', 'Type of cost', 'Cost USD'])
-    material_costs['Operation ID'] = material_data['Material type ID']
-    material_costs['Type of cost'] = 'Materials'
-    material_costs['Cost USD'] = material_data['Cost USD']
+    material_costs = pd.DataFrame([[material_data['Material type ID'], 'Materials', material_data['Cost USD']]],
+                                  columns=['Operation ID', 'Type of cost', 'Cost USD'])
+
+    cost_adder = (num_turbines * 17639 +
+                  num_turbines * rotor_diam * 24.8 +
+                  construction_time * 55500 +
+                  access_roads * 3800)
+    additional_costs = pd.DataFrame([['Other operations for roads', 'Other', cost_adder]],
+                                    columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
     road_cost = road_cost.append(material_costs)
+    road_cost = road_cost.append(additional_costs)
+
+    # set mobilization cost equal to 5% of total road cost
+    mobilization_costs = pd.DataFrame([['Mobilization', 'Other', float(road_cost["Cost USD"].sum()) * 0.05]],
+                                      columns=['Operation ID', 'Type of cost', 'Cost USD'])
+
+    road_cost = road_cost.append(mobilization_costs)
 
     total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_road_cost['Phase of construction'] = 'Roads'
