@@ -9,7 +9,7 @@ Calculates the costs for erecting the tower and rotor nacelle assembly for land-
 [Get site complexity]
 Get number of turbines
 Get duration of construction
-[Get rate of deliveries]
+Get rate of deliveries
 Get daily hours of operation
 Get turbine rating
 Get component specifications
@@ -59,13 +59,15 @@ hr_per_min = 1/60
 m_per_ft = 0.3048
 
 
-def calculate_erection_operation_time(project_data):
+def calculate_erection_operation_time(project_data, construct_duration, operational_construction_time):
     """
     Calculates operation time required for each type of equipment included in project data.
 
     :param project_data: dictionary of data frames for each of the csv files loaded for the project
+    :param construct_duration: duration of construction (in months)
     :return: list of possible cranes that could be used to erect tower and turbine
     """
+    erection_construction_time = 1/3 * construct_duration
 
     print('Calculating operation time')
     # group project data by project ID
@@ -78,7 +80,7 @@ def calculate_erection_operation_time(project_data):
     boolean_dictionary = {True: 'Top', False: 'Base'}
     project_data['components']['Operation'] = project_data['components']['Operation'].map(boolean_dictionary)
 
-    # create groups for topping and base
+    # create groups for operations
     top_v_base = project_data['components'].groupby(['Operation'])
 
     # group crane data by boom system and crane name to get distinct cranes
@@ -198,12 +200,177 @@ def calculate_erection_operation_time(project_data):
 
     operation_time = rental_time_without_weather.reset_index()
     operation_time = operation_time.rename(columns={0: 'Operation time all turbines hrs'})
+    operation_time['Operational construct days'] = (operation_time['Operation time all turbines hrs'] /
+                                                    operational_construction_time)
 
-    #possible_cranes['Total time per operation without weather'] =
+    # if more than one crew needed to complete within construction duration then assume that all construction happens
+    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    operation_time['time_construct_bool'] = (operation_time['Operational construct days'] >
+                                             erection_construction_time * 30)
+    boolean_dictionary = {True: erection_construction_time * 30, False: np.NAN}
+    operation_time['time_construct_bool'] = operation_time['time_construct_bool'].map(boolean_dictionary)
+    operation_time['Time construct days'] = operation_time[['time_construct_bool', 'Operational construct days']].min(axis=1)
 
-        # possible_cranes['Setup time hr'] + \
-        #                                                           possible_cranes['Travel time hr'] + \
-        #                                                           possible_cranes['Operation time hr']
+    return possible_cranes, operation_time
+
+def calculate_offload_operation_time(project_data, construct_duration, operational_construction_time,
+                                      rate_of_deliveries):
+    """
+
+    :param project_data:
+    :param construct_duration:
+    :param operational_construction_time:
+    :return:
+    """
+
+    erection_construction_time = 1 / 3 * construct_duration
+
+    print('Calculating offload operation time')
+    # group project data by project ID
+    project = project_data['project'].where(project_data['project']['Project ID'] == 'Conventional')
+    project = project.dropna(thresh=1)
+    # project_grouped = data_csv['project'].groupby(['Project ID', 'Turbine rating MW', 'Hub height m'])
+
+    offload_cranes = project_data['crane_specs'].where(project_data['crane_specs']['Equipment name'] == 'Offload crane')
+
+
+    # group crane data by boom system and crane name to get distinct cranes
+    crane_grouped = offload_cranes.groupby(
+        ['Equipment name', 'Crane name', 'Boom system', 'Crane capacity tonne'])
+
+    crane_poly = pd.DataFrame(
+        columns=['Equipment name', 'Crane name', 'Boom system', 'Crane capacity tonne', 'Crane poly'])
+    for name, crane in crane_grouped:
+        crane = crane.reset_index(drop=True)
+        x = crane['Max capacity tonne']
+        y = crane['Hub height m']
+        wind_speed = min(crane['Max wind speed m per s'])
+        hoist_speed = min(crane['Hoist speed m per min'])
+        travel_speed = min(crane['Speed of travel km per hr'])
+        setup_time = max(crane['Setup time hr'])
+        crew_type = crane['Crew type ID'][
+            0]  # todo: fix this so it's not a hack... need to rethink data structure - right now just picking first crew type - this is correct because same for all crane/boom combinations but we should come up with a better way to do it
+        polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+        df = pd.DataFrame([[name[0],
+                            name[1],
+                            name[2],
+                            name[3],
+                            wind_speed,
+                            setup_time,
+                            hoist_speed,
+                            travel_speed,
+                            crew_type,
+                            polygon]],
+                          columns=['Equipment name', 'Crane name', 'Boom system', 'Crane capacity tonne',
+                                   'Max wind speed m per s', 'Setup time hr',
+                                   'Hoist speed m per min', 'Speed of travel km per hr',
+                                   'Crew type ID', 'Crane poly'])
+        crane_poly = crane_poly.append(df)
+
+
+    rownew = pd.Series()
+    component_max_speed = pd.DataFrame()
+    crane_poly_new = crane_poly
+
+    component_group = project_data['components']
+
+    bool_list = list()
+    for idx, crane in crane_poly.iterrows():
+        polygon = crane['Crane poly']
+
+        for component in component_group['Component']:
+            # get weight and height of component in each component group
+            component_only = component_group.where(component_group['Component'] == component).dropna(thresh=1)
+            point = Point(component_only['Weight tonne'], component_only['Offload hook height m'])
+            crane['Lift boolean {component}'.format(component=component)] = polygon.contains(point)
+
+        rownew = rownew.append(crane)
+
+        for component in component_group['Component']:
+            if crane['Lift boolean {component}'.format(component=component)] is False:
+                crane_bool = False
+            else:
+                crane_bool = True
+
+        bool_list.append(crane_bool)
+
+        # calculate max permissible wind speed
+        # equation for calculating permissible wind speed:
+        # vmax = max_TAB * sqrt(1.2 * mh / AW), where
+        # mh = hoist load
+        # AW = area exposed to wind = surface area * coeff drag
+        # 1.2 = constant in m^2 / t
+        # vmax_TAB = maximum load speed per load chart
+        # source: pg. 33 of Liebherr
+
+        mh = component_group['Weight tonne']
+        AW = component_group['Surface area sq m'] * component_group['Coeff drag']
+        vmax_TAB = crane['Max wind speed m per s']
+        vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
+
+        # if vmax_calc is less than vmax_TAB then vmax_calc, otherwise vmax_TAB (based on pg. 33 of Liebherr)
+        # todo: check vmax - should it be set to calculated value rather than vmax_TAB if greater?
+        component_group_new = pd.DataFrame(component_group,
+                                           columns=list(component_group.columns.values) + ['vmax',
+                                                                                           'Crane name',
+                                                                                           'Boom system',
+                                                                                           'crane_bool'])
+        component_group_new['vmax'] = list((min(vmax_TAB, x) for x in vmax_calc))
+        component_group_new['Crane name'] = crane['Crane name']
+        component_group_new['Boom system'] = crane['Boom system']
+        component_group_new['crane_bool'] = crane_bool
+
+        component_max_speed = component_max_speed.append(component_group_new)
+
+    crane_poly_new['Crane bool {operation}'.format(operation='offload')] = list(bool_list)
+
+    crane_poly = crane_poly_new
+
+    # join crane polygon to crane specs
+    crane_component = pd.merge(crane_poly, component_max_speed, on=['Crane name', 'Boom system'])
+
+    # select only cranes that could lift the component
+    possible_cranes = crane_component.where(crane_component['crane_bool'] == True).dropna(thresh=1).reset_index(
+        drop=True)
+
+    # calculate travel time per cycle
+    turbine_spacing = float(project['Turbine spacing (times rotor diameter)'] * project['Rotor diameter m'] * km_per_m)
+    turbine_num = float(project['Number of turbines'])
+    possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * turbine_num
+
+    # calculate erection time
+    possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[
+        'Hoist speed m per min'] * hr_per_min)
+                                            + (possible_cranes['Offload cycle time hrs'])
+                                            ) * turbine_num
+
+    # store setup time
+    possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * turbine_num
+
+    erection_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                             'Boom system'])['Operation time hr'].sum()
+    travel_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                           'Boom system'])['Travel time hr'].max()
+    setup_time = possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
+                                          'Boom system'])['Setup time hr'].max()
+    rental_time_without_weather = erection_time + travel_time + setup_time
+
+    operation_time = rental_time_without_weather.reset_index()
+    operation_time = operation_time.rename(columns={0: 'Operation time all turbines hrs'})
+    operation_time['Operational construct days'] = (operation_time['Operation time all turbines hrs'] /
+                                                    operational_construction_time)
+
+    # if more than one crew needed to complete within construction duration then assume that all construction happens
+    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    operation_time['time_construct_bool'] = (turbine_num / operation_time['Operational construct days'] * 6
+                                             > float(rate_of_deliveries))
+    boolean_dictionary = {True: (float(turbine_num) / (float(rate_of_deliveries) / 6)), False: np.NAN}
+    operation_time['time_construct_bool'] = operation_time['time_construct_bool'].map(boolean_dictionary)
+    operation_time['Time construct days'] = operation_time[['time_construct_bool', 'Operational construct days']].max(
+        axis=1)
+
+    possible_cranes['Operation'] = 'Offload'
+    operation_time['Operation'] = 'Offload'
 
     return possible_cranes, operation_time
 
@@ -218,6 +385,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window):
     """
 
     # calculate wind delay for each component and crane combination
+    crane_specs = crane_specs.reset_index()
     crane_specs['Wind delay percent'] = np.nan
     print('Calculating wind delay')
     for i in range(0, len(crane_specs.index)):
@@ -330,12 +498,12 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     separate_topbase_crane_cost['Total cost USD'] = separate_topbase_crane_cost['Labor cost USD'] + \
                                                     separate_topbase_crane_cost['Equipment rental cost USD'] + \
                                                     separate_topbase_crane_cost['Fuel cost USD'] + \
-                                                    separate_topbase_crane_cost['Mobilization cost USD'] * 2  # for mobilization and demobilizaton 
+                                                    separate_topbase_crane_cost['Mobilization cost USD'] * 2  # for mobilization and demobilizaton
 
     return separate_topbase_crane_cost, topbase_same_crane_cost
 
 
-def find_minimum_cost_cranes(separate_basetop, same_basetop):
+def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
     """
     Finds the minimum cost crane(s) based on the aggregated labor, equipment, mobilization and fuel costs for erection.
 
@@ -343,6 +511,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop):
                              separate cranes for base and topping
     :param same_basetop: data frame with aggregated labor, equipment, mobilization, and fuel costs for utilizing the
                          same crane for base and topping
+    :param allow_same_flag: flag to indicate whether choosing same base and topping crane is allowed
     :return: data frame with the lowest cost crane option for erection
     """
     total_separate_cost = pd.DataFrame()
@@ -361,31 +530,46 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop):
     # sum costs for separate cranes to get total for all cranes
     cost_chosen_separate = total_separate_cost['Total cost USD'].sum()
 
-    # get the minimum cost for using the same crane for all operations
-    cost_chosen_same = min(same_basetop['Total cost USD'])
+    if allow_same_flag is True:
+        # get the minimum cost for using the same crane for all operations
+        cost_chosen_same = min(same_basetop['Total cost USD'])
 
-    # check if separate or same crane option is cheaper and choose crane cost
-    if cost_chosen_separate < cost_chosen_same:
-        cost_chosen = total_separate_cost.loc[0, ] + total_separate_cost.loc[1, ]
+        # check if separate or same crane option is cheaper and choose crane cost
+        if cost_chosen_separate < cost_chosen_same:
+            cost_chosen = total_separate_cost.groupby(by="Boom system").sum()
+        else:
+            cost_chosen = same_basetop.where(same_basetop['Total cost USD'] == cost_chosen_same).dropna()
     else:
-        cost_chosen = same_basetop.where(same_basetop['Total cost USD'] == cost_chosen_same).dropna()
+        cost_chosen = total_separate_cost.groupby(by="Boom system").sum()
 
     return cost_chosen
 
 
-def calculate_costs(project_data, hour_day, time_construct, weather_window):
+def calculate_costs(project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
 
     :param project_data: dictionary of data frames for each of the csv files loaded for the project
-    :param season_id: dictionary that maps seasons to months
-    :param season_construct: list of seasons for construction (e.g., ['spring', 'summer'])
-    :param operational_hour_dict: dictionary of hours for each type of operational time (e.g., normal vs. long hours)
+    :param hour_day: dictionary of hours for each type of operational time (e.g., normal vs. long hours)
     :param time_construct: string that describes operational time (e.g., normal vs. long hours)
+    :param weather_window: window of weather data for project of interest
+    :param construction_time: time allowed for construction (in months)
+    :param rate_of_deliveries: rate of deliveries (number of turbines per week)
      :return:
     """
-    [crane_specs, operation_time] = calculate_erection_operation_time(project_data=project_data)
+    [crane_specs, operation_time] = calculate_erection_operation_time(project_data=project_data,
+                                                                      construct_duration=construction_time,
+                                                                      operational_construction_time=hour_day[time_construct])
+
+    [offload_specs, offload_time] = calculate_offload_operation_time(project_data=project_data,
+                                                                     construct_duration=construction_time,
+                                                                     operational_construction_time=hour_day[time_construct],
+                                                                     rate_of_deliveries=rate_of_deliveries)
+
+    # append data for offloading
+    crane_specs = crane_specs.append(offload_specs)
+    operation_time = operation_time.append(offload_time)
 
     cranes_wind_delay = calculate_wind_delay_by_component(crane_specs=crane_specs,
                                                           weather_window=weather_window)
@@ -396,7 +580,9 @@ def calculate_costs(project_data, hour_day, time_construct, weather_window):
                                                                 hour_day=hour_day,
                                                                 construct_time=time_construct)
 
-    erection_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop, same_basetop=same_basetop)
+    erection_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop,
+                                             same_basetop=same_basetop,
+                                             allow_same_flag=False)
 
     return erection_cost
 
