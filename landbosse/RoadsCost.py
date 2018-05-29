@@ -232,26 +232,28 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
 
     road_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
-    material_costs = pd.DataFrame([[material_data['Material type ID'], 'Materials', material_data['Cost USD']]],
+    material_costs = pd.DataFrame([[material_data['Material type ID'], 'Materials', float(material_data['Cost USD'])]],
                                   columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
-    cost_adder = (num_turbines * 17639 +
-                  num_turbines * rotor_diam * 24.8 +
-                  construction_time * 55500 +
-                  access_roads * 3800)
-    additional_costs = pd.DataFrame([['Other operations for roads', 'Other', cost_adder]],
+    cost_adder = (float(num_turbines) * 17639 +
+                  float(num_turbines) * float(rotor_diam) * 24.8 +
+                  float(construction_time) * 55500 +
+                  float(access_roads) * 3800)
+    additional_costs = pd.DataFrame([['Other operations for roads', 'Other', float(cost_adder)]],
                                     columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
     road_cost = road_cost.append(material_costs)
     road_cost = road_cost.append(additional_costs)
 
     # set mobilization cost equal to 5% of total road cost
-    mobilization_costs = pd.DataFrame([['Mobilization', 'Other', float(road_cost["Cost USD"].sum()) * 0.05]],
+    mobilization_costs = pd.DataFrame([['Mobilization', 'Mobilization', float(road_cost["Cost USD"].sum()) * 0.05]],
                                       columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
     road_cost = road_cost.append(mobilization_costs)
 
     total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_road_cost['Phase of construction'] = 'Roads'
+
+    print(total_road_cost)
 
     return total_road_cost
