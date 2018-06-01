@@ -82,11 +82,20 @@ def calculate_foundation_loads(component_data):
     # get cross-sectional area
     A_f = component_data['Surface area sq m']
 
+    # get coefficient of drag
+    C_d = component_data['Coeff drag']
+
     # get lever arm
     L = component_data['Lever arm m']
 
+    # get multipliers for tower and rotor
+    multiplier_rotor = component_data['Multplier drag rotor']
+    multiplier_tower = component_data['Multiplier tower drag']
+
     # Equations from Shrestha, S. 2015. DESIGN AND ANALYSIS OF FOUNDATION FOR ONSHORE TALL WIND TURBINES. All Theses. Paper 2291.
     # https: // tigerprints.clemson.edu / cgi / viewcontent.cgi?referer = https: // www.google.com / & httpsredir = 1 & article = 3296 & context = all_theses
+    # Also from
+    # http://ir.uiowa.edu/cgi/viewcontent.cgi?article=2427&context=etd
 
     # calculate wind pressure
     K_z = 2.01 * (z / z_g) ** (2 / a)  # exposure factor
@@ -95,21 +104,28 @@ def calculate_foundation_loads(component_data):
     V = 60  # critical velocity in m/s
     wind_pressure = 0.613 * K_z * K_zt * K_d * V ** 2
 
-    # calculate wind loads of each component
+    # calculate wind loads on each tower component
     G = 0.85  # gust factor
-    C_f = 0.8  # coefficient of force
-    F = wind_pressure * G * C_f * A_f
+    C_f = 0.4  # coefficient of force
+    F_t = (wind_pressure * G * C_f * A_f) * multiplier_tower
 
-    # calculate moment from each component at base of tower
-    M = F * L
+    # calculate drag rotor
+    rho = 1.225  # air density in kg/m^3
+    F_r = (0.5 * rho * C_d * A_f * V ** 2) * multiplier_rotor
 
-    # get total lateral load (N) and moment (N * m)
-    F_lat = F.sum()
-    M_tot = M.sum()
+    F = (F_t + F_r)
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne
+    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / 1.15  # scaling factor to adjust dead load for uplift
+
+    # calculate moment from each component at base of tower
+    M_overturn = F * L
+    M_resist = F_dead * 5  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 10 m))
+
+    # get total lateral load (N) and moment (N * m)
+    F_lat = F.sum()
+    M_tot = (M_overturn.sum() - M_resist) * 1.8  # safety factor of 1.8 for moment only
 
     foundation_loads = {'F_dead': F_dead,
                         'F_lat': F_lat,
@@ -148,7 +164,7 @@ def estimate_material_needs(foundation_volume, num_turbines):
     :return: table of material needs
     """
 
-    steel_mass = (foundation_volume * 0.015 * steel_density / kg_per_tonne * ton_per_tonne * num_turbines) * 1.1
+    steel_mass = (foundation_volume * 0.012 * steel_density / kg_per_tonne * ton_per_tonne * num_turbines)
     concrete_volume = foundation_volume * 0.985 * cubicyd_per_cubicm * num_turbines
 
     material_needs = pd.DataFrame([['Steel - rebar', steel_mass, 'ton (short)'],
