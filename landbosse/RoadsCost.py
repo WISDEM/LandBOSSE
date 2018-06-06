@@ -181,7 +181,8 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
 
 
 def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window,
-                    crane_width_m, operational_hrs_per_day, num_turbines, rotor_diam, access_roads, per_diem_rate):
+                    crane_width_m, operational_hrs_per_day, num_turbines, rotor_diam, access_roads, per_diem_rate,
+                    overtime_multiplier):
     """
 
     :param road_length: float of road length in meters
@@ -225,10 +226,10 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     wind_multiplier = 1 + (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
 
     labor_equip_data = pd.merge(operation_data[['Operation ID', 'Units', 'Quantity of material']], input_data['rsmeans'], on=['Units', 'Operation ID'])
-    labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit']
-                                   + round(labor_equip_data['Quantity of material'] *
-                                           labor_equip_data['Per Diem Hours (per unit)'] / operational_hrs_per_day / 6
-                                           ) * 7 * per_diem_rate) * wind_multiplier
+    labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * overtime_multiplier
+                                    + round(labor_equip_data['Quantity of material'] *
+                                            labor_equip_data['Per Diem Hours (per unit)'] / operational_hrs_per_day / 6
+                                            ) * 7 * per_diem_rate) * wind_multiplier
 
     road_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 

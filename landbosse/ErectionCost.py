@@ -420,7 +420,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window):
     return crane_specs
 
 
-def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day, construct_time):
+def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day, construct_time, overtime_multiplier):
     """
     Aggregates labor, equipment, mobilization and fuel costs for erection.
 
@@ -444,7 +444,7 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
 
     # calculate crew costs
-    crew_cost['Hourly rate for all workers'] = crew_cost['Hourly rate USD per hour'] * crew_cost['Number of workers']
+    crew_cost['Hourly rate for all workers'] = (crew_cost['Hourly rate USD per hour'] * crew_cost['Number of workers']) * overtime_multiplier
     crew_cost['Per diem all workers'] = crew_cost['Per diem USD per day'] * crew_cost['Number of workers']
 
     # group crew costs by crew type and operation
@@ -545,7 +545,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
     return cost_chosen
 
 
-def calculate_costs(project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries):
+def calculate_costs(project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries, overtime_multiplier):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
@@ -578,7 +578,8 @@ def calculate_costs(project_data, hour_day, time_construct, weather_window, cons
                                                                 operation_time=operation_time,
                                                                 project_data=project_data,
                                                                 hour_day=hour_day,
-                                                                construct_time=time_construct)
+                                                                construct_time=time_construct,
+                                                                overtime_multiplier=overtime_multiplier)
 
     erection_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop,
                                              same_basetop=same_basetop,

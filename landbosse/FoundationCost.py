@@ -230,7 +230,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day):
+def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day, overtime_multiplier):
     """
 
     :param input_data:
@@ -263,7 +263,7 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     per_diem = operation_data['Number of workers'] * operation_data['Number of crews'] * (operation_data['Time construct days'] + round(operation_data['Time construct days'] / 7)) * 144
     where_are_NaNs = np.isnan(per_diem)
     per_diem[where_are_NaNs] = 0
-    labor_equip_data['Cost USD'] = labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * wind_multiplier + per_diem
+    labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * overtime_multiplier + per_diem) * wind_multiplier
 
     foundation_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
