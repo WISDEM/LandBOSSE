@@ -420,7 +420,8 @@ def calculate_wind_delay_by_component(crane_specs, weather_window):
     return crane_specs
 
 
-def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day, construct_time, overtime_multiplier):
+def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day, construct_time, overtime_multiplier,
+                             project_size):
     """
     Aggregates labor, equipment, mobilization and fuel costs for erection.
 
@@ -442,6 +443,22 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
 
     # merge crew type and crew cost data
     crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
+
+    # increase management crews by project size
+    crew_cost.loc[crew_cost['Crew name'] == "Management - project size", 'Number of workers'] = \
+        round(crew_cost[crew_cost['Crew name'] == "Management - project size"]['Number of workers'] *
+              np.ceil(project_size / 100))
+
+    # increase management crews by rate of construction (scale if greater than 10/wk)
+    rate_construction = float(project_data['project']['Rate of deliveries (turbines per week)'].dropna())
+
+    crew_cost.loc[crew_cost['Crew name'] == "Management - rate construction", 'Number of workers'] = \
+        round(crew_cost[crew_cost['Crew name'] == "Management - rate construction"]['Number of workers'] *
+              np.ceil(rate_construction / 10))
+
+    crew_cost.loc[crew_cost['Crew name'] == "Mechanical completion", 'Number of workers'] = \
+        round(crew_cost[crew_cost['Crew name'] == "Mechanical completion"]['Number of workers'] *
+              np.ceil(rate_construction / 10))
 
     # calculate crew costs
     crew_cost['Hourly rate for all workers'] = (crew_cost['Hourly rate USD per hour'] * crew_cost['Number of workers']) * overtime_multiplier
@@ -545,7 +562,8 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
     return cost_chosen
 
 
-def calculate_costs(project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries, overtime_multiplier):
+def calculate_costs(project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries,
+                    overtime_multiplier, project_size):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
@@ -579,7 +597,8 @@ def calculate_costs(project_data, hour_day, time_construct, weather_window, cons
                                                                 project_data=project_data,
                                                                 hour_day=hour_day,
                                                                 construct_time=time_construct,
-                                                                overtime_multiplier=overtime_multiplier)
+                                                                overtime_multiplier=overtime_multiplier,
+                                                                project_size=project_size)
 
     erection_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop,
                                              same_basetop=same_basetop,
@@ -599,7 +618,8 @@ if __name__ == "__main__":
     possible_cranes = calculate_wind_delay_by_component(crane_specs=crane_specs_project,
                                                         weather_window=weather_window_project)
 
-    [separate_basetop_cranes, same_basetop_cranes] = aggregate_erection_costs(crane_data=possible_cranes, project_data=data_csv)
+    [separate_basetop_cranes, same_basetop_cranes] = aggregate_erection_costs(crane_data=possible_cranes,
+                                                                              project_data=data_csv)
 
     crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
 
