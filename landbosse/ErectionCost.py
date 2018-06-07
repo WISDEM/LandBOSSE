@@ -470,9 +470,18 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     # merge crane data with grouped crew costs
     possible_crane_cost = pd.merge(possible_crane_cost, crew_cost_grouped, on=['Crew type ID', 'Operation'])
 
+    # get total rate for management crew
+    management_rates = crew_cost_grouped[(crew_cost_grouped['Operation'] == 'Management') |
+                                         (crew_cost_grouped['Operation'] == 'Mechanical completion')].sum()
+    per_diem_management = management_rates['Per diem all workers']
+    hourly_management = management_rates['Hourly rate for all workers']
+
     # calculate labor costs
     labor_day_operation = round(possible_crane_cost['Total time per op with weather'] / hour_day[construct_time])
-    possible_crane_cost['Labor cost USD'] = possible_crane_cost['Total time per op with weather'] * possible_crane_cost['Hourly rate for all workers'] + labor_day_operation * crew_cost['Per diem all workers']
+    possible_crane_cost['Labor cost USD'] = (possible_crane_cost['Total time per op with weather'] *
+                                             (possible_crane_cost['Hourly rate for all workers'] + hourly_management) +
+                                             labor_day_operation *
+                                             (crew_cost['Per diem all workers'] + per_diem_management))
 
     # calculate fuel costs
     project = project_data['project'].where(project_data['project']['Project ID'] == 'Conventional')
@@ -558,6 +567,8 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
             cost_chosen = same_basetop.where(same_basetop['Total cost USD'] == cost_chosen_same).dropna()
     else:
         cost_chosen = total_separate_cost.groupby(by="Boom system").sum()
+
+    print(total_separate_cost)
 
     return cost_chosen
 
