@@ -37,10 +37,11 @@ Return total management costs
 
 import math
 import pandas as pd
+import numpy as np
 
 
 def calculate_costs(project_value, foundation_cost, num_hwy_permits, construction_time_months,
-                    markup_constants, num_turbines, project_size):
+                    markup_constants, num_turbines, project_size, hub_height, num_access_roads):
     """
     Calculate management costs by type (insurance, construction permitting, bonding, project management,
     markup and contingency, and site-specific engineering) and then sum to get total
@@ -61,13 +62,21 @@ def calculate_costs(project_value, foundation_cost, num_hwy_permits, constructio
                                                            num_hwy_permits=num_hwy_permits)
     bond_cost = bonding(project_value=project_value)
     project_management_cost = project_management(construction_time_months)
-    markup_contingency_cost = markup_contingency(markup_constants=markup_constants, project_value=project_value)
+    markup_contingency_cost = markup_contingency(markup_constants=markup_constants,
+                                                 project_value=project_value)
     development_engineering_cost = engineering_foundations_collection_sys(num_turbines=num_turbines,
                                                                           project_size=project_size)
+    met_mast_cost = met_mast(project_size=project_size,
+                             hub_height=hub_height)
+    site_security_cost = site_security(project_size=project_size,
+                                       num_access_roads=num_access_roads,
+                                       construction_time_months=construction_time_months)
+    site_facility_cost = site_facility(project_size=project_size)
 
     # Sum management costs over all types
     total_management_cost = insurance_cost + construction_permitting_cost + bond_cost + project_management_cost + \
-                            markup_contingency_cost + development_engineering_cost
+                            markup_contingency_cost + development_engineering_cost + met_mast_cost + \
+                            site_security_cost + site_facility_cost
 
     total_management_cost = pd.DataFrame([[total_management_cost]], columns=['Management cost USD'])
 
@@ -76,7 +85,12 @@ def calculate_costs(project_value, foundation_cost, num_hwy_permits, constructio
 
 def insurance(project_value):
     """
-    Calculate insurance costs based on project value, builder size, and project size
+    Calculate insurance costs based on project value, builder size, and project size. Includes:
+
+    Builder's risk
+    General liability
+    Umbrella policy
+    Professional liability
 
     :param project_value: float that represents the sum of all other BOS costs (e.g., roads, foundations, erection)
     :return: insurance costs
@@ -89,7 +103,10 @@ def insurance(project_value):
 
 def construction_permitting(foundation_cost, num_hwy_permits):
     """
-    Calculate construction permitting costs based empirical data.
+    Calculate construction permitting costs based empirical data from industry.
+    Includes:
+
+    Building and highway permits
 
     :param foundation_cost: float that equals the foundation costs for the project
     :param num_hwy_permits: integer that equals the number of highway permits needed for the project
@@ -123,6 +140,19 @@ def bonding(project_value):
 def project_management(construction_time_months):
     """
     Calculate project management costs based on project size based on empirical data from industry.
+    Includes:
+
+    Project manager and assistant project manager for site
+    Site managers for civil, electrical, and erection
+    QA/QC management
+    QA/QC inspections for civil, structural, electrical, and mechanical
+    Administrative support for the site
+    Health and safety supervisors
+    Environmental supervisors
+    Office equipment & materials
+    Site radios, communication, and vehicles
+    Management team per diem and travel
+    Legal and public relations
 
     :param construction_time_months: float that equals the project duration (in months)
     :return: project management cost
@@ -143,6 +173,13 @@ def project_management(construction_time_months):
 def markup_contingency(markup_constants, project_value):
     """
     Calculate mark-up and contingency costs based on project value based on empirical data from industry.
+    Includes:
+
+    Contingency
+    Warranty management
+    Sales and use tax
+    Overhead
+    Profit margin
 
     :param markup_constants: dictionary of markup and contingency costs that can be set by user
     :param project_value: float that represents the sum of all other BOS costs (e.g., roads, foundations, erection)
@@ -177,3 +214,104 @@ def engineering_foundations_collection_sys(num_turbines, project_size):
                                             round(3.4893 * math.log(num_turbines) - 7.3049, 0) * 16800 + \
                                             2 * 161675 + 4000
     return development_engineering_cost
+
+
+def site_facility(project_size):
+    """
+    Uses empirical data to estimate cost of building O&M facility, including
+
+    Building design and construction
+    Drilling and installing a water well, including piping
+    Electric power for a water well
+    Septic tank and drain field
+
+    :param project_size: project size in megawatts (MW)
+    :return: cost of O&M building in USD
+    """
+    building_area_df = pd.DataFrame([[0, 200, 3000], [200, 500, 5000], [500, 800, 7000], [800, 1000, 9000], [1000, 5000, 12000]],
+                                  columns=['Size Min (MW)', 'Size Max (MW)', 'Building area (sq. ft.)'])
+    building_area = building_area_df[(building_area_df['Size Max (MW)'] > project_size) &
+                                 (building_area_df['Size Min (MW)'] <= project_size)]['Building area (sq. ft.)']
+
+    # if project_size < 200:
+    #     building_area = 3000
+    #     if project_size < 500:
+    #         building_area = 5000
+    #         if project_size < 800:
+    #             building_area = 7000
+    #             if project_size < 1000:
+    #                 building_area = 9000
+    #             if project_size >= 1000:
+    #                 building_area = 12000
+
+    site_facility_cost = float(building_area) * 125 + 176125
+
+    return site_facility_cost
+
+
+def site_security(project_size, num_access_roads, construction_time_months):
+    """
+    Uses empirical data to estimate cost of site security, including
+
+    Constructing and reinstating the compound
+    Constructing and reinstating the batch plant site
+    Setting up and removing the site offices for the contractor, turbine supplier, and owner
+    Restroom facilities
+    Electrical and telephone hook-up
+    Monthly office costs
+    Signage for project information, safety and directions
+    Cattle guards and gates
+
+    :param project_size: project size in megawatts (MW)
+    :param num_access_roads: number of access roads
+    :param construction_time_months: duration of construction in months
+    :return: cost of site security in USD
+    """
+    if project_size > 30:
+        adder = 90000
+        if project_size > 100:
+            multiplier = 10
+        else:
+            multiplier = 5
+    else:
+        adder = 0
+        multiplier = 3
+
+    site_security_cost = ((num_access_roads * 9825) + (29850 * construction_time_months) + (multiplier * 30000) + adder
+                          + (project_size / 5 * 300) + 62400)
+
+    return site_security_cost
+
+
+def met_mast(project_size, hub_height):
+    """
+    Uses empirical data to estimate cost of permanent and temporary met masts and power performance
+
+    :param project_size: project size in megawatts (MW)
+    :param hub_height: hub height in meters
+    :return: cost of met masts and power performance in USD
+    """
+
+    if (project_size >= 30) & (project_size <= 100):
+        num_perm_met_mast = 2
+        num_temp_met_mast = 2
+    elif (project_size > 100) & (project_size <= 300):
+        num_perm_met_mast = 2
+        num_temp_met_mast = 4
+    elif project_size > 300:
+        num_perm_met_mast = round(project_size / 100)
+        num_temp_met_mast = round(project_size / 100) * 2
+    else:
+        num_perm_met_mast = 1
+        num_temp_met_mast = 1
+
+    if hub_height < 90:
+        multiplier_perm = 232600
+        multiplier_temp = 92600
+    else:
+        multiplier_perm = 290000
+        multiplier_temp = 116800
+
+    met_mast_cost = (num_perm_met_mast * multiplier_perm) + (num_temp_met_mast * multiplier_temp) + 200000
+
+    return met_mast_cost
