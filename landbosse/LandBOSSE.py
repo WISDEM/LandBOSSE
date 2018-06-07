@@ -67,10 +67,10 @@ file_list = {'crane_specs': "/Users/aeberle/Documents/Wind FY18/Land based BOS/P
              'rsmeans': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/rsmeans_data.csv"}
 
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
-per_diem = 140  # USD per day
+per_diem = 144  # USD per day
 season_construct = ['spring', 'summer']
 time_construct = 'normal'
-construction_time_months = 6
+construction_time_months = 13
 num_hwy_permits = 1  # assuming number of highway permits = 1
 
 # Financial parameters
@@ -96,8 +96,9 @@ phase_list = {'Collection system': '',
               'Management': '',
               'Foundations': '',
               'Roads': '',
-              'Transmission and interconnection': ''}
-type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials', 'Development', 'Management']
+              'Transmission and interconnection': '',
+              'Substation': ''}
+type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials', 'Development', 'Management', 'Other']
 
 
 # create object that contains the properties of a land-based wind project
@@ -127,11 +128,26 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     turbine_spacing = project_data['Turbine spacing (times rotor diameter)'][0]
     rotor_diameter = project_data['Rotor diameter m'][0]
     turbine_rating_kilowatt = project_data['Turbine rating MW'][0] * kilowatt_per_megawatt
+    rate_of_deliveries = project_data['Rate of deliveries (turbines per week)']
+    hub_height = project_data['Hub height m'][0]
+
+    # electrical
+    interconnect_voltage = 137
+    pad_mount_transformer = True
+    MV_thermal_backfill_mi = 0
+    MV_overhead_collector_mi = 0
+    rock_trenching_percent = 0.1
+    distance_to_interconnect = 5
+    new_switchyard = True
+
     project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
-    road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter) / 2
+    road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter)
     road_width_ft = 16  # feet
     road_thickness_in = 8  # inches
     crane_width_m = 10.7  # meters
+    overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
+
+    num_access_roads = 5
 
     # create data frame to store cost data for each module
     bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
@@ -153,43 +169,82 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                                           construction_time=construction_time_months,
                                           weather_window=weather_window,
                                           crane_width_m=crane_width_m,
-                                          operational_hrs_per_day=operational_hrs_per_day)
+                                          operational_hrs_per_day=operational_hrs_per_day,
+                                          num_turbines=num_turbines,
+                                          rotor_diam=rotor_diameter,
+                                          access_roads=num_access_roads,
+                                          per_diem_rate=per_diem,
+                                          overtime_multiplier=overtime_multiplier)
 
     # calculate foundation costs
     foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
                                                      num_turbines=num_turbines,
                                                      construction_time=construction_time_months,
                                                      weather_window=weather_window,
-                                                     operational_hrs_per_day=operational_hrs_per_day)
+                                                     operational_hrs_per_day=operational_hrs_per_day,
+                                                     overtime_multiplier=overtime_multiplier)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
-    bos_cost.loc[bos_cost['Phase of construction'].isin(foundation_cost['Phase of construction']) &
-                 bos_cost['Type of cost'].isin(foundation_cost['Type of cost']), ['Cost USD']] = foundation_cost.loc[
-        foundation_cost['Phase of construction'].isin(bos_cost['Phase of construction']) &
-        foundation_cost['Type of cost'].isin(bos_cost['Type of cost']), ['Cost USD']].values
+    for value in foundation_cost['Type of cost']:
+        bos_cost.loc[(bos_cost['Phase of construction'] == 'Foundations') &
+                     (bos_cost['Type of cost'] == value), ['Cost USD']] = foundation_cost.loc[
+        (foundation_cost['Phase of construction'] == 'Foundations') &
+        (foundation_cost['Type of cost'] == value), ['Cost USD']].values
 
     # set values in bos_cost data frame - since formatting is already correct for road_cost, then overwrite values
-    bos_cost.loc[bos_cost['Phase of construction'].isin(road_cost['Phase of construction']) &
-                 bos_cost['Type of cost'].isin(road_cost['Type of cost']), ['Cost USD']] = road_cost.loc[
-        road_cost['Phase of construction'].isin(bos_cost['Phase of construction']) &
-        road_cost['Type of cost'].isin(bos_cost['Type of cost']), ['Cost USD']].values
+    for value in foundation_cost['Type of cost']:
+        bos_cost.loc[(bos_cost['Phase of construction'] == 'Roads') &
+                     (bos_cost['Type of cost'] == value), ['Cost USD']] = road_cost.loc[
+        (road_cost['Phase of construction'] == 'Roads') &
+        (road_cost['Type of cost'] == value), ['Cost USD']].values
 
-    # calculate management costs
-    management_cost = ManagementCost.calculate_costs(project_value=project_value, foundation_cost=foundation_cost,
-                                                     num_hwy_permits=num_hwy_permits,
-                                                     construction_time_months=construction_time_months,
-                                                     markup_constants=markup_constants,
-                                                     num_turbines=num_turbines,
-                                                     project_size=project_size)
-    bos_cost = save_cost_data(phase='Management',
-                              phase_cost=management_cost,
-                              bos_cost=bos_cost)
+
+    substation = 11652 * (interconnect_voltage + project_size) + 11795 * (project_size ** 0.3549) + 1526800
+
+    if distance_to_interconnect == 0:
+        trans_interconnect = 0
+    else:
+        if new_switchyard is True:
+            interconnect_adder = 18115 * interconnect_voltage + 165944
+        else:
+            interconnect_adder = 0
+        trans_interconnect = ((1176 * interconnect_voltage + 218257) * (distance_to_interconnect ** (-0.1063))
+                              * distance_to_interconnect) + interconnect_adder
+
+    if pad_mount_transformer is True:
+        multipier_material = 66733.4
+    else:
+        multipier_material = 27088.4
+    electrical_materials = num_turbines * multipier_material + int(project_size / 25) * 35375 + \
+                         int(project_size / 100) * 50000 + rotor_diameter * num_turbines * 545.4 + \
+                         MV_thermal_backfill_mi * 5 + 41945
+    if project_size > 200:
+        material_adder = 300000
+    else:
+        material_adder = 155000
+    electrical_installation = int(project_size / 25) * 14985 + material_adder + \
+                           num_turbines * (7059.3 + rotor_diameter * (352.4 + 297 * rock_trenching_percent)) + \
+                           MV_overhead_collector_mi * 200000 + 10000
+
+    bos_cost.loc[(bos_cost['Phase of construction'] == 'Transmission and interconnection') &
+                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = trans_interconnect
+
+    bos_cost.loc[(bos_cost['Phase of construction'] == 'Substation') &
+                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = substation
+
+    bos_cost.loc[(bos_cost['Phase of construction'] == 'Collection system') &
+                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = electrical_installation + electrical_materials
 
     # calculate erection costs
     erection_cost = ErectionCost.calculate_costs(project_data=data_csv,
                                                  hour_day=operational_hour_dict,
+                                                 construction_time=construction_time_months,
                                                  time_construct=time_construct,
-                                                 weather_window=weather_window)
+                                                 weather_window=weather_window,
+                                                 rate_of_deliveries=rate_of_deliveries,
+                                                 overtime_multiplier=overtime_multiplier,
+                                                 project_size=project_size
+                                                 )
 
     bos_cost = save_cost_data(phase='Erection',
                               phase_cost=erection_cost,
@@ -199,11 +254,32 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                               phase_cost=pd.DataFrame([[development]], columns=['Development cost USD']),
                               bos_cost=bos_cost)
 
+    project_value = float(bos_cost['Cost USD'].sum())
+
+    # calculate management costs
+    management_cost = ManagementCost.calculate_costs(project_value=project_value,  #57552441 #
+                                                     foundation_cost=foundation_cost,
+                                                     num_hwy_permits=num_hwy_permits,
+                                                     construction_time_months=construction_time_months,
+                                                     markup_constants=markup_constants,
+                                                     num_turbines=num_turbines,
+                                                     project_size=project_size,
+                                                     hub_height=hub_height,
+                                                     num_access_roads=num_access_roads)
+    bos_cost = save_cost_data(phase='Management',
+                              phase_cost=management_cost,
+                              bos_cost=bos_cost)
+
+
+
     print('Final cost matrix:')
     print(bos_cost)
 
     print('Total cost by phase:')
     print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
+
+    print('Total cost USD:')
+    print(bos_cost['Cost USD'].sum())
 
     return bos_cost
 
