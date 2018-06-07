@@ -255,6 +255,4 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_road_cost['Phase of construction'] = 'Roads'
 
-    print(total_road_cost)
-
     return total_road_cost

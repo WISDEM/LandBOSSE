@@ -634,7 +634,7 @@ if __name__ == "__main__":
 
     crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
 
-    print(crane_cost)
+    print(crane_cost[['Operation', 'Crane name', 'Boom system']])
 
 # OTHER NOTES ABOUT WEATHER DELAYS
 
