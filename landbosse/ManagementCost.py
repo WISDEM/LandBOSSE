@@ -231,18 +231,7 @@ def site_facility(project_size):
     building_area_df = pd.DataFrame([[0, 200, 3000], [200, 500, 5000], [500, 800, 7000], [800, 1000, 9000], [1000, 5000, 12000]],
                                   columns=['Size Min (MW)', 'Size Max (MW)', 'Building area (sq. ft.)'])
     building_area = building_area_df[(building_area_df['Size Max (MW)'] > project_size) &
-                                 (building_area_df['Size Min (MW)'] <= project_size)]['Building area (sq. ft.)']
-
-    # if project_size < 200:
-    #     building_area = 3000
-    #     if project_size < 500:
-    #         building_area = 5000
-    #         if project_size < 800:
-    #             building_area = 7000
-    #             if project_size < 1000:
-    #                 building_area = 9000
-    #             if project_size >= 1000:
-    #                 building_area = 12000
+                                     (building_area_df['Size Min (MW)'] <= project_size)]['Building area (sq. ft.)']
 
     site_facility_cost = float(building_area) * 125 + 176125
 
