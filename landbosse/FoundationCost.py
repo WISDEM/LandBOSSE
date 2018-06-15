@@ -83,7 +83,7 @@ def calculate_foundation_loads(component_data):
     A_f = component_data['Surface area sq m']
 
     # get coefficient of drag
-    C_d = component_data['Coeff drag']
+    C_d = component_data['Coeff drag (installed)']
 
     # get lever arm
     L = component_data['Lever arm m']
@@ -106,7 +106,7 @@ def calculate_foundation_loads(component_data):
 
     # calculate wind loads on each tower component
     G = 0.85  # gust factor
-    C_f = 0.4  # coefficient of force
+    C_f = 0.6  # coefficient of force
     F_t = (wind_pressure * G * C_f * A_f) * multiplier_tower
 
     # calculate drag rotor
@@ -121,11 +121,11 @@ def calculate_foundation_loads(component_data):
 
     # calculate moment from each component at base of tower
     M_overturn = F * L
-    M_resist = F_dead * 5  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 10 m))
+    M_resist = F_dead * 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
 
     # get total lateral load (N) and moment (N * m)
     F_lat = F.sum()
-    M_tot = (M_overturn.sum() - M_resist) * 1.8  # safety factor of 1.8 for moment only
+    M_tot = (M_overturn.sum() - M_resist) * 1.35  # safety factor of 1.8 for moment only
 
     foundation_loads = {'F_dead': F_dead,
                         'F_lat': F_lat,
