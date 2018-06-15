@@ -229,11 +229,11 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * overtime_multiplier
                                     + round(labor_equip_data['Quantity of material'] *
                                             labor_equip_data['Per Diem Hours (per unit)'] / operational_hrs_per_day / 6
-                                            ) * 7 * per_diem_rate) * wind_multiplier
+                                            ) * 7 * per_diem_rate * labor_equip_data['Number of workers']) * wind_multiplier
 
     road_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]
 
-    material_costs = pd.DataFrame([[material_data['Material type ID'], 'Materials', float(material_data['Cost USD'])]],
+    material_costs = pd.DataFrame([[material_data['Material type ID'][0], 'Materials', float(material_data['Cost USD'])]],
                                   columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
     cost_adder = (float(num_turbines) * 17639 +
@@ -252,7 +252,13 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
 
     road_cost = road_cost.append(mobilization_costs)
 
+    # print(road_cost.groupby(by=['Operation ID']).sum())
+
     total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
+    total_road_cost.loc[total_road_cost['Type of cost'] == 'Labor', 'Cost USD'] = float(
+        total_road_cost.loc[total_road_cost['Type of cost'] == 'Labor', 'Cost USD']) + 48.8 * road_length
     total_road_cost['Phase of construction'] = 'Roads'
+
+    # print(total_road_cost)
 
     return total_road_cost
