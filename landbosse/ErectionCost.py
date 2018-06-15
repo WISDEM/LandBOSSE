@@ -435,7 +435,13 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     average_wind_delay = crane_data.groupby(['Crane name', 'Boom system', 'Operation'])['Wind delay percent'].mean().reset_index()
     join_wind_operation = pd.merge(operation_time, average_wind_delay, on=['Crane name', 'Boom system', 'Operation'])
 
-    join_wind_operation['Total time per op with weather'] = join_wind_operation['Operation time all turbines hrs'] * (1 + join_wind_operation['Wind delay percent'])
+    join_wind_operation['Total time per op with weather'] = (join_wind_operation['Operation time all turbines hrs'] * 1
+                                                             / (1 - join_wind_operation['Wind delay percent']))
+
+    join_wind_operation['Time weather'] = (join_wind_operation['Operation time all turbines hrs'] *
+                                           join_wind_operation['Wind delay percent'] / (1 - join_wind_operation['Wind delay percent']))
+
+    # print(join_wind_operation)  # for debugging
 
     possible_crane_cost = pd.merge(join_wind_operation, project_data['equip_price'], on=['Equipment name', 'Crane capacity tonne'])
 
@@ -602,6 +608,10 @@ def calculate_costs(project_data, hour_day, time_construct, weather_window, cons
 
     cranes_wind_delay = calculate_wind_delay_by_component(crane_specs=crane_specs,
                                                           weather_window=weather_window)
+
+    # for debugging
+    # print(cranes_wind_delay[(cranes_wind_delay['Crane name'] == 'LR1500') & (cranes_wind_delay['Boom system'] == 'SL3F')])
+
 
     [separate_basetop, same_basetop] = aggregate_erection_costs(crane_data=cranes_wind_delay,
                                                                 operation_time=operation_time,
