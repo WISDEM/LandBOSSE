@@ -201,7 +201,7 @@ def estimate_construction_time(throughput_operations, material_needs, duration_c
 
 
 def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed,
-                            operational_hrs_per_day):
+                            operational_hrs_per_day, height_interest, wind_shear_exponent):
     """
     Calculates wind delay for foundations.
 
@@ -220,7 +220,9 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
                                          start_delay=start_delay,
                                          mission_time=mission_time_hrs,
-                                         critical_wind_speed=critical_wind_speed)
+                                         critical_wind_speed=critical_wind_speed,
+                                         height_interest=height_interest,
+                                         wind_shear_exponent=wind_shear_exponent)
     wind_delay = pd.DataFrame(wind_delay)
 
     # if greater than 4 hour delay, then shut down for full day (10 hours)
@@ -230,7 +232,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day, overtime_multiplier):
+def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day, overtime_multiplier, wind_shear_exponent):
     """
 
     :param input_data:
@@ -255,7 +257,9 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
                                          duration_construction=operation_data['Time construct days'].max(skipna=True),
                                          start_delay=0,
                                          critical_wind_speed=13,
-                                         operational_hrs_per_day=operational_hrs_per_day)
+                                         operational_hrs_per_day=operational_hrs_per_day,
+                                         height_interest=20,
+                                         wind_shear_exponent=wind_shear_exponent)
 
     wind_delay_percent = (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
     wind_multiplier = 1 / (1 - wind_delay_percent)
@@ -281,6 +285,8 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
 
     total_foundation_cost = foundation_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_foundation_cost['Phase of construction'] = 'Foundations'
+
+    print(material_vol)
 
     return total_foundation_cost, wind_multiplier
 

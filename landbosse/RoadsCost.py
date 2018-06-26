@@ -151,7 +151,7 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
 
 
 def calculate_weather_delay(weather_window, duration_construction, start_delay, critical_wind_speed,
-                            operational_hrs_per_day):
+                            operational_hrs_per_day, wind_shear_exponent):
     """
     Calculates wind delay for roads.
 
@@ -170,7 +170,9 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     wind_delay = WD.calculate_wind_delay(weather_window=weather_window,
                                          start_delay=start_delay,
                                          mission_time=mission_time_hrs,
-                                         critical_wind_speed=critical_wind_speed)
+                                         critical_wind_speed=critical_wind_speed,
+                                         height_interest=20,
+                                         wind_shear_exponent=wind_shear_exponent)
     wind_delay = pd.DataFrame(wind_delay)
 
     # if greater than 4 hour delay, then shut down for full day (10 hours)
@@ -182,7 +184,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
 
 def calculate_costs(road_length, road_width, road_thickness, input_data, construction_time, weather_window,
                     crane_width_m, operational_hrs_per_day, num_turbines, rotor_diam, access_roads, per_diem_rate,
-                    overtime_multiplier):
+                    overtime_multiplier, wind_shear_exponent):
     """
 
     :param road_length: float of road length in meters
@@ -221,7 +223,8 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
                                          duration_construction=operation_data['Time construct days'].max(skipna=True),
                                          start_delay=0,
                                          critical_wind_speed=13,
-                                         operational_hrs_per_day=operational_hrs_per_day)
+                                         operational_hrs_per_day=operational_hrs_per_day,
+                                         wind_shear_exponent=wind_shear_exponent)
 
     wind_delay_percent = (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
     wind_multiplier = 1 / (1 - wind_delay_percent)

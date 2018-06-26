@@ -72,7 +72,7 @@ def create_weather_window(weather_data, season_id, season_construct, time_constr
     return weather_window
 
 
-def calculate_wind_delay(weather_window, start_delay, mission_time, critical_wind_speed):
+def calculate_wind_delay(weather_window, start_delay, mission_time, critical_wind_speed, height_interest, wind_shear_exponent):
     """
     Calculates wind delay based on weather window, mission time, and critical wind speed.
 
@@ -98,7 +98,7 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
 
     # create new column for boolean for weather delay (true or false) based on critical wind speed
     # todo: might want to modify to consider other types of weather delays (e.g., rain, lightening)
-    mission_weather['Wind delay'] = mission_weather['Speed m per s'] > critical_wind_speed
+    mission_weather['Wind delay'] = mission_weather['Speed m per s'] * (height_interest / 100) ** (wind_shear_exponent) > critical_wind_speed
 
     if mission_weather['Wind delay'].any() == True:
         # create new weather delay data frame and determine number of hours of delay along with boolean for > 1 hr
