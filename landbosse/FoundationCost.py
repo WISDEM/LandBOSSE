@@ -258,7 +258,7 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
                                          operational_hrs_per_day=operational_hrs_per_day)
 
     wind_delay_percent = (wind_delay / operational_hrs_per_day) / operation_data['Time construct days'].max(skipna=True)
-    wind_multiplier = wind_delay_percent / (1 - wind_delay_percent)
+    wind_multiplier = 1 / (1 - wind_delay_percent)
 
     labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
     per_diem = operation_data['Number of workers'] * operation_data['Number of crews'] * (operation_data['Time construct days'] + round(operation_data['Time construct days'] / 7)) * 144

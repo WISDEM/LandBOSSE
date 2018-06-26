@@ -303,7 +303,7 @@ def calculate_offload_operation_time(project_data, construct_duration, operation
         # vmax_TAB = maximum load speed per load chart
         # source: pg. 33 of Liebherr
 
-        mh = component_group['Weight tonne']
+        mh = component_group['Weight tonne'] / 2  # divided by two because assuming two offload cranes are used
         AW = component_group['Surface area sq m'] * component_group['Coeff drag']
         vmax_TAB = crane['Max wind speed m per s']
         vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
@@ -441,6 +441,8 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     join_wind_operation['Time weather'] = (join_wind_operation['Operation time all turbines hrs'] *
                                            join_wind_operation['Wind delay percent'] / (1 - join_wind_operation['Wind delay percent']))
 
+    join_wind_operation['Wind multiplier'] = 1 / (1 - join_wind_operation['Wind delay percent'])
+
     # print(join_wind_operation)  # for debugging
 
     possible_crane_cost = pd.merge(join_wind_operation, project_data['equip_price'], on=['Equipment name', 'Crane capacity tonne'])
@@ -502,7 +504,11 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
     possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name',
                                                                  'Boom system'])['Labor cost USD',
                                                                                  'Equipment rental cost USD',
-                                                                                 'Fuel cost USD'].sum().reset_index()
+                                                                                 'Fuel cost USD',
+                                                                                 'Time weather',
+                                                                                 'Total time per op with weather',
+                                                                                 'Wind multiplier'
+                                                                                ].sum().reset_index()
 
     #possible_crane_topbase = possible_crane_cost.where(possible_crane_cost['Crane bool Base'] == possible_crane_cost['Crane bool Top']).dropna()
     #possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name', 'Boom system'])['Labor cost USD', 'Equipment rental cost USD', 'Fuel cost USD'].sum().reset_index() # must group together because can't use separate cranes in this case
@@ -521,7 +527,13 @@ def aggregate_erection_costs(crane_data, operation_time, project_data, hour_day,
 
 
     # calculate costs if top and base use separate cranes
-    separate_topbase = possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD', 'Equipment rental cost USD', 'Fuel cost USD'].sum().reset_index()
+    separate_topbase = possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD',
+                                                                                               'Equipment rental cost USD',
+                                                                                               'Fuel cost USD',
+                                                                                               'Time weather',
+                                                                                               'Total time per op with weather',
+                                                                                               'Wind multiplier'
+                                                                                              ].sum().reset_index()
 
     # join mobilization data to separate top base crane costs
     separate_topbase_crane_cost = pd.merge(separate_topbase, mobilization_costs, on=['Crane name', 'Boom system'])
@@ -558,6 +570,9 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
 
     # reset index for separate crane costs
     total_separate_cost = total_separate_cost.reset_index()
+
+    # duplicate offload records because assuming two offload cranes are on site
+    total_separate_cost = total_separate_cost.append(total_separate_cost.loc[total_separate_cost['Operation'] == 'Offload'])
 
     # sum costs for separate cranes to get total for all cranes
     cost_chosen_separate = total_separate_cost['Total cost USD'].sum()
