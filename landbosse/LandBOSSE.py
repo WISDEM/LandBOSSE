@@ -50,21 +50,6 @@ class Project(object):
         # self.rock_type = rock_type_by_region[region]
 
 
-project_value = 1e8  # todo: change to use value calculated by all modules except management
-
-# model inputs
-# todo: replace with function call for user input
-# dictionary of file names for input data
-file_list = {'crane_specs': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crane_specs.csv",
-             'equip': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip.csv",
-             'crew': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crews.csv",
-             'components': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components.csv",
-             'project': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/project.csv",
-             'equip_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip_price.csv",
-             'crew_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crew_price.csv",
-             'material_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/material_price.csv",
-             'weather': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/weather_withtime.csv",
-             'rsmeans': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/rsmeans_data.csv"}
 
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
 per_diem = 144  # USD per day
@@ -101,11 +86,7 @@ phase_list = {'Collection system': '',
 type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials', 'Development', 'Management', 'Other']
 
 
-# create object that contains the properties of a land-based wind project
-#project = Project(project_value, num_turbines, turbine_rating_kilowatt, construction_time_months)
-
-
-def calculate_bos_cost(files, season, season_month, development, list_of_phases):
+def calculate_bos_cost(files, scenario_name, scenario_height, season, season_month, development, list_of_phases):
     """
     Executes the calculate costs functions for each module/phase in the balance of system
 
@@ -122,14 +103,15 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
         data_csv[file] = pd.DataFrame(pd.read_csv(files[file], engine='python'))
 
     # define project parameters
-    project_data = data_csv['project'].where(data_csv['project']['Project ID'] == 'Conventional')
+    project_data = data_csv['project'].where((data_csv['project']['Project ID'] == scenario_name) & (data_csv['project']['Hub height m'] == scenario_height))
     project_data = project_data.dropna(thresh=1)
-    num_turbines = project_data['Number of turbines'][0]
-    turbine_spacing = project_data['Turbine spacing (times rotor diameter)'][0]
-    rotor_diameter = project_data['Rotor diameter m'][0]
-    turbine_rating_kilowatt = project_data['Turbine rating MW'][0] * kilowatt_per_megawatt
-    rate_of_deliveries = project_data['Rate of deliveries (turbines per week)']
-    hub_height = project_data['Hub height m'][0]
+    num_turbines = float(project_data['Number of turbines'])
+    turbine_spacing = float(project_data['Turbine spacing (times rotor diameter)'])
+    rotor_diameter = float(project_data['Rotor diameter m'])
+    turbine_rating_kilowatt = float(project_data['Turbine rating MW']) * kilowatt_per_megawatt
+    rate_of_deliveries = float(project_data['Rate of deliveries (turbines per week)'])
+    hub_height = float(project_data['Hub height m'])
+    wind_shear_exponent = float(project_data['Wind shear exponent'])
 
     # electrical
     interconnect_voltage = 137
@@ -142,9 +124,9 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
 
     project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
     road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter)
-    road_width_ft = 16  # feet
+    road_width_ft = 20  # feet 16
     road_thickness_in = 8  # inches
-    crane_width_m = 10.7  # meters
+    crane_width_m = 12.2  # meters 10.7
     overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
 
     num_access_roads = 5
@@ -162,27 +144,30 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     operational_hrs_per_day = operational_hour_dict[time_construct]
 
     # calculate road costs
-    road_cost = RoadsCost.calculate_costs(road_length=road_length_m,
-                                          road_width=road_width_ft,
-                                          road_thickness=road_thickness_in,
-                                          input_data=data_csv,
-                                          construction_time=construction_time_months,
-                                          weather_window=weather_window,
-                                          crane_width_m=crane_width_m,
-                                          operational_hrs_per_day=operational_hrs_per_day,
-                                          num_turbines=num_turbines,
-                                          rotor_diam=rotor_diameter,
-                                          access_roads=num_access_roads,
-                                          per_diem_rate=per_diem,
-                                          overtime_multiplier=overtime_multiplier)
+    [road_cost, road_wind_mult] = RoadsCost.calculate_costs(road_length=road_length_m,
+                                                            road_width=road_width_ft,
+                                                            road_thickness=road_thickness_in,
+                                                            input_data=data_csv,
+                                                            construction_time=construction_time_months,
+                                                            weather_window=weather_window,
+                                                            crane_width_m=crane_width_m,
+                                                            operational_hrs_per_day=operational_hrs_per_day,
+                                                            num_turbines=num_turbines,
+                                                            rotor_diam=rotor_diameter,
+                                                            access_roads=num_access_roads,
+                                                            per_diem_rate=per_diem,
+                                                            overtime_multiplier=overtime_multiplier,
+                                                            wind_shear_exponent=wind_shear_exponent
+                                                            )
 
     # calculate foundation costs
-    foundation_cost = FoundationCost.calculate_costs(input_data=data_csv,
-                                                     num_turbines=num_turbines,
-                                                     construction_time=construction_time_months,
-                                                     weather_window=weather_window,
-                                                     operational_hrs_per_day=operational_hrs_per_day,
-                                                     overtime_multiplier=overtime_multiplier)
+    [foundation_cost, foundation_wind_mult] = FoundationCost.calculate_costs(input_data=data_csv,
+                                                                             num_turbines=num_turbines,
+                                                                             construction_time=construction_time_months,
+                                                                             weather_window=weather_window,
+                                                                             operational_hrs_per_day=operational_hrs_per_day,
+                                                                             overtime_multiplier=overtime_multiplier,
+                                                                             wind_shear_exponent=wind_shear_exponent)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
     for value in foundation_cost['Type of cost']:
@@ -192,7 +177,7 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
         (foundation_cost['Type of cost'] == value), ['Cost USD']].values
 
     # set values in bos_cost data frame - since formatting is already correct for road_cost, then overwrite values
-    for value in foundation_cost['Type of cost']:
+    for value in road_cost['Type of cost']:
         bos_cost.loc[(bos_cost['Phase of construction'] == 'Roads') &
                      (bos_cost['Type of cost'] == value), ['Cost USD']] = road_cost.loc[
         (road_cost['Phase of construction'] == 'Roads') &
@@ -236,14 +221,16 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                  (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = electrical_installation + electrical_materials
 
     # calculate erection costs
-    erection_cost = ErectionCost.calculate_costs(project_data=data_csv,
+    erection_cost = ErectionCost.calculate_costs(project_specs=project_data,
+                                                 project_data=data_csv,
                                                  hour_day=operational_hour_dict,
                                                  construction_time=construction_time_months,
                                                  time_construct=time_construct,
                                                  weather_window=weather_window,
                                                  rate_of_deliveries=rate_of_deliveries,
                                                  overtime_multiplier=overtime_multiplier,
-                                                 project_size=project_size
+                                                 project_size=project_size,
+                                                 wind_shear_exponent=wind_shear_exponent
                                                  )
 
     bos_cost = save_cost_data(phase='Erection',
@@ -270,10 +257,14 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
                               phase_cost=management_cost,
                               bos_cost=bos_cost)
 
+    # weather delays
+    erection_wind_mult = (erection_cost['Total time per op with weather']) / (erection_cost['Total time per op with weather'] - erection_cost['Time weather'])
+    wind_multiplier = pd.DataFrame([['Erection', erection_wind_mult.reset_index(drop=True).mean()],
+                                    ['Foundation', foundation_wind_mult],
+                                    ['Road', road_wind_mult]], columns=['Operation', 'Wind multiplier'])
 
-
-    print('Final cost matrix:')
-    print(bos_cost)
+    #print('Final cost matrix:')
+    #print(bos_cost)
 
     print('Total cost by phase:')
     print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
@@ -281,7 +272,7 @@ def calculate_bos_cost(files, season, season_month, development, list_of_phases)
     print('Total cost USD:')
     print(bos_cost['Cost USD'].sum())
 
-    return bos_cost
+    return bos_cost, wind_multiplier
 
 
 def save_cost_data(phase, phase_cost, bos_cost):
@@ -302,8 +293,78 @@ def save_cost_data(phase, phase_cost, bos_cost):
 
 
 if __name__ == '__main__':
-    bos_cost = calculate_bos_cost(files=file_list,
-                                  season=season_construct,
-                                  season_month=season_dict,
-                                  development=development_cost,
-                                  list_of_phases=phase_list)
+
+    # model inputs
+    # todo: replace with function call for user input
+    # dictionary of file names for input data
+    file_list = {'crane_specs': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crane_specs.csv",
+                 'equip': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip.csv",
+                 'crew': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crews.csv",
+                 'components': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_85.csv",
+                 'project': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/project_scenario_list.csv",
+                 'equip_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip_price.csv",
+                 'crew_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crew_price.csv",
+                 'material_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/material_price.csv",
+                 'weather': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/weather_withtime.csv",
+                 'rsmeans': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/rsmeans_data.csv"}
+
+    [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
+                                                   scenario_name='Concrete',
+                                                   scenario_height=85,
+                                                   season=season_construct,
+                                                   season_month=season_dict,
+                                                   development=development_cost,
+                                                   list_of_phases=phase_list)
+
+    # model inputs
+    # todo: replace with function call for user input
+    # dictionary of file names for input data
+    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_120.csv"
+
+    [bos_cost_2, wind_mult_2] = calculate_bos_cost(files=file_list,
+                                                   scenario_name='Concrete',
+                                                   scenario_height=120,
+                                                   season=season_construct,
+                                                   season_month=season_dict,
+                                                   development=development_cost,
+                                                   list_of_phases=phase_list)
+
+    join_cost = pd.merge(bos_cost_1, bos_cost_2, on=['Phase of construction', 'Type of cost'])
+
+    # model inputs
+    # todo: replace with function call for user input
+    # dictionary of file names for input data
+    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_140.csv"
+
+    [bos_cost_3, wind_mult_3] = calculate_bos_cost(files=file_list,
+                                                   season=season_construct,
+                                                   scenario_name='Concrete',
+                                                   scenario_height=140,
+                                                   season_month=season_dict,
+                                                   development=development_cost,
+                                                   list_of_phases=phase_list)
+
+    join_cost = pd.merge(join_cost, bos_cost_3, on=['Phase of construction', 'Type of cost'])
+
+    # model inputs
+    # todo: replace with function call for user input
+    # dictionary of file names for input data
+    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_160.csv"
+
+    [bos_cost_4, wind_mult_4] = calculate_bos_cost(files=file_list,
+                                                   scenario_name='Concrete',
+                                                   scenario_height=160,
+                                                   season=season_construct,
+                                                   season_month=season_dict,
+                                                   development=development_cost,
+                                                   list_of_phases=phase_list)
+
+    join_cost = pd.merge(join_cost, bos_cost_4, on=['Phase of construction', 'Type of cost'])
+
+    wind_multiplier = wind_mult_1.merge(wind_mult_2, on=['Operation'])
+    wind_multiplier = wind_multiplier.merge(wind_mult_3, on=['Operation'])
+    wind_multiplier = wind_multiplier.merge(wind_mult_4, on=['Operation'])
+
+    print(wind_multiplier)
+
+    print(join_cost.groupby(by=join_cost['Phase of construction']).sum())
