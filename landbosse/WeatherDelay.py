@@ -47,7 +47,7 @@ def create_weather_window(weather_data, season_id, season_construct, time_constr
     weather_data['Year'] = pd.to_datetime(weather_data['Date']).dt.year
     weather_data['Month'] = pd.to_datetime(weather_data['Date']).dt.month
     weather_data['Day'] = pd.to_datetime(weather_data['Date']).dt.day
-    weather_data['Hour'] = pd.to_datetime(weather_data['Date']).dt.hour
+    weather_data['Hour'] = pd.to_datetime(weather_data['Date']).dt.hour + 6
 
     # change speed to numeric value
     weather_data['Speed m per s'] = pd.to_numeric(weather_data['Speed m per s'])
@@ -132,9 +132,11 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
 
             # calculate the number of hours for each consecutive delay > 1 hr
             if weather_delay.iloc[-2]['Hour delay bool'] == True:
-                greater_than_1hr = np.diff(index_change)[include_change[:-1]]
+                greater_than_1hr = np.diff(index_change)[include_change[0:len(np.diff(index_change))]]
+
             else:
-                greater_than_1hr = np.diff(index_change)[include_change]
+                greater_than_1hr = np.diff(index_change)[include_change[0:len(np.diff(index_change))+1]]
+
         else:
             greater_than_1hr = []
 
