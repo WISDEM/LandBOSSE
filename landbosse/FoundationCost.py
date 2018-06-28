@@ -121,7 +121,7 @@ def calculate_foundation_loads(component_data):
 
     # calculate moment from each component at base of tower
     M_overturn = F * L
-    M_resist = F_dead * 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
+    M_resist = F_dead * 4 * (1 - (np.exp(F_dead/1.8e6/10) - 1) / 5)#((1 + 0.03 * 2) - 0.03 * F_dead / 1e6)#np.e * (1 / np.exp(F_dead / 1.8e6))#* 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
 
     # get total lateral load (N) and moment (N * m)
     F_lat = F.sum()
@@ -244,8 +244,10 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     """
 
     foundation_loads = calculate_foundation_loads(component_data=input_data['components'])
+    print(foundation_loads)
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads)
     material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)
+    print(material_vol)
     material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
     material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(material_data['Material price USD per unit'])
 
