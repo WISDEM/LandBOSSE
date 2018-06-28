@@ -457,9 +457,10 @@ def aggregate_erection_costs(project_specs, crane_data, operation_time, project_
     crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
 
     # increase management crews by project size
+    num_turbines = float(project_specs['Number of turbines'])
     crew_cost.loc[crew_cost['Crew name'] == "Management - project size", 'Number of workers'] = \
         round(crew_cost[crew_cost['Crew name'] == "Management - project size"]['Number of workers'] *
-              np.ceil(project_size / 100))
+              np.ceil(num_turbines / 100))
 
     # increase management crews by rate of construction (scale if greater than 10/wk)
     rate_construction = float(project_specs['Rate of deliveries (turbines per week)'].dropna())
@@ -593,7 +594,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
         cost_chosen = total_separate_cost.groupby(by="Boom system").sum()
 
     # for debugging
-    # print(total_separate_cost)
+    print(total_separate_cost)
 
     return cost_chosen
 
