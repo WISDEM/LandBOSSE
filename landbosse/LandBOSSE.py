@@ -297,19 +297,19 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list = {'crane_specs': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crane_specs.csv",
-                 'equip': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip.csv",
-                 'crew': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crews.csv",
-                 'components': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_85.csv",
-                 'project': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/project_scenario_list.csv",
-                 'equip_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/equip_price.csv",
-                 'crew_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/crew_price.csv",
-                 'material_price': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/material_price.csv",
-                 'weather': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/weather_withtime.csv",
-                 'rsmeans': "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/rsmeans_data.csv"}
+    file_list = {'crane_specs': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crane_specs_SECT.csv",
+                 'equip': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip.csv",
+                 'crew': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crews.csv",
+                 'components': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_85.csv",
+                 'project': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/project_scenario_list.csv",
+                 'equip_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip_price.csv",
+                 'crew_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crew_price.csv",
+                 'material_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/material_price.csv",
+                 'weather': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/weather_withtime.csv",
+                 'rsmeans': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/rsmeans_data.csv"}
 
     [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Concrete',
+                                                   scenario_name='SECT',
                                                    scenario_height=85,
                                                    season=season_construct,
                                                    season_month=season_dict,
@@ -319,10 +319,10 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_120.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_120.csv"
 
     [bos_cost_2, wind_mult_2] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Concrete',
+                                                   scenario_name='SECT',
                                                    scenario_height=120,
                                                    season=season_construct,
                                                    season_month=season_dict,
@@ -334,11 +334,11 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_140.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_140.csv"
 
     [bos_cost_3, wind_mult_3] = calculate_bos_cost(files=file_list,
                                                    season=season_construct,
-                                                   scenario_name='Concrete',
+                                                   scenario_name='SECT',
                                                    scenario_height=140,
                                                    season_month=season_dict,
                                                    development=development_cost,
@@ -349,10 +349,10 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Users/aeberle/Documents/Wind FY18/Land based BOS/Pseudocode/components_concrete_iea36_160.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_160.csv"
 
     [bos_cost_4, wind_mult_4] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Concrete',
+                                                   scenario_name='SECT',
                                                    scenario_height=160,
                                                    season=season_construct,
                                                    season_month=season_dict,

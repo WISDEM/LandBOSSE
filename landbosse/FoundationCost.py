@@ -117,11 +117,14 @@ def calculate_foundation_loads(component_data):
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / 1.15  # scaling factor to adjust dead load for uplift
+    print("L")
+    print(max(L))
+    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / (1.15 * (max(L)/100))  # scaling factor to adjust dead load for uplift
+    F_dead = F_dead * ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6)
 
     # calculate moment from each component at base of tower
     M_overturn = F * L
-    M_resist = F_dead * 4 * (1 - (np.exp(F_dead/1.8e6/10) - 1) / 5)#((1 + 0.03 * 2) - 0.03 * F_dead / 1e6)#np.e * (1 / np.exp(F_dead / 1.8e6))#* 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
+    M_resist = F_dead * 4 #* ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6) # (1 - (np.exp(F_dead/1.8e6/10) - 1) / 5) #np.e * (1 / np.exp(F_dead / 1.8e6))#* 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
 
     # get total lateral load (N) and moment (N * m)
     F_lat = F.sum()
