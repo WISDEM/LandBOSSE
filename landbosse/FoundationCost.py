@@ -62,7 +62,7 @@ cubicyd_per_cubicm = 1.30795
 ton_per_tonne = 0.907185
 
 
-def calculate_foundation_loads(component_data):
+def calculate_foundation_loads(component_data, tower_type):
     """
 
     :param component_data: data on components (weight, height, area, etc.)
@@ -120,7 +120,14 @@ def calculate_foundation_loads(component_data):
     print("L")
     print(max(L))
     F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / (1.15 * (max(L)/100))  # scaling factor to adjust dead load for uplift
-    F_dead = F_dead * ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6)
+
+    if tower_type == 'concrete':
+        F_dead_multiplier = ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6)
+    else:
+        slope = 0.006
+        F_dead_multiplier = 1 / (1 + 85 * slope - max(L) * slope)
+
+    F_dead = F_dead * F_dead_multiplier
 
     # calculate moment from each component at base of tower
     M_overturn = F * L
@@ -235,7 +242,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     return wind_delay_time
 
 
-def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day, overtime_multiplier, wind_shear_exponent):
+def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day, overtime_multiplier, wind_shear_exponent, tower_type):
     """
 
     :param input_data:
@@ -246,7 +253,7 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     :return:
     """
 
-    foundation_loads = calculate_foundation_loads(component_data=input_data['components'])
+    foundation_loads = calculate_foundation_loads(component_data=input_data['components'], tower_type=tower_type)
     print(foundation_loads)
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads)
     material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)

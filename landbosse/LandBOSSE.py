@@ -112,6 +112,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     rate_of_deliveries = float(project_data['Rate of deliveries (turbines per week)'])
     hub_height = float(project_data['Hub height m'])
     wind_shear_exponent = float(project_data['Wind shear exponent'])
+    tower_type = project_data['Tower type'].values[0]
 
     # electrical
     interconnect_voltage = 137
@@ -167,7 +168,8 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
                                                                              weather_window=weather_window,
                                                                              operational_hrs_per_day=operational_hrs_per_day,
                                                                              overtime_multiplier=overtime_multiplier,
-                                                                             wind_shear_exponent=wind_shear_exponent)
+                                                                             wind_shear_exponent=wind_shear_exponent,
+                                                                             tower_type=tower_type)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
     for value in foundation_cost['Type of cost']:
@@ -263,8 +265,8 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
                                     ['Foundation', foundation_wind_mult],
                                     ['Road', road_wind_mult]], columns=['Operation', 'Wind multiplier'])
 
-    #print('Final cost matrix:')
-    #print(bos_cost)
+    print('Final cost matrix:')
+    print(bos_cost)
 
     print('Total cost by phase:')
     print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
