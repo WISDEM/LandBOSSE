@@ -113,6 +113,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     hub_height = float(project_data['Hub height m'])
     wind_shear_exponent = float(project_data['Wind shear exponent'])
     tower_type = project_data['Tower type'].values[0]
+    foundation_depth = float(project_data['Foundation depth m'])
 
     # electrical
     interconnect_voltage = 137
@@ -169,7 +170,8 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
                                                                              operational_hrs_per_day=operational_hrs_per_day,
                                                                              overtime_multiplier=overtime_multiplier,
                                                                              wind_shear_exponent=wind_shear_exponent,
-                                                                             tower_type=tower_type)
+                                                                             tower_type=tower_type,
+                                                                             depth=foundation_depth)
 
     # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
     for value in foundation_cost['Type of cost']:
@@ -299,19 +301,19 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list = {'crane_specs': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crane_specs_SECT.csv",
+    file_list = {'crane_specs': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crane_specs.csv",
                  'equip': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip.csv",
                  'crew': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crews.csv",
-                 'components': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_85.csv",
+                 'components': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_85.csv",
                  'project': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/project_scenario_list.csv",
                  'equip_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip_price.csv",
-                 'crew_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crew_price.csv",
+                 'crew_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crew_price_half.csv",
                  'material_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/material_price.csv",
                  'weather': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/weather_withtime.csv",
                  'rsmeans': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/rsmeans_data.csv"}
 
     [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='SECT',
+                                                   scenario_name='Steel',
                                                    scenario_height=85,
                                                    season=season_construct,
                                                    season_month=season_dict,
@@ -321,10 +323,10 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_120.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_120.csv"
 
     [bos_cost_2, wind_mult_2] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='SECT',
+                                                   scenario_name='Steel',
                                                    scenario_height=120,
                                                    season=season_construct,
                                                    season_month=season_dict,
@@ -336,11 +338,11 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_140.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_140.csv"
 
     [bos_cost_3, wind_mult_3] = calculate_bos_cost(files=file_list,
                                                    season=season_construct,
-                                                   scenario_name='SECT',
+                                                   scenario_name='Steel',
                                                    scenario_height=140,
                                                    season_month=season_dict,
                                                    development=development_cost,
@@ -351,10 +353,10 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_sect_iea36_160.csv"
+    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_160.csv"
 
     [bos_cost_4, wind_mult_4] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='SECT',
+                                                   scenario_name='Steel',
                                                    scenario_height=160,
                                                    season=season_construct,
                                                    season_month=season_dict,
