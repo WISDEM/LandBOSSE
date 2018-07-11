@@ -119,8 +119,6 @@ def calculate_foundation_loads(component_data, tower_type, depth):
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    print("L")
-    print(max(L))
     F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / (1.15)  # scaling factor to adjust dead load for uplift
 
     #if tower_type == 'concrete':
@@ -302,10 +300,8 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     """
 
     foundation_loads = calculate_foundation_loads(component_data=input_data['components'], tower_type=tower_type, depth=depth)
-    print(foundation_loads)
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads, depth=depth)
     material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)
-    print(material_vol)
     material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
     material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(material_data['Material price USD per unit'])
 
@@ -345,8 +341,6 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
 
     total_foundation_cost = foundation_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_foundation_cost['Phase of construction'] = 'Foundations'
-
-    print(material_vol)
 
     return total_foundation_cost, wind_multiplier
 

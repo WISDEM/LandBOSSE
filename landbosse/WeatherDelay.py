@@ -53,7 +53,7 @@ def create_weather_window(weather_data, season_id, season_construct, time_constr
     weather_data['Speed m per s'] = pd.to_numeric(weather_data['Speed m per s'])
 
     # create time window for normal (8am to 6pm) versus long (24 hour) time window for operation
-    print('Creating weather window')
+    print('Creating weather window...')
     weather_data['Time window'] = weather_data['Hour'].between(8, 18, inclusive=True)
     boolean_dictionary = {True: 'normal', False: 'long'}
     weather_data['Time window'] = weather_data['Time window'].map(boolean_dictionary)

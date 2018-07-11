@@ -97,6 +97,8 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     :param list_of_phases: list of strings that describe the phases to be modeled
     :return: total BOS costs for by phase and type
     """
+
+    print("Running LandBOSSE...")
     # read csv files and load data into dictionary
     data_csv = dict()
     for file in files:
@@ -273,7 +275,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     print('Total cost by phase:')
     print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
 
-    print('Total cost USD:')
+    print('\n Total cost USD:')
     print(bos_cost['Cost USD'].sum())
 
     return bos_cost, wind_multiplier
@@ -301,16 +303,17 @@ if __name__ == '__main__':
     # model inputs
     # todo: replace with function call for user input
     # dictionary of file names for input data
-    file_list = {'crane_specs': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crane_specs.csv",
-                 'equip': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip.csv",
-                 'crew': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crews.csv",
-                 'components': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_85.csv",
-                 'project': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/project_scenario_list.csv",
-                 'equip_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/equip_price.csv",
-                 'crew_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/crew_price_half.csv",
-                 'material_price': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/material_price.csv",
-                 'weather': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/weather_withtime.csv",
-                 'rsmeans': "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/rsmeans_data.csv"}
+    file_path = "/landbosse/default_inputs/"
+    file_list = {'crane_specs':     file_path + "crane_specs.csv",
+                 'equip':           file_path + "equip.csv",
+                 'crew':            file_path + "crews.csv",
+                 'components':      file_path + "components_steel_iea36_120.csv",
+                 'project':         file_path + "project_iea36_120.csv",
+                 'equip_price':     file_path + "equip_price.csv",
+                 'crew_price':      file_path + "crew_price.csv",
+                 'material_price':  file_path + "material_price.csv",
+                 'weather':         file_path + "weather_withtime.csv",
+                 'rsmeans':         file_path + "rsmeans_data.csv"}
 
     [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
                                                    scenario_name='Steel',
@@ -319,56 +322,3 @@ if __name__ == '__main__':
                                                    season_month=season_dict,
                                                    development=development_cost,
                                                    list_of_phases=phase_list)
-
-    # model inputs
-    # todo: replace with function call for user input
-    # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_120.csv"
-
-    [bos_cost_2, wind_mult_2] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Steel',
-                                                   scenario_height=120,
-                                                   season=season_construct,
-                                                   season_month=season_dict,
-                                                   development=development_cost,
-                                                   list_of_phases=phase_list)
-
-    join_cost = pd.merge(bos_cost_1, bos_cost_2, on=['Phase of construction', 'Type of cost'])
-
-    # model inputs
-    # todo: replace with function call for user input
-    # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_140.csv"
-
-    [bos_cost_3, wind_mult_3] = calculate_bos_cost(files=file_list,
-                                                   season=season_construct,
-                                                   scenario_name='Steel',
-                                                   scenario_height=140,
-                                                   season_month=season_dict,
-                                                   development=development_cost,
-                                                   list_of_phases=phase_list)
-
-    join_cost = pd.merge(join_cost, bos_cost_3, on=['Phase of construction', 'Type of cost'])
-
-    # model inputs
-    # todo: replace with function call for user input
-    # dictionary of file names for input data
-    file_list['components'] = "/Volumes/TAMA/WTT/BOS modeling/data and refs/Input data/model_input_a_comp/components_steel_iea36_160.csv"
-
-    [bos_cost_4, wind_mult_4] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Steel',
-                                                   scenario_height=160,
-                                                   season=season_construct,
-                                                   season_month=season_dict,
-                                                   development=development_cost,
-                                                   list_of_phases=phase_list)
-
-    join_cost = pd.merge(join_cost, bos_cost_4, on=['Phase of construction', 'Type of cost'])
-
-    wind_multiplier = wind_mult_1.merge(wind_mult_2, on=['Operation'])
-    wind_multiplier = wind_multiplier.merge(wind_mult_3, on=['Operation'])
-    wind_multiplier = wind_multiplier.merge(wind_mult_4, on=['Operation'])
-
-    print(wind_multiplier)
-
-    print(join_cost.groupby(by=join_cost['Phase of construction']).sum())

@@ -69,7 +69,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
     """
     erection_construction_time = 1/3 * construct_duration
 
-    print('Calculating operation time')
+    print('Calculating operation time for erection...')
     # group project data by project ID
     project = project_specs
 
@@ -223,7 +223,6 @@ def calculate_offload_operation_time(project_specs, project_data, construct_dura
 
     erection_construction_time = 1 / 3 * construct_duration
 
-    print('Calculating offload operation time')
     # group project data by project ID
     project = project_specs
 
@@ -386,7 +385,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window, wind_shear_ex
     # calculate wind delay for each component and crane combination
     crane_specs = crane_specs.reset_index()
     crane_specs['Wind delay percent'] = np.nan
-    print('Calculating wind delay')
+    print('Calculating wind delay for erection... \n')
     for i in range(0, len(crane_specs.index)):
         # print for debugging
         # print("Calculating weather delay for {operation}, {component},
@@ -514,9 +513,6 @@ def aggregate_erection_costs(project_specs, crane_data, operation_time, project_
                                                                                  'Wind multiplier'
                                                                                 ].sum().reset_index()
 
-    #possible_crane_topbase = possible_crane_cost.where(possible_crane_cost['Crane bool Base'] == possible_crane_cost['Crane bool Top']).dropna()
-    #possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name', 'Boom system'])['Labor cost USD', 'Equipment rental cost USD', 'Fuel cost USD'].sum().reset_index() # must group together because can't use separate cranes in this case
-
     # group crane spec data for mobilization
     mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])['Mobilization cost USD'].max().reset_index()
 
@@ -528,7 +524,6 @@ def aggregate_erection_costs(project_specs, crane_data, operation_time, project_
                                                 topbase_same_crane_cost['Equipment rental cost USD'] + \
                                                 topbase_same_crane_cost['Fuel cost USD'] + \
                                                 topbase_same_crane_cost['Mobilization cost USD'] * 2  # for mobilization and demobilizaton
-
 
     # calculate costs if top and base use separate cranes
     separate_topbase = possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD',
@@ -594,7 +589,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
         cost_chosen = total_separate_cost.groupby(by="Boom system").sum()
 
     # for debugging
-    print(total_separate_cost)
+    # print(total_separate_cost)
 
     return cost_chosen
 
@@ -668,7 +663,8 @@ if __name__ == "__main__":
 
     crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
 
-    print(crane_cost[['Operation', 'Crane name', 'Boom system']])
+    # for debugging
+    # print(crane_cost[['Operation', 'Crane name', 'Boom system']])
 
 # OTHER NOTES ABOUT WEATHER DELAYS
 
