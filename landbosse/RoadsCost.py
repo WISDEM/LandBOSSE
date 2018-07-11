@@ -115,6 +115,7 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     # create list of unique material units for operations
     list_units = operation_data['Units'].unique()
 
+    # calculated road properties
     lift_depth_m = 0.2
     topsoil_volume = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
     embankment_volume_crane = (road_properties['crane_path_width_m']) * road_properties['road_length_m'] * (road_properties['depth_to_subgrade_m'])
@@ -122,6 +123,7 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
     material_volume = road_properties['material_volume']
     rough_grading_area = road_properties['road_length_m'] * road_properties['road_width_m'] * square_feet_per_square_meter * math.ceil(road_properties['road_thickness_m'] / lift_depth_m) / 100000
 
+    # map units for materials to calculated road properties
     material_quantity_dict = {'cubic yard': topsoil_volume,
                               'embankment cubic yards crane': embankment_volume_crane,
                               'embankment cubic yards road': embankment_volume_road,
@@ -133,15 +135,17 @@ def estimate_construction_time(throughput_operations, road_properties, duration_
         unit_quantity = pd.DataFrame([[unit, material_quantity_dict[unit]]], columns=['Units', 'Quantity of material'])
         material_needs = material_needs.append(unit_quantity)
 
+    # join material needs with operational data to compute costs
     operation_data = pd.merge(operation_data, material_needs, on=['Units']).dropna(thresh=3)
     operation_data = operation_data.where((operation_data['Daily output']).isnull() == False).dropna(thresh=4)
 
+    # calculate operational parameters and estimate costs without weather delays
     operation_data['Number of days'] = operation_data['Quantity of material'] / operation_data['Daily output']
     operation_data['Number of crews'] = np.ceil((operation_data['Number of days'] / 30) / road_construction_time)
     operation_data['Cost USD without weather delays'] = operation_data['Quantity of material'] * operation_data['Rate USD per unit']
 
     # if more than one crew needed to complete within construction duration then assume that all construction happens
-    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    # within that window and use that time frame for weather delays; if not, use the number of days calculated
     operation_data['time_construct_bool'] = operation_data['Number of days'] > road_construction_time * 30
     boolean_dictionary = {True: road_construction_time * 30, False: np.NAN}
     operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
@@ -160,6 +164,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     :param start_delay: the delay from the start of the weather window for the operation of interest
     :param critical_wind_speed: the critical wind speed for determining wind delay
     :param operational_hrs_per_day: number of hours of operation per day
+    :param wind_shear_exponent: exponent for wind shear calculations
     :return: the total wind delay (in hours) as estimated based on the input parameters
     """
 
@@ -199,6 +204,8 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     :param rotor_diam: rotor diameter in meters
     :param access_roads: number of access roads for project
     :param per_diem_rate: per diem (USD per day)
+    :param overtime_multiplier: multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
+    :param wind_shear_exponent: exponent for wind shear calculations
     :return: data frame with total road costs by phase of construction
     """
 
@@ -240,6 +247,7 @@ def calculate_costs(road_length, road_width, road_thickness, input_data, constru
     material_costs = pd.DataFrame([[material_data['Material type ID'][0], 'Materials', float(material_data['Cost USD'])]],
                                   columns=['Operation ID', 'Type of cost', 'Cost USD'])
 
+    # add costs for other operations not included in process data (e.g., fencing, access roads)
     cost_adder = (float(num_turbines) * 17639 +
                   float(num_turbines) * float(rotor_diam) * 24.8 +
                   float(construction_time) * 55500 +

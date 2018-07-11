@@ -47,7 +47,8 @@ def create_weather_window(weather_data, season_id, season_construct, time_constr
     weather_data['Year'] = pd.to_datetime(weather_data['Date']).dt.year
     weather_data['Month'] = pd.to_datetime(weather_data['Date']).dt.month
     weather_data['Day'] = pd.to_datetime(weather_data['Date']).dt.day
-    weather_data['Hour'] = pd.to_datetime(weather_data['Date']).dt.hour + 6
+    weather_data['Hour'] = pd.to_datetime(weather_data['Date']).dt.hour + 6  # shift weather data to local time
+    # todo: fix weather data to use local time as input
 
     # change speed to numeric value
     weather_data['Speed m per s'] = pd.to_numeric(weather_data['Speed m per s'])
@@ -84,7 +85,6 @@ def calculate_wind_delay(weather_window, start_delay, mission_time, critical_win
              count of list = number of weather delays; value in list = duration of weather delay)
     """
 
-    # print('Calculating wind delay')
     # select only weather data after start delay (e.g., delay due to need for waiting on prior operation before start)
     weather_data = weather_window[weather_window.index > start_delay]
     mission_end = weather_window.index[weather_window.index == start_delay][0] + mission_time

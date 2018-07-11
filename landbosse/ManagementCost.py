@@ -37,7 +37,6 @@ Return total management costs
 
 import math
 import pandas as pd
-import numpy as np
 
 
 def calculate_costs(project_value, foundation_cost, num_hwy_permits, construction_time_months,
@@ -85,7 +84,8 @@ def calculate_costs(project_value, foundation_cost, num_hwy_permits, constructio
 
 def insurance(project_value):
     """
-    Calculate insurance costs based on project value, builder size, and project size. Includes:
+    Calculate insurance costs based on project value, builder size, and project size;
+    equation based on empirical data from industry. Includes:
 
     Builder's risk
     General liability
@@ -124,7 +124,7 @@ def construction_permitting(foundation_cost, num_hwy_permits):
 
 def bonding(project_value):
     """
-    Calculate bonding costs based on project size based on empirical data from industry.
+    Calculate bonding costs based on project size; equation based on empirical data from industry.
 
     :param project_value: float that represents the sum of all other BOS costs (e.g., roads, foundations, erection)
     :return: bonding cost
@@ -139,7 +139,7 @@ def bonding(project_value):
 
 def project_management(construction_time_months):
     """
-    Calculate project management costs based on project size based on empirical data from industry.
+    Calculate project management costs based on project size; equation based on empirical data from industry.
     Includes:
 
     Project manager and assistant project manager for site
@@ -172,7 +172,7 @@ def project_management(construction_time_months):
 
 def markup_contingency(markup_constants, project_value):
     """
-    Calculate mark-up and contingency costs based on project value based on empirical data from industry.
+    Calculate mark-up and contingency costs based on project value.
     Includes:
 
     Contingency
@@ -229,7 +229,7 @@ def site_facility(project_size):
     :return: cost of O&M building in USD
     """
     building_area_df = pd.DataFrame([[0, 200, 3000], [200, 500, 5000], [500, 800, 7000], [800, 1000, 9000], [1000, 5000, 12000]],
-                                  columns=['Size Min (MW)', 'Size Max (MW)', 'Building area (sq. ft.)'])
+                                    columns=['Size Min (MW)', 'Size Max (MW)', 'Building area (sq. ft.)'])
     building_area = building_area_df[(building_area_df['Size Max (MW)'] > project_size) &
                                      (building_area_df['Size Min (MW)'] <= project_size)]['Building area (sq. ft.)']
 

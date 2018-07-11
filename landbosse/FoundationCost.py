@@ -121,23 +121,14 @@ def calculate_foundation_loads(component_data, tower_type, depth):
     g = 9.8  # m / s ^ 2
     F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / (1.15)  # scaling factor to adjust dead load for uplift
 
-    #if tower_type == 'concrete':
-    #    F_dead_multiplier = ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6)
-    #else:
-    #    slope = 0.006
-    #    F_dead_multiplier = 1 / (1 + 85 * slope - max(L) * slope)
-    F_dead_multiplier = 1
-
-    #F_dead = F_dead #* F_dead_multiplier
-
     # calculate moment from each component at base of tower
     M_overturn = F * L
 
     safety_overturn = 1.5
     unit_weight_fill = 17.3e3  # in N / m^3
     unit_weight_concrete = 23.6e3  # in N / m^3
-    rated_thrust = 742e3  # thrust for IEA 37 reference machine in N (unfactored)
-    bearing_pressure = 203500 * 1.2  # N / m^2
+    rated_thrust = 742e3  # thrust for IEA 37 reference machine in N (unfactored) # todo: update to user input
+    bearing_pressure = 203500 * 1.2  # N / m^2 # todo: update to user input
 
     # get total lateral load (N) and moment (N * m)
     F_lat = F.sum()
@@ -153,23 +144,24 @@ def calculate_foundation_loads(component_data, tower_type, depth):
          F_dead,
          - (safety_overturn * (M_tot + F_horiz * depth))]
 
+    # calculate foundation radius based on overturning moment
     R = np.roots(p)
     R = np.real(R[np.isreal(R)])[0]
 
-    #M_resist = F_dead * 4 #* ((1 + 0.05 * 2) - 0.05 * F_dead / 1e6) # (1 - (np.exp(F_dead/1.8e6/10) - 1) / 5) #np.e * (1 / np.exp(F_dead / 1.8e6))#* 4  # resising moment is function of dead weight and foundation diameter (this equation assumes foundation radius is on the order of 5 meters (diam = 8 m))
-
+    # calculate foundation radius based on shear
     foundation_vol = np.pi * R ** 2 * depth
     V_1 = (foundation_vol * ((2 / 3 * unit_weight_fill + 1 / 3 * unit_weight_concrete)) + F_dead)
     e = M_tot / V_1
     R_2 = e * 3 / 2
 
+    # calculate foundation radius based on bearing pressure
     R_pick = max(R, R_2)
-    A_eff = V_1 / bearing_pressure  #2 * [R_pick ** 2 * np.arccos(e / R_pick) - e * np.sqrt(R_pick ** 2 - e ** 2)]
+    A_eff = V_1 / bearing_pressure
     x = Symbol('x')
     R_3 = max(solve(2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - A_eff, x))
 
+    # pick the largest foundation radius based on all three foundation design criteria: moment, shear, bearing
     R_pick = max(R_pick, R_3)
-
 
     foundation_loads = {'F_dead': F_dead,
                         'F_lat': F_lat,
@@ -196,13 +188,6 @@ def determine_foundation_size(foundation_loads, depth):
     :param type_of_tower: flag for type of tower - currently unused
     :return:
     """
-
-    # get foundation loads and convert N to kN
-    #F_dead = foundation_loads['F_dead']
-    #F_lat = foundation_loads['F_lat']
-    #M_tot = foundation_loads['M_tot']
-
-    #foundation_cubic_meters = 1.012 * (0.0000034 * (M_tot * (M_tot / (71 * F_lat)) * (M_tot / (20 * F_dead))) + 168) / cubicyd_per_cubicm
 
     R = float(foundation_loads['Radius'])
     foundation_cubic_meters = np.pi * R ** 2 * depth * 0.4  # only compute the portion of the foundation that is composed of concrete (1/3 concrete; other portion is backfill)

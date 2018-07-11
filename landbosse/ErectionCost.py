@@ -63,8 +63,10 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
     """
     Calculates operation time required for each type of equipment included in project data.
 
+    :param project_specs: data frame with project details (from project input file)
     :param project_data: dictionary of data frames for each of the csv files loaded for the project
     :param construct_duration: duration of construction (in months)
+    :param operational_construction_time: operational hours of construction
     :return: list of possible cranes that could be used to erect tower and turbine
     """
     erection_construction_time = 1/3 * construct_duration
@@ -93,7 +95,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
         hoist_speed = min(crane['Hoist speed m per min'])
         travel_speed = min(crane['Speed of travel km per hr'])
         setup_time = max(crane['Setup time hr'])
-        crew_type = crane['Crew type ID'][0]  # todo: fix this so it's not a hack... need to rethink data structure - right now just picking first crew type - this is correct because same for all crane/boom combinations but we should come up with a better way to do it
+        crew_type = crane['Crew type ID'][0]  #todo: fix this so it's not a hack... need to rethink data structure - right now just picking first crew type - this is correct because same for all crane/boom combinations but we should come up with a better way to do it
         polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
         df = pd.DataFrame([[name[0],
                             name[1],
@@ -202,7 +204,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
                                                     operational_construction_time)
 
     # if more than one crew needed to complete within construction duration then assume that all construction happens
-    # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+    # within that window and use that time frame for weather delays; if not, use the number of days calculated
     operation_time['time_construct_bool'] = (operation_time['Operational construct days'] >
                                              erection_construction_time * 30)
     boolean_dictionary = {True: erection_construction_time * 30, False: np.NAN}
@@ -211,18 +213,16 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
 
     return possible_cranes, operation_time
 
-def calculate_offload_operation_time(project_specs, project_data, construct_duration, operational_construction_time,
-                                      rate_of_deliveries):
+
+def calculate_offload_operation_time(project_specs, project_data, operational_construction_time, rate_of_deliveries):
     """
 
-    :param project_data:
-    :param construct_duration:
-    :param operational_construction_time:
-    :return:
+    :param project_specs: data frame with project details (from project input file)
+    :param project_data: dictionary of data frames for each of the csv files loaded for the project
+    :param operational_construction_time: operational hours of construction
+    :param rate_of_deliveries: rate of deliveries
+    :return: operation time for offloading
     """
-
-    erection_construction_time = 1 / 3 * construct_duration
-
     # group project data by project ID
     project = project_specs
 
@@ -260,7 +260,6 @@ def calculate_offload_operation_time(project_specs, project_data, construct_dura
                                    'Hoist speed m per min', 'Speed of travel km per hr',
                                    'Crew type ID', 'Crane poly'])
         crane_poly = crane_poly.append(df)
-
 
     rownew = pd.Series()
     component_max_speed = pd.DataFrame()
@@ -379,6 +378,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window, wind_shear_ex
 
     :param crane_specs: data frame with crane specifications and component properties
     :param weather_window: filtered weather window containing data specific to season and time of construction
+    :param wind_shear_exponent: exponent for wind shear calculations
     :return: data frame with crane specifications and component properties joined with wind delays for each case
     """
 
@@ -423,13 +423,18 @@ def calculate_wind_delay_by_component(crane_specs, weather_window, wind_shear_ex
     return crane_specs
 
 
-def aggregate_erection_costs(project_specs, crane_data, operation_time, project_data, hour_day, construct_time, overtime_multiplier,
-                             project_size):
+def aggregate_erection_costs(project_specs, crane_data, operation_time, project_data, hour_day, construct_time,
+                             overtime_multiplier):
     """
     Aggregates labor, equipment, mobilization and fuel costs for erection.
 
+    :param project_specs: data frame with project details (from project input file)
     :param crane_data: data frame with crane specifications and component properties joined with wind delays for each case
+    :param operation_time: dictionary of operation time by crane type (offload vs erection)
     :param project_data: dictionary of data frames for each of the csv files loaded for the project
+    :param hour_day: dictionary for number of hours worked per day (normal vs long)
+    :param construct_time: time allowed for construction
+    :param overtime_multiplier: overtime multiplier for labor costs (40 hrs/wk vs. 60 hrs/wk)
     :return: two data frames that have aggregated labor, equipment, mobilization, and fuel costs for
              1) utilizing the same crane for base and topping and
              2) utilizing separate cranes for base and topping
@@ -594,18 +599,22 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
     return cost_chosen
 
 
-def calculate_costs(project_specs, project_data, hour_day, time_construct, weather_window, construction_time, rate_of_deliveries,
-                    overtime_multiplier, project_size, wind_shear_exponent):
+def calculate_costs(project_specs, project_data, hour_day, time_construct, weather_window, construction_time,
+                    rate_of_deliveries, overtime_multiplier, project_size, wind_shear_exponent):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
 
+    :param project_specs: data frame with project details (from project input file)
     :param project_data: dictionary of data frames for each of the csv files loaded for the project
     :param hour_day: dictionary of hours for each type of operational time (e.g., normal vs. long hours)
     :param time_construct: string that describes operational time (e.g., normal vs. long hours)
     :param weather_window: window of weather data for project of interest
     :param construction_time: time allowed for construction (in months)
     :param rate_of_deliveries: rate of deliveries (number of turbines per week)
+    :param overtime_multiplier: multiplier for overtime work (working 60 hr/wk vs 40 hr/wk)
+    :param project_size: project size in MW
+    :param wind_shear_exponent: exponent used for wind shear calculations
      :return:
     """
     [crane_specs, operation_time] = calculate_erection_operation_time(project_specs=project_specs,
@@ -615,7 +624,6 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
 
     [offload_specs, offload_time] = calculate_offload_operation_time(project_specs=project_specs,
                                                                      project_data=project_data,
-                                                                     construct_duration=construction_time,
                                                                      operational_construction_time=hour_day[time_construct],
                                                                      rate_of_deliveries=rate_of_deliveries)
 
@@ -637,8 +645,7 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
                                                                 project_data=project_data,
                                                                 hour_day=hour_day,
                                                                 construct_time=time_construct,
-                                                                overtime_multiplier=overtime_multiplier,
-                                                                project_size=project_size)
+                                                                overtime_multiplier=overtime_multiplier)
 
     erection_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop,
                                              same_basetop=same_basetop,

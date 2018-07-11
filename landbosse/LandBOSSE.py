@@ -24,33 +24,6 @@ import numpy as np
 
 # constants
 kilowatt_per_megawatt = 1000
-
-
-class Project(object):
-    def __init__(self, project_value, num_turbines, turbine_rating_kilowatt, construction_time_months):
-        # Set input variables (project_value, builder_size, num_turbines, turbine_rating_kilowatt, region)
-        self.project_value = project_value  # set project value
-        self.num_turbines = num_turbines  # set number of turbines
-        self.turbine_rating = turbine_rating_kilowatt  # set turbine rating in kilowatts
-
-        # Construction time
-        self.construction_time_months = construction_time_months
-
-        # Calculate project_size (project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt)
-        kilowatt_per_megawatt = 1000
-        self.project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
-
-        # Get regional parameters (regulatory_environment, environmental_characteristics, infrastructure_interface,
-        # soil_type, and rock_type) THESE DATA ARE CURRENTLY UNUSED
-        # self.region = region  # set region
-        # self.regulatory_environment = regulatory_environment_by_region[region]
-        # self.environmental_characteristics = environmental_characteristics_by_region[region]
-        # self.infrastructure_interface = public_infrastructure_interface_by_region[region]
-        # self.soil_type = soil_type_by_region[region]
-        # self.rock_type = rock_type_by_region[region]
-
-
-
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
 per_diem = 144  # USD per day
 season_construct = ['spring', 'summer']
@@ -58,7 +31,7 @@ time_construct = 'normal'
 construction_time_months = 13
 num_hwy_permits = 1  # assuming number of highway permits = 1
 
-# Financial parameters
+# financial parameters
 markup_constants = {'contingency': 0.03,
                     'warranty_management': 0.0002,
                     'sales_and_use_tax': 0,
@@ -74,7 +47,6 @@ season_dict = {'winter':   [12, 1, 2],
 operational_hour_dict = {'long': 24,
                          'normal': 10}
 
-
 phase_list = {'Collection system': '',
               'Development': '',
               'Erection': '',
@@ -83,19 +55,19 @@ phase_list = {'Collection system': '',
               'Roads': '',
               'Transmission and interconnection': '',
               'Substation': ''}
+
 type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials', 'Development', 'Management', 'Other']
 
 
-def calculate_bos_cost(files, scenario_name, scenario_height, season, season_month, development, list_of_phases):
+def calculate_bos_cost(files, scenario_name, scenario_height, development):
     """
     Executes the calculate costs functions for each module/phase in the balance of system
 
-    :param files: dictionary of files with input data from the user
-    :param season: list of strings that describe season(s) of interest for analysis
-    :param season_month: dictionary that maps seasons to months
-    :param development: float of development costs input by the user
-    :param list_of_phases: list of strings that describe the phases to be modeled
-    :return: total BOS costs for by phase and type
+    :param files: [dict] dictionary of files with input data from the user
+    :param scenario_name: [str] name of scenario to be run (must be in project file)
+    :param scenario_height: [str] hub height of scenario to be run (must be in project file)
+    :param development: [float] development costs input by the user
+    :return: total BOS costs for by phase and type; weather delay by phase
     """
 
     print("Running LandBOSSE...")
@@ -104,7 +76,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     for file in files:
         data_csv[file] = pd.DataFrame(pd.read_csv(files[file], engine='python'))
 
-    # define project parameters
+    # extract project parameters from input data
     project_data = data_csv['project'].where((data_csv['project']['Project ID'] == scenario_name) & (data_csv['project']['Hub height m'] == scenario_height))
     project_data = project_data.dropna(thresh=1)
     num_turbines = float(project_data['Number of turbines'])
@@ -116,8 +88,9 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     wind_shear_exponent = float(project_data['Wind shear exponent'])
     tower_type = project_data['Tower type'].values[0]
     foundation_depth = float(project_data['Foundation depth m'])
+    project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
 
-    # electrical
+    # default electrical parameters
     interconnect_voltage = 137
     pad_mount_transformer = True
     MV_thermal_backfill_mi = 0
@@ -126,14 +99,15 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     distance_to_interconnect = 5
     new_switchyard = True
 
-    project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
+    # default road parameters
     road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter)
     road_width_ft = 20  # feet 16
     road_thickness_in = 8  # inches
     crane_width_m = 12.2  # meters 10.7
-    overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
-
     num_access_roads = 5
+
+    # default labor parameters
+    overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
 
     # create data frame to store cost data for each module
     bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
@@ -189,7 +163,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
         (road_cost['Phase of construction'] == 'Roads') &
         (road_cost['Type of cost'] == value), ['Cost USD']].values
 
-
+    # todo: move electrical calculations to separate modules
     substation = 11652 * (interconnect_voltage + project_size) + 11795 * (project_size ** 0.3549) + 1526800
 
     if distance_to_interconnect == 0:
@@ -250,7 +224,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
     project_value = float(bos_cost['Cost USD'].sum())
 
     # calculate management costs
-    management_cost = ManagementCost.calculate_costs(project_value=project_value,  #57552441 #
+    management_cost = ManagementCost.calculate_costs(project_value=project_value,
                                                      foundation_cost=foundation_cost,
                                                      num_hwy_permits=num_hwy_permits,
                                                      construction_time_months=construction_time_months,
@@ -259,6 +233,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, season, season_mon
                                                      project_size=project_size,
                                                      hub_height=hub_height,
                                                      num_access_roads=num_access_roads)
+
     bos_cost = save_cost_data(phase='Management',
                               phase_cost=management_cost,
                               bos_cost=bos_cost)
@@ -318,7 +293,4 @@ if __name__ == '__main__':
     [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
                                                    scenario_name='Steel',
                                                    scenario_height=85,
-                                                   season=season_construct,
-                                                   season_month=season_dict,
-                                                   development=development_cost,
-                                                   list_of_phases=phase_list)
+                                                   development=development_cost)
