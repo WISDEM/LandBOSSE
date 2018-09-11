@@ -126,7 +126,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
             for component in component_group['Component']:
                 # get weight and height of component in each component group
                 component_only = component_group.where(component_group['Component'] == component).dropna(thresh=1)
-                point = Point(component_only['Weight tonne'], component_only['Lift height m'])
+                point = Point(component_only['Mass tonne'], component_only['Lift height m'])
                 crane['Lift boolean {component}'.format(component=component)] = polygon.contains(point)
 
             rownew = rownew.append(crane)
@@ -148,7 +148,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
             # vmax_TAB = maximum load speed per load chart
             # source: pg. 33 of Liebherr
 
-            mh = component_group['Weight tonne']
+            mh = component_group['Mass tonne']
             AW = component_group['Surface area sq m'] * component_group['Coeff drag']
             vmax_TAB = crane['Max wind speed m per s']
             vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
@@ -274,7 +274,7 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         for component in component_group['Component']:
             # get weight and height of component in each component group
             component_only = component_group.where(component_group['Component'] == component).dropna(thresh=1)
-            point = Point(component_only['Weight tonne'] / 2, component_only['Offload hook height m'])  # weight ivided by two because assuming two offload cranes are used
+            point = Point(component_only['Mass tonne'] / 2, component_only['Offload hook height m'])  # weight ivided by two because assuming two offload cranes are used
             crane['Lift boolean {component}'.format(component=component)] = polygon.contains(point)
 
         rownew = rownew.append(crane)
@@ -296,7 +296,7 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         # vmax_TAB = maximum load speed per load chart
         # source: pg. 33 of Liebherr
 
-        mh = component_group['Weight tonne'] / 2  # divided by two because assuming two offload cranes are used
+        mh = component_group['Mass tonne'] / 2  # divided by two because assuming two offload cranes are used
         AW = component_group['Surface area sq m'] * component_group['Coeff drag']
         vmax_TAB = crane['Max wind speed m per s']
         vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
@@ -651,6 +651,7 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
                                              same_basetop=same_basetop,
                                              allow_same_flag=False)
 
+    print(erection_cost.index.values)
     return erection_cost
 
 
@@ -671,7 +672,7 @@ if __name__ == "__main__":
     crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
 
     # for debugging
-    # print(crane_cost[['Operation', 'Crane name', 'Boom system']])
+    print(crane_cost[['Operation', 'Crane name', 'Boom system']])
 
 # OTHER NOTES ABOUT WEATHER DELAYS
 

@@ -253,7 +253,9 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
     print('\n Total cost USD:')
     print(bos_cost['Cost USD'].sum())
 
-    return bos_cost, wind_multiplier
+    print(wind_multiplier)
+
+    return bos_cost, wind_multiplier, road_length_m, num_turbines, project_size
 
 
 def save_cost_data(phase, phase_cost, bos_cost):
@@ -275,22 +277,59 @@ def save_cost_data(phase, phase_cost, bos_cost):
 
 if __name__ == '__main__':
 
-    # model inputs
-    # todo: replace with function call for user input
-    # dictionary of file names for input data
-    file_path = "/landbosse/default_inputs/"
-    file_list = {'crane_specs':     file_path + "crane_specs.csv",
-                 'equip':           file_path + "equip.csv",
-                 'crew':            file_path + "crews.csv",
-                 'components':      file_path + "components_steel_iea36_120.csv",
-                 'project':         file_path + "project_iea36_120.csv",
-                 'equip_price':     file_path + "equip_price.csv",
-                 'crew_price':      file_path + "crew_price.csv",
-                 'material_price':  file_path + "material_price.csv",
-                 'weather':         file_path + "weather_withtime.csv",
-                 'rsmeans':         file_path + "rsmeans_data.csv"}
+    scenario_list = list(["Steel - 2.3", "Steel - BAU 5", "Steel - DNV 4.5", "Steel - DNV 6.5", "Steel - High SP 5"])
+    scenario_height = list([90, 117, 130, 160, 110])
 
-    [bos_cost_1, wind_mult_1] = calculate_bos_cost(files=file_list,
-                                                   scenario_name='Steel',
-                                                   scenario_height=85,
-                                                   development=development_cost)
+    scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
+    other_scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
+
+
+    for i in range(0, len(scenario_list)):
+        scenario = scenario_list[i]
+        height = scenario_height[i]
+        print(i)
+        print(scenario)
+        print(height)
+        # model inputs
+        # todo: replace with function call for user input
+        # dictionary of file names for input data
+        dir_path = "/Users/aeberle/Desktop/BAR_analysis/"
+        file_path = dir_path #+ "/default_inputs_for_model_release/"
+        file_list = {'crane_specs':     file_path + "crane_specs.csv",
+                     'equip':           file_path + "equip.csv",
+                     'crew':            file_path + "crews.csv",
+                     'components':      file_path + scenario + ".csv",
+                     'project':         file_path + "project_scenario_list_bar_100turbine.csv",
+                     'equip_price':     file_path + "equip_price.csv",
+                     'crew_price':      file_path + "crew_price.csv",
+                     'material_price':  file_path + "material_price.csv",
+                     'weather':         file_path + "weather_withtime.csv",
+                     'rsmeans':         file_path + "rsmeans_data.csv"}
+
+        [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size] = calculate_bos_cost(files=file_list,
+                                                       scenario_name=scenario,
+                                                       scenario_height=height,
+                                                       development=development_cost)
+
+        sum_bos = bos_cost_1.groupby(by="Phase of construction").sum()
+        scenario_data = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
+        scenario_data['Scenario'] = ([scenario] * 8)
+        scenario_data['Phase of construction'] = sum_bos.index.values.tolist()
+        scenario_data['Cost USD'] = sum_bos['Cost USD'].values.tolist()
+        scenario_data_compiled = scenario_data_compiled.append(scenario_data)
+
+        scenario_sum = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
+        scenario_sum['Scenario'] = [scenario] * 3
+        scenario_sum['Phase of construction'] = ['Total', 'Total per turbine', 'Total per MW']
+        scenario_sum['Cost USD'] = [scenario_data['Cost USD'].sum(), scenario_data['Cost USD'].sum()/num_turbines, scenario_data['Cost USD'].sum()/project_size]
+        scenario_data_compiled = scenario_data_compiled.append(scenario_sum)
+
+        scenario_weather = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
+        scenario_weather['Scenario'] = [scenario] * 2
+        scenario_weather['Parameter'] = ['Wind delay multiplier', 'Road length m']
+        scenario_weather['Value'] = [wind_mult_1.iloc[0]['Wind multiplier'], road_length]
+        other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather)
+
+
+        scenario_data_compiled.to_csv('/Users/aeberle/Desktop/BAR_analysis/output_100turbine.csv')
+        other_scenario_data_compiled.to_csv('/Users/aeberle/Desktop/BAR_analysis/output_other_params_100turbine.csv')

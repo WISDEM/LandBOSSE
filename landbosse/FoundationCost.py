@@ -119,7 +119,7 @@ def calculate_foundation_loads(component_data, tower_type, depth):
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    F_dead = component_data['Weight tonne'].sum() * g * kg_per_tonne / (1.15)  # scaling factor to adjust dead load for uplift
+    F_dead = component_data['Mass tonne'].sum() * g * kg_per_tonne / (1.15)  # scaling factor to adjust dead load for uplift
 
     # calculate moment from each component at base of tower
     M_overturn = F * L
@@ -139,7 +139,7 @@ def calculate_foundation_loads(component_data, tower_type, depth):
 
     F_horiz = max(F_lat, rated_thrust)
 
-    p = [(np.pi * depth * (0.6 * unit_weight_fill + 0.4 * unit_weight_concrete)),
+    p = [(np.pi * depth * (2 / 3 * unit_weight_fill + 1 / 3 *unit_weight_concrete)),
          0,
          F_dead,
          - (safety_overturn * (M_tot + F_horiz * depth))]
@@ -163,17 +163,13 @@ def calculate_foundation_loads(component_data, tower_type, depth):
     # pick the largest foundation radius based on all three foundation design criteria: moment, shear, bearing
     R_pick = max(R_pick, R_3)
 
-    foundation_loads = {'F_dead': F_dead,
-                        'F_lat': F_lat,
-                        'F_thrust': rated_thrust,
-                        'F_horiz': F_horiz,
-                        'M_overturn': M_overturn,
-                        'M_thrust': M_thrust,
-                        'M_tot': M_tot,
-                        'Radius_o': R,
-                        'Radius_e': R_2,
-                        'Radius_b': R_3,
-                        'Radius': R_pick}
+    foundation_loads = {'F_dead_kN': F_dead / 1e3,
+                        'F_horiz_kN': F_lat / 1e3,
+                        'M_tot_kN_m': M_tot / 1e3,
+                        'Radius_o_m': R,
+                        'Radius_s_m': R_2,
+                        'Radius_b_m': R_3,
+                        'Radius_m': R_pick}
 
     return foundation_loads
 
@@ -189,7 +185,7 @@ def determine_foundation_size(foundation_loads, depth):
     :return:
     """
 
-    R = float(foundation_loads['Radius'])
+    R = float(foundation_loads['Radius_m'])
     foundation_cubic_meters = np.pi * R ** 2 * depth * 0.4  # only compute the portion of the foundation that is composed of concrete (1/3 concrete; other portion is backfill)
 
     return foundation_cubic_meters
@@ -285,8 +281,11 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     """
 
     foundation_loads = calculate_foundation_loads(component_data=input_data['components'], tower_type=tower_type, depth=depth)
+    print(foundation_loads)
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads, depth=depth)
+    print(foundation_volume)
     material_vol = estimate_material_needs(foundation_volume=foundation_volume, num_turbines=num_turbines)
+    print(material_vol)
     material_data = pd.merge(material_vol, input_data['material_price'], on=['Material type ID'])
     material_data['Cost USD'] = material_data['Quantity of material'] * pd.to_numeric(material_data['Material price USD per unit'])
 
@@ -327,5 +326,6 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     total_foundation_cost = foundation_cost.groupby(by=['Type of cost']).sum().reset_index()
     total_foundation_cost['Phase of construction'] = 'Foundations'
 
+    print(foundation_cost)
     return total_foundation_cost, wind_multiplier
 
