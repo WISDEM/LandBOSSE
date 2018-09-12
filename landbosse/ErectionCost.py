@@ -52,6 +52,7 @@ from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 import WeatherDelay as WD
+import sys
 
 # constants
 km_per_m = 0.001
@@ -119,7 +120,6 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
     crane_poly_new = crane_poly
     for name_operation, component_group in top_v_base:
         # calculate polygon for crane capacity and check if component can be lifted by each crane without wind loading
-        bool_list = list()
         for idx, crane in crane_poly.iterrows():
             polygon = crane['Crane poly']
 
@@ -131,13 +131,13 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
 
             rownew = rownew.append(crane)
 
+            bool_list = list()
             for component in component_group['Component']:
                 if crane['Lift boolean {component}'.format(component=component)] is False:
                     crane_bool = False
                 else:
                     crane_bool = True
-
-            bool_list.append(crane_bool)
+                bool_list.append(crane_bool)
 
             # calculate max permissible wind speed
             # equation for calculating permissible wind speed:
@@ -163,11 +163,11 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
             component_group_new['vmax'] = list((min(vmax_TAB, x) for x in vmax_calc))
             component_group_new['Crane name'] = crane['Crane name']
             component_group_new['Boom system'] = crane['Boom system']
-            component_group_new['crane_bool'] = crane_bool
+            component_group_new['crane_bool'] = bool_list
 
             component_max_speed = component_max_speed.append(component_group_new)
 
-        crane_poly_new['Crane bool {operation}'.format(operation=name_operation)] = list(bool_list)
+        crane_poly_new['Crane bool {operation}'.format(operation=name_operation)] = min(bool_list)
 
     crane_poly = crane_poly_new
 
@@ -211,7 +211,19 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
     operation_time['time_construct_bool'] = operation_time['time_construct_bool'].map(boolean_dictionary)
     operation_time['Time construct days'] = operation_time[['time_construct_bool', 'Operational construct days']].min(axis=1)
 
-    return possible_cranes, operation_time
+    print(possible_cranes[['Crane name', 'Component', 'Operation time hr', 'Operation']])
+    for operation, component_group in top_v_base:
+        unique_component_crane = possible_cranes.loc[possible_cranes['Operation'] == operation]['Component'].unique()
+        for component in component_group['Component']:
+            if component not in unique_component_crane:
+                error = 1
+                sys.exit('Error: Unable to find installation crane for {} operation and {} component'.format(operation, component))
+            else:
+                error = 0
+        if error == 0:
+            print('Crane(s) found for all components for {} installation'.format(operation))
+
+    return possible_cranes, operation_time, error
 
 
 def calculate_offload_operation_time(project_specs, project_data, operational_construction_time, rate_of_deliveries):
@@ -267,7 +279,6 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
 
     component_group = project_data['components']
 
-    bool_list = list()
     for idx, crane in crane_poly.iterrows():
         polygon = crane['Crane poly']
 
@@ -279,13 +290,15 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
 
         rownew = rownew.append(crane)
 
+        bool_list = list()
         for component in component_group['Component']:
             if crane['Lift boolean {component}'.format(component=component)] is False:
                 crane_bool = False
             else:
                 crane_bool = True
 
-        bool_list.append(crane_bool)
+            bool_list.append(crane_bool)
+
 
         # calculate max permissible wind speed
         # equation for calculating permissible wind speed:
@@ -311,11 +324,11 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         component_group_new['vmax'] = list((min(vmax_TAB, x) for x in vmax_calc))
         component_group_new['Crane name'] = crane['Crane name']
         component_group_new['Boom system'] = crane['Boom system']
-        component_group_new['crane_bool'] = crane_bool
+        component_group_new['crane_bool'] = bool_list
 
         component_max_speed = component_max_speed.append(component_group_new)
 
-    crane_poly_new['Crane bool {operation}'.format(operation='offload')] = list(bool_list)
+    crane_poly_new['Crane bool {operation}'.format(operation='offload')] = min(bool_list)
 
     crane_poly = crane_poly_new
 
@@ -369,7 +382,19 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         possible_cranes = []
         operation_time = []
 
-    return possible_cranes, operation_time
+    print(possible_cranes[['Crane name', 'Component', 'Operation time hr']])
+    unique_components = project_data['components']['Component'].unique()
+    unique_component_crane = possible_cranes['Component'].unique()
+    for component in unique_components:
+        if component not in unique_component_crane:
+            error = 1
+            sys.exit('Error: Unable to find offload crane for {}'.format(component))
+        else:
+            error = 0
+    if error == 0:
+        print('Crane(s) found for all components for offloading')
+
+    return possible_cranes, operation_time, error
 
 
 def calculate_wind_delay_by_component(crane_specs, weather_window, wind_shear_exponent):
@@ -617,15 +642,22 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
     :param wind_shear_exponent: exponent used for wind shear calculations
      :return:
     """
-    [crane_specs, operation_time] = calculate_erection_operation_time(project_specs=project_specs,
+    [crane_specs, operation_time, error_install] = calculate_erection_operation_time(project_specs=project_specs,
                                                                       project_data=project_data,
                                                                       construct_duration=construction_time,
                                                                       operational_construction_time=hour_day[time_construct])
 
-    [offload_specs, offload_time] = calculate_offload_operation_time(project_specs=project_specs,
+    if error_install == 1:
+        error = 1
+        sys.exit()
+
+    [offload_specs, offload_time, error_off] = calculate_offload_operation_time(project_specs=project_specs,
                                                                      project_data=project_data,
                                                                      operational_construction_time=hour_day[time_construct],
                                                                      rate_of_deliveries=rate_of_deliveries)
+    if error_off == 1:
+        error = 1
+        sys.exit()
 
     # append data for offloading
     if len(offload_specs) != 0:
