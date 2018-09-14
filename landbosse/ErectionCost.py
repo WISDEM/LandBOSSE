@@ -112,7 +112,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
                                      'Max wind speed m per s', 'Setup time hr',
                                      'Hoist speed m per min', 'Speed of travel km per hr',
                                      'Crew type ID', 'Crane poly'])
-        crane_poly = crane_poly.append(df)
+        crane_poly = crane_poly.append(df, sort=True)
 
     # loop through operation type (topping vs. base)
     rownew = pd.Series()
@@ -165,7 +165,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
             component_group_new['Boom system'] = crane['Boom system']
             component_group_new['crane_bool'] = bool_list
 
-            component_max_speed = component_max_speed.append(component_group_new)
+            component_max_speed = component_max_speed.append(component_group_new, sort=True)
 
         crane_poly_new['Crane bool {operation}'.format(operation=name_operation)] = min(bool_list)
 
@@ -271,7 +271,7 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
                                    'Max wind speed m per s', 'Setup time hr',
                                    'Hoist speed m per min', 'Speed of travel km per hr',
                                    'Crew type ID', 'Crane poly'])
-        crane_poly = crane_poly.append(df)
+        crane_poly = crane_poly.append(df, sort=True)
 
     rownew = pd.Series()
     component_max_speed = pd.DataFrame()
@@ -299,7 +299,6 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
 
             bool_list.append(crane_bool)
 
-
         # calculate max permissible wind speed
         # equation for calculating permissible wind speed:
         # vmax = max_TAB * sqrt(1.2 * mh / AW), where
@@ -326,7 +325,7 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         component_group_new['Boom system'] = crane['Boom system']
         component_group_new['crane_bool'] = bool_list
 
-        component_max_speed = component_max_speed.append(component_group_new)
+        component_max_speed = component_max_speed.append(component_group_new, sort=True)
 
     crane_poly_new['Crane bool {operation}'.format(operation='offload')] = min(bool_list)
 
@@ -595,13 +594,13 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
         # find the crane that corresponds to the minimum cost for each operation
         crane = separate_basetop[separate_basetop['Total cost USD'] == min_val]
         cost = crane.groupby('Operation').min()
-        total_separate_cost = total_separate_cost.append(cost)
+        total_separate_cost = total_separate_cost.append(cost, sort=True)
 
     # reset index for separate crane costs
     total_separate_cost = total_separate_cost.reset_index()
 
     # duplicate offload records because assuming two offload cranes are on site
-    total_separate_cost = total_separate_cost.append(total_separate_cost.loc[total_separate_cost['Operation'] == 'Offload'])
+    total_separate_cost = total_separate_cost.append(total_separate_cost.loc[total_separate_cost['Operation'] == 'Offload'], sort=True)
 
     # sum costs for separate cranes to get total for all cranes
     cost_chosen_separate = total_separate_cost['Total cost USD'].sum()
@@ -661,8 +660,8 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
 
     # append data for offloading
     if len(offload_specs) != 0:
-        crane_specs = crane_specs.append(offload_specs)
-        operation_time = operation_time.append(offload_time)
+        crane_specs = crane_specs.append(offload_specs, sort=True)
+        operation_time = operation_time.append(offload_time, sort=True)
 
     cranes_wind_delay = calculate_wind_delay_by_component(crane_specs=crane_specs,
                                                           weather_window=weather_window,
