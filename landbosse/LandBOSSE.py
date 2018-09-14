@@ -278,15 +278,17 @@ def save_cost_data(phase, phase_cost, bos_cost):
 if __name__ == '__main__':
 
     # define file paths for inputs and outputs
-    input_data_path = "/Users/aeberle/Desktop/BAR_analysis/inputs/"
-    output_data_path = "/Users/aeberle/Desktop/BAR_analysis/outputs/"
+    input_data_path = "/Users/aeberle/Desktop/BAR_analysis/14sept/inputs/"
+    component_folder = "component_data/"  # subfolder for component data
+    output_data_path = "/Users/aeberle/Desktop/BAR_analysis/14sept/outputs/"
 
     # define file names for outputs
     file_name_main_outputs = 'output_test.csv'  # main outputs are costs
     file_name_other_outputs = 'output_other_params_test.csv'  # other outputs currently include road length and wind multiplier
 
     # open project data file
-    project_data = pd.read_csv(input_data_path + "project_scenario_list_bar_100turbine.csv")
+    project_path = input_data_path + "project_scenario_list_bar.csv"
+    project_data = pd.read_csv(project_path)
 
     # initialize output data frames
     scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
@@ -307,8 +309,8 @@ if __name__ == '__main__':
         file_list = {'crane_specs':     input_data_path + "crane_specs.csv",
                      'equip':           input_data_path + "equip.csv",
                      'crew':            input_data_path + "crews.csv",
-                     'components':      input_data_path + scenario + ".csv",
-                     'project':         input_data_path + "project_scenario_list_bar_100turbine.csv",
+                     'components':      input_data_path + component_folder + scenario + ".csv",
+                     'project':         project_path,
                      'equip_price':     input_data_path + "equip_price.csv",
                      'crew_price':      input_data_path + "crew_price.csv",
                      'material_price':  input_data_path + "material_price.csv",
