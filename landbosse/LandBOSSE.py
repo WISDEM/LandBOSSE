@@ -277,40 +277,51 @@ def save_cost_data(phase, phase_cost, bos_cost):
 
 if __name__ == '__main__':
 
-    scenario_list = list(["Steel - 2.3", "Steel - BAU 5", "Steel - DNV 4.5", "Steel - DNV 6.5", "Steel - High SP 5"])
-    scenario_height = list([90, 117, 130, 160, 110])
+    # define file paths for inputs and outputs
+    input_data_path = "/Users/aeberle/Desktop/BAR_analysis/inputs/"
+    output_data_path = "/Users/aeberle/Desktop/BAR_analysis/outputs/"
 
+    # define file names for outputs
+    file_name_main_outputs = 'output_test.csv'  # main outputs are costs
+    file_name_other_outputs = 'output_other_params_test.csv'  # other outputs currently include road length and wind multiplier
+
+    # open project data file
+    project_data = pd.read_csv(input_data_path + "project_scenario_list_bar_100turbine.csv")
+
+    # initialize output data frames
     scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
     other_scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
 
-
-    for i in range(0, len(scenario_list)):
-        scenario = scenario_list[i]
-        height = scenario_height[i]
-        print(i)
+    # loop project ids (scenarios) in project data file and execute model
+    for i in range(0, len(project_data)):
+        # extract name and hub height for scenario
+        scenario = project_data['Project ID'][i]
+        height = project_data['Hub height m'][i]
         print(scenario)
         print(height)
-        # model inputs
-        # todo: replace with function call for user input
-        # dictionary of file names for input data
-        dir_path = "/Users/aeberle/Desktop/BAR_analysis/"
-        file_path = dir_path #+ "/default_inputs_for_model_release/"
-        file_list = {'crane_specs':     file_path + "crane_specs.csv",
-                     'equip':           file_path + "equip.csv",
-                     'crew':            file_path + "crews.csv",
-                     'components':      file_path + scenario + ".csv",
-                     'project':         file_path + "project_scenario_list_bar_100turbine.csv",
-                     'equip_price':     file_path + "equip_price.csv",
-                     'crew_price':      file_path + "crew_price.csv",
-                     'material_price':  file_path + "material_price.csv",
-                     'weather':         file_path + "weather_withtime.csv",
-                     'rsmeans':         file_path + "rsmeans_data.csv"}
 
+        # define model inputs
+        # todo: replace with function call for user input
+
+        # dictionary of file names for input data (currently only "components" file changes by scenario)
+        file_list = {'crane_specs':     input_data_path + "crane_specs.csv",
+                     'equip':           input_data_path + "equip.csv",
+                     'crew':            input_data_path + "crews.csv",
+                     'components':      input_data_path + scenario + ".csv",
+                     'project':         input_data_path + "project_scenario_list_bar_100turbine.csv",
+                     'equip_price':     input_data_path + "equip_price.csv",
+                     'crew_price':      input_data_path + "crew_price.csv",
+                     'material_price':  input_data_path + "material_price.csv",
+                     'weather':         input_data_path + "weather_withtime.csv",
+                     'rsmeans':         input_data_path + "rsmeans_data.csv"}
+
+        # execute BOS model
         [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size] = calculate_bos_cost(files=file_list,
                                                        scenario_name=scenario,
                                                        scenario_height=height,
                                                        development=development_cost)
 
+        # compile results into output data frames
         sum_bos = bos_cost_1.groupby(by="Phase of construction").sum()
         scenario_data = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
         scenario_data['Scenario'] = ([scenario] * 8)
@@ -318,18 +329,20 @@ if __name__ == '__main__':
         scenario_data['Cost USD'] = sum_bos['Cost USD'].values.tolist()
         scenario_data_compiled = scenario_data_compiled.append(scenario_data)
 
+        # add row for total costs (sum of all module costs)
         scenario_sum = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
         scenario_sum['Scenario'] = [scenario] * 3
         scenario_sum['Phase of construction'] = ['Total', 'Total per turbine', 'Total per MW']
         scenario_sum['Cost USD'] = [scenario_data['Cost USD'].sum(), scenario_data['Cost USD'].sum()/num_turbines, scenario_data['Cost USD'].sum()/project_size]
         scenario_data_compiled = scenario_data_compiled.append(scenario_sum)
 
+        # other outputs
         scenario_weather = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
         scenario_weather['Scenario'] = [scenario] * 2
         scenario_weather['Parameter'] = ['Wind delay multiplier', 'Road length m']
         scenario_weather['Value'] = [wind_mult_1.iloc[0]['Wind multiplier'], road_length]
         other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather)
 
-
-        scenario_data_compiled.to_csv('/Users/aeberle/Desktop/BAR_analysis/output_100turbine.csv')
-        other_scenario_data_compiled.to_csv('/Users/aeberle/Desktop/BAR_analysis/output_other_params_100turbine.csv')
+        # save data to csv files
+        scenario_data_compiled.to_csv(output_data_path + file_name_main_outputs, index=False)
+        other_scenario_data_compiled.to_csv(output_data_path + file_name_other_outputs, index=False)
