@@ -21,6 +21,7 @@ import RoadsCost
 from itertools import product
 import pandas as pd
 import numpy as np
+import os
 
 # constants
 kilowatt_per_megawatt = 1000
@@ -278,16 +279,18 @@ def save_cost_data(phase, phase_cost, bos_cost):
 if __name__ == '__main__':
 
     # define file paths for inputs and outputs
-    input_data_path = "/Users/aeberle/Desktop/BAR_analysis/14sept/inputs/"
+    # current NREL filepath for inputs: "//nrel.gov/shared/Wind/Public/Projects/Projects T-Z/TAMA/WTT/BOS modeling/current_model_inputs_and_example_outputs/"
+    # suggest creating a local copy of this folder when you run the model
+    input_data_path = "/Users/aeberle/Desktop/bos_model/inputs/"
     component_folder = "component_data/"  # subfolder for component data
-    output_data_path = "/Users/aeberle/Desktop/BAR_analysis/14sept/outputs/"
+    output_data_path = "/Users/aeberle/Desktop/bos_model/outputs/"
 
     # define file names for outputs
-    file_name_main_outputs = 'output_test.csv'  # main outputs are costs
-    file_name_other_outputs = 'output_other_params_test.csv'  # other outputs currently include road length and wind multiplier
+    file_name_main_outputs = 'output_100turbine.csv'  # main outputs are costs
+    file_name_other_outputs = 'output_other_params_100turbine.csv'  # other outputs currently include road length and wind multiplier
 
     # open project data file
-    project_path = input_data_path + "project_scenario_list_bar.csv"
+    project_path = os.path.join(input_data_path, "project_scenario_list_bar_100turbine.csv")
     project_data = pd.read_csv(project_path)
 
     # initialize output data frames
@@ -299,6 +302,7 @@ if __name__ == '__main__':
         # extract name and hub height for scenario
         scenario = project_data['Project ID'][i]
         height = project_data['Hub height m'][i]
+        scenario_filename = scenario + ".csv"
         print(scenario)
         print(height)
 
@@ -306,16 +310,16 @@ if __name__ == '__main__':
         # todo: replace with function call for user input
 
         # dictionary of file names for input data (currently only "components" file changes by scenario)
-        file_list = {'crane_specs':     input_data_path + "crane_specs.csv",
-                     'equip':           input_data_path + "equip.csv",
-                     'crew':            input_data_path + "crews.csv",
-                     'components':      input_data_path + component_folder + scenario + ".csv",
+        file_list = {'crane_specs':     os.path.join(input_data_path, "crane_specs.csv"),
+                     'equip':           os.path.join(input_data_path, "equip.csv"),
+                     'crew':            os.path.join(input_data_path, "crews.csv"),
+                     'components':      os.path.join(input_data_path + component_folder, scenario_filename),
                      'project':         project_path,
-                     'equip_price':     input_data_path + "equip_price.csv",
-                     'crew_price':      input_data_path + "crew_price.csv",
-                     'material_price':  input_data_path + "material_price.csv",
-                     'weather':         input_data_path + "weather_withtime.csv",
-                     'rsmeans':         input_data_path + "rsmeans_data.csv"}
+                     'equip_price':     os.path.join(input_data_path, "equip_price.csv"),
+                     'crew_price':      os.path.join(input_data_path, "crew_price.csv"),
+                     'material_price':  os.path.join(input_data_path, "material_price.csv"),
+                     'weather':         os.path.join(input_data_path, "weather_withtime.csv"),
+                     'rsmeans':         os.path.join(input_data_path, "rsmeans_data.csv")}
 
         # execute BOS model
         [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size] = calculate_bos_cost(files=file_list,
@@ -345,6 +349,11 @@ if __name__ == '__main__':
         scenario_weather['Value'] = [wind_mult_1.iloc[0]['Wind multiplier'], road_length]
         other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather)
 
+        # data frame manipulation for plotting
+        # split_names = scenario_data_compiled['Scenario'].str.split(n=1, expand=True)
+        # df[df['Phase of construction'] == 'Total per MW'].bar(by='Scenario')
+
         # save data to csv files
-        scenario_data_compiled.to_csv(output_data_path + file_name_main_outputs, index=False)
-        other_scenario_data_compiled.to_csv(output_data_path + file_name_other_outputs, index=False)
+        scenario_data_compiled.to_csv(os.path.join(output_data_path, file_name_main_outputs), index=False)
+        other_scenario_data_compiled.to_csv(os.path.join(output_data_path, file_name_other_outputs), index=False)
+
