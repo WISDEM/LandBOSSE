@@ -282,7 +282,7 @@ if __name__ == '__main__':
     # current NREL filepath for inputs: "//nrel.gov/shared/Wind/Public/Projects/Projects T-Z/TAMA/WTT/BOS modeling/current_model_inputs_and_example_outputs/"
     # suggest creating a local copy of this folder when you run the model
     input_data_path = "/Users/aeberle/Desktop/bos_model/inputs/"
-    component_folder = "component_data/"  # subfolder for component data
+    component_folder = "component_data_proprietary/"  # subfolder for component data
     output_data_path = "/Users/aeberle/Desktop/bos_model/outputs/"
 
     # define file names for outputs
@@ -310,16 +310,16 @@ if __name__ == '__main__':
         # todo: replace with function call for user input
 
         # dictionary of file names for input data (currently only "components" file changes by scenario)
-        file_list = {'crane_specs':     os.path.join(input_data_path, "crane_specs.csv"),
+        file_list = {'crane_specs':     os.path.join(input_data_path, "crane_specs_columnO-proprietary.csv"),
                      'equip':           os.path.join(input_data_path, "equip.csv"),
                      'crew':            os.path.join(input_data_path, "crews.csv"),
                      'components':      os.path.join(input_data_path + component_folder, scenario_filename),
                      'project':         project_path,
-                     'equip_price':     os.path.join(input_data_path, "equip_price.csv"),
-                     'crew_price':      os.path.join(input_data_path, "crew_price.csv"),
-                     'material_price':  os.path.join(input_data_path, "material_price.csv"),
+                     'equip_price':     os.path.join(input_data_path, "equip_price_proprietary.csv"),
+                     'crew_price':      os.path.join(input_data_path, "crew_price_proprietary.csv"),
+                     'material_price':  os.path.join(input_data_path, "material_price_proprietary.csv"),
                      'weather':         os.path.join(input_data_path, "weather_withtime.csv"),
-                     'rsmeans':         os.path.join(input_data_path, "rsmeans_data.csv")}
+                     'rsmeans':         os.path.join(input_data_path, "rsmeans_data_proprietary.csv")}
 
         # execute BOS model
         [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size] = calculate_bos_cost(files=file_list,
