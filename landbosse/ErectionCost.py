@@ -211,7 +211,7 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
     operation_time['time_construct_bool'] = operation_time['time_construct_bool'].map(boolean_dictionary)
     operation_time['Time construct days'] = operation_time[['time_construct_bool', 'Operational construct days']].min(axis=1)
 
-    print(possible_cranes[['Crane name', 'Component', 'Operation time hr', 'Operation']])
+    #print(possible_cranes[['Crane name', 'Component', 'Operation time hr', 'Operation']])
     for operation, component_group in top_v_base:
         unique_component_crane = possible_cranes.loc[possible_cranes['Operation'] == operation]['Component'].unique()
         for component in component_group['Component']:
@@ -381,7 +381,7 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
         possible_cranes = []
         operation_time = []
 
-    print(possible_cranes[['Crane name', 'Component', 'Operation time hr']])
+    #print(possible_cranes[['Crane name', 'Component', 'Operation time hr']])
     unique_components = project_data['components']['Component'].unique()
     unique_component_crane = possible_cranes['Component'].unique()
     for component in unique_components:
@@ -409,7 +409,7 @@ def calculate_wind_delay_by_component(crane_specs, weather_window, wind_shear_ex
     # calculate wind delay for each component and crane combination
     crane_specs = crane_specs.reset_index()
     crane_specs['Wind delay percent'] = np.nan
-    print('Calculating wind delay for erection... \n')
+    print('Calculating wind delay for erection...')
     for i in range(0, len(crane_specs.index)):
         # print for debugging
         # print("Calculating weather delay for {operation}, {component},
@@ -682,9 +682,18 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
                                              same_basetop=same_basetop,
                                              allow_same_flag=False)
 
-    print(erection_cost.index.values)
-    return erection_cost
+    erection_cost_output = pd.DataFrame([['Erection', 'Equipment rental', erection_cost['Equipment rental cost USD'].sum()],
+                                         ['Erection', 'Fuel', erection_cost['Fuel cost USD'].sum()],
+                                         ['Erection', 'Labor', erection_cost['Labor cost USD'].sum()],
+                                         ['Erection', 'Mobilization', erection_cost['Mobilization cost USD'].sum()],
+                                         ['Erection', 'Other', 0],
+                                         ['Erection', 'Materials', 0]],
+                                        columns=['Phase of construction', 'Type of cost', 'Cost USD'])
 
+    erection_wind_mult = (erection_cost['Total time per op with weather']) / (erection_cost['Total time per op with weather'] - erection_cost['Time weather'])
+    erection_wind_mult = erection_wind_mult.reset_index(drop=True).mean()
+
+    return erection_cost_output, erection_wind_mult
 
 if __name__ == "__main__":
     crane_specs_project = calculate_erection_operation_time(project_data=data_csv)
@@ -703,7 +712,9 @@ if __name__ == "__main__":
     crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
 
     # for debugging
-    print(crane_cost[['Operation', 'Crane name', 'Boom system']])
+    #print(crane_cost[['Operation', 'Crane name', 'Boom system']])
+
+
 
 # OTHER NOTES ABOUT WEATHER DELAYS
 

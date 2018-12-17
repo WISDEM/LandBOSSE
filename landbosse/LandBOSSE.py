@@ -22,6 +22,8 @@ from itertools import product
 import pandas as pd
 import numpy as np
 import os
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # constants
 kilowatt_per_megawatt = 1000
@@ -123,6 +125,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
     operational_hrs_per_day = operational_hour_dict[time_construct]
 
     # calculate road costs
+    print("Calculating road costs...")
     [road_cost, road_wind_mult] = RoadsCost.calculate_costs(road_length=road_length_m,
                                                             road_width=road_width_ft,
                                                             road_thickness=road_thickness_in,
@@ -140,6 +143,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                                                             )
 
     # calculate foundation costs
+    print("Calculating foundation costs...")
     [foundation_cost, foundation_wind_mult] = FoundationCost.calculate_costs(input_data=data_csv,
                                                                              num_turbines=num_turbines,
                                                                              construction_time=construction_time_months,
@@ -165,6 +169,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
         (road_cost['Type of cost'] == value), ['Cost USD']].values
 
     # todo: move electrical calculations to separate modules
+    print("Calculating electrical costs...")
     substation = 11652 * (interconnect_voltage + project_size) + 11795 * (project_size ** 0.3549) + 1526800
 
     if distance_to_interconnect == 0:
@@ -202,21 +207,24 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                  (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = electrical_installation + electrical_materials
 
     # calculate erection costs
-    erection_cost = ErectionCost.calculate_costs(project_specs=project_data,
-                                                 project_data=data_csv,
-                                                 hour_day=operational_hour_dict,
-                                                 construction_time=construction_time_months,
-                                                 time_construct=time_construct,
-                                                 weather_window=weather_window,
-                                                 rate_of_deliveries=rate_of_deliveries,
-                                                 overtime_multiplier=overtime_multiplier,
-                                                 project_size=project_size,
-                                                 wind_shear_exponent=wind_shear_exponent
-                                                 )
+    print("Calculating erection costs...")
+    [erection_cost, erection_wind_mult] = ErectionCost.calculate_costs(project_specs=project_data,
+                                                                         project_data=data_csv,
+                                                                         hour_day=operational_hour_dict,
+                                                                         construction_time=construction_time_months,
+                                                                         time_construct=time_construct,
+                                                                         weather_window=weather_window,
+                                                                         rate_of_deliveries=rate_of_deliveries,
+                                                                         overtime_multiplier=overtime_multiplier,
+                                                                         project_size=project_size,
+                                                                         wind_shear_exponent=wind_shear_exponent
+                                                                         )
 
-    bos_cost = save_cost_data(phase='Erection',
-                              phase_cost=erection_cost,
-                              bos_cost=bos_cost)
+    for value in erection_cost['Type of cost']:
+        bos_cost.loc[(bos_cost['Phase of construction'] == 'Erection') &
+                     (bos_cost['Type of cost'] == value), ['Cost USD']] = erection_cost.loc[
+        (erection_cost['Phase of construction'] == 'Erection') &
+        (erection_cost['Type of cost'] == value), ['Cost USD']].values
 
     bos_cost = save_cost_data(phase='Development',
                               phase_cost=pd.DataFrame([[development]], columns=['Development cost USD']),
@@ -225,6 +233,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
     project_value = float(bos_cost['Cost USD'].sum())
 
     # calculate management costs
+    print("Calculating management costs...")
     management_cost = ManagementCost.calculate_costs(project_value=project_value,
                                                      foundation_cost=foundation_cost,
                                                      num_hwy_permits=num_hwy_permits,
@@ -240,21 +249,21 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                               bos_cost=bos_cost)
 
     # weather delays
-    erection_wind_mult = (erection_cost['Total time per op with weather']) / (erection_cost['Total time per op with weather'] - erection_cost['Time weather'])
-    wind_multiplier = pd.DataFrame([['Erection', erection_wind_mult.reset_index(drop=True).mean()],
+    wind_multiplier = pd.DataFrame([['Erection', erection_wind_mult],
                                     ['Foundation', foundation_wind_mult],
                                     ['Road', road_wind_mult]], columns=['Operation', 'Wind multiplier'])
 
-    print('Final cost matrix:')
-    print(bos_cost)
+    # print statements for debugging
+    #print('Final cost matrix:')
+    #print(bos_cost)
 
-    print('Total cost by phase:')
-    print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
+    #print('Total cost by phase:')
+    #print(bos_cost.groupby(by=bos_cost['Phase of construction']).sum())
 
-    print('\n Total cost USD:')
-    print(bos_cost['Cost USD'].sum())
+    #print('\n Total cost USD:')
+    #print(bos_cost['Cost USD'].sum())
 
-    print(wind_multiplier)
+    #print(wind_multiplier)
 
     return bos_cost, wind_multiplier, road_length_m, num_turbines, project_size
 
@@ -281,7 +290,7 @@ if __name__ == '__main__':
     # define file paths for inputs and outputs
     # current NREL filepath for inputs: "//nrel.gov/shared/Wind/Public/Projects/Projects T-Z/TAMA/WTT/BOS modeling/current_model_inputs_and_example_outputs/"
     # suggest creating a local copy of this folder when you run the model
-    input_data_path = "/Users/aeberle/Desktop/bos_model/inputs/"
+    input_data_path = "/Users/aeberle/Desktop/bos_model/inputs_open_release_real/"
     component_folder = "component_data_proprietary/"  # subfolder for component data
     output_data_path = "/Users/aeberle/Desktop/bos_model/outputs/"
 
@@ -290,11 +299,12 @@ if __name__ == '__main__':
     file_name_other_outputs = 'output_other_params_100turbine.csv'  # other outputs currently include road length and wind multiplier
 
     # open project data file
-    project_path = os.path.join(input_data_path, "project_scenario_list_bar_100turbine.csv")
+    project_path = os.path.join(input_data_path, "project_scenario_list.csv")
     project_data = pd.read_csv(project_path)
 
     # initialize output data frames
     scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
+    scenario_data_full_compiled = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
     other_scenario_data_compiled = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
 
     # loop project ids (scenarios) in project data file and execute model
@@ -304,7 +314,7 @@ if __name__ == '__main__':
         height = project_data['Hub height m'][i]
         scenario_filename = scenario + ".csv"
         print(scenario)
-        print(height)
+        #print(height)
 
         # define model inputs
         # todo: replace with function call for user input
@@ -349,11 +359,43 @@ if __name__ == '__main__':
         scenario_weather['Value'] = [wind_mult_1.iloc[0]['Wind multiplier'], road_length]
         other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather)
 
-        # data frame manipulation for plotting
-        # split_names = scenario_data_compiled['Scenario'].str.split(n=1, expand=True)
-        # df[df['Phase of construction'] == 'Total per MW'].bar(by='Scenario')
-
         # save data to csv files
         scenario_data_compiled.to_csv(os.path.join(output_data_path, file_name_main_outputs), index=False)
         other_scenario_data_compiled.to_csv(os.path.join(output_data_path, file_name_other_outputs), index=False)
 
+        scenario_data_full = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
+        scenario_data_full['Scenario'] = ([scenario] * 64)
+        scenario_data_full['Phase of construction'] = bos_cost_1['Phase of construction'].values.tolist()
+        scenario_data_full['Type of cost'] = bos_cost_1['Type of cost'].values.tolist()
+        scenario_data_full['Cost USD'] = bos_cost_1['Cost USD'].values.tolist()
+        scenario_data_full_compiled = scenario_data_full_compiled.append(scenario_data_full)
+
+    # data frame manipulation for plotting
+    split_names = pd.DataFrame(scenario_data_full_compiled['Scenario'].str.split('_', expand=True))
+    scenario_data_full_compiled['Hub height'] = split_names[1]
+    scenario_data_full_compiled['Turbine'] = split_names[0]
+    data_total_by_phase = scenario_data_full_compiled.groupby(by=['Phase of construction', 'Scenario']).sum().reset_index(drop=False)
+    data_total_by_type = scenario_data_full_compiled.groupby(by=['Type of cost', 'Scenario']).sum().reset_index(drop=False)
+    data_total = scenario_data_full_compiled.groupby(by=['Scenario']).sum().reset_index(drop=False)
+
+
+    sns.set()
+    sns.set_style("darkgrid")
+    sns.set_context("poster")
+    phase_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total_by_phase, hue="Phase of construction",
+                                kind="bar", size=8, palette=sns.cubehelix_palette(8, start=0.3, rot=-.75), margin_titles=True)
+    phase_plot.fig.subplots_adjust(top=0.9)
+    phase_plot.fig.suptitle('Cost by Phase', fontsize=16)
+    phase_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_phase_construction.png"))
+
+    type_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total_by_type, hue="Type of cost",
+                               kind="bar", size=8, palette=sns.cubehelix_palette(8))
+    type_plot.fig.subplots_adjust(top=0.9)
+    type_plot.fig.suptitle('Cost by Type', fontsize=16)
+    type_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_type_cost.png"))
+
+    total_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total, kind="bar", size=8,
+                                palette=sns.color_palette("muted"))
+    total_plot.fig.subplots_adjust(top=0.9)
+    total_plot.fig.suptitle('Total Cost', fontsize=16)
+    total_plot.savefig(os.path.join(output_data_path, "scenario_total.png"))
