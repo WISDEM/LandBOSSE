@@ -21,6 +21,7 @@ import RoadsCost
 import SubstationCost
 import TransDistCost
 import CollectionCost
+import DevelopmentCost
 from itertools import product
 import pandas as pd
 import numpy as np
@@ -171,9 +172,13 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
 
     # calculate collection system costs
     print("Calculating collection system costs...")
-    collection_system_cost = CollectionCost.calculate_costs(pad_mount_transformer, num_turbines, project_size,
-                                                                  rotor_diameter, MV_thermal_backfill_mi,
-                                                                  rock_trenching_percent, MV_overhead_collector_mi)
+    collection_system_cost = CollectionCost.calculate_costs(pad_mount_transformer=pad_mount_transformer,
+                                                            num_turbines=num_turbines,
+                                                            project_size=project_size,
+                                                            rotor_diameter=rotor_diameter,
+                                                            MV_thermal_backfill_mi=MV_thermal_backfill_mi,
+                                                            rock_trenching_percent=rock_trenching_percent,
+                                                            MV_overhead_collector_mi=MV_overhead_collector_mi)
 
     # calculate erection costs
     print("Calculating erection costs...")
@@ -189,13 +194,18 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                                                                          wind_shear_exponent=wind_shear_exponent
                                                                          )
 
+    # calculate development costs -- based on user input right now
+    print ("Calculating development costs... ")
+    development_cost = DevelopmentCost.calculate_costs(development_cost=development)
+
     # set values in bos_cost data frame
     data_dict = {'Collection system': collection_system_cost,
               'Erection': erection_cost,
               'Foundations': foundation_cost,
               'Roads': road_cost,
               'Transmission and distribution': trans_dist_cost,
-              'Substation': substation_cost}
+              'Substation': substation_cost,
+              'Development': development_cost}
 
     for key in data_dict:
         for value in data_dict[key]['Type of cost']:
@@ -204,10 +214,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
             (data_dict[key]['Phase of construction'] == key) &
             (data_dict[key]['Type of cost'] == value), ['Cost USD']].values
 
-    bos_cost = save_cost_data(phase='Development',
-                              phase_cost=pd.DataFrame([[development]], columns=['Development cost USD']),
-                              bos_cost=bos_cost)
-
+    # sum total costs except management (management requires total of all other costs)
     project_value = float(bos_cost['Cost USD'].sum())
 
     # calculate management costs
