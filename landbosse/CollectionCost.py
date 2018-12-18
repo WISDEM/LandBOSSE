@@ -17,7 +17,6 @@ Return total collection system costs
 
 """
 
-import math
 import pandas as pd
 
 

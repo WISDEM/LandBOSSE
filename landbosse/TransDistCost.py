@@ -14,7 +14,6 @@ Return total transmission and distribution costs
 
 """
 
-import math
 import pandas as pd
 
 
