@@ -49,7 +49,6 @@ Estimate the amount of equipment needed for foundation construction based on fou
 Calculate the total foundation cost based on amount of equipment, amount of labor, amount of material, and price data
 
 """
-import math
 import pandas as pd
 import numpy as np
 import WeatherDelay as WD
@@ -64,14 +63,12 @@ cubicyd_per_cubicm = 1.30795
 ton_per_tonne = 0.907185
 
 
-def calculate_foundation_loads(component_data, tower_type, depth):
+def calculate_foundation_loads(component_data, depth):
     """
 
     :param component_data: data on components (weight, height, area, etc.)
-    :param rotor_diam:
-    :param hub_height:
-    :param turbine_rating:
-    :return:
+    :param depth: depth in meters
+    :return: foundation loads
     """
 
     # set exposure constants
@@ -82,13 +79,13 @@ def calculate_foundation_loads(component_data, tower_type, depth):
     z = component_data['Section height m']
 
     # get cross-sectional area
-    A_f = component_data['Surface area sq m']
+    a_f = component_data['Surface area sq m']
 
     # get coefficient of drag
-    C_d = component_data['Coeff drag (installed)']
+    c_d = component_data['Coeff drag (installed)']
 
     # get lever arm
-    L = component_data['Lever arm m']
+    l = component_data['Lever arm m']
 
     # get multipliers for tower and rotor
     multiplier_rotor = component_data['Multplier drag rotor']
@@ -100,29 +97,29 @@ def calculate_foundation_loads(component_data, tower_type, depth):
     # http://ir.uiowa.edu/cgi/viewcontent.cgi?article=2427&context=etd
 
     # calculate wind pressure
-    K_z = 2.01 * (z / z_g) ** (2 / a)  # exposure factor
-    K_d = 0.95  # wind directionality factor
-    K_zt = 1  # topographic factor
-    V = 52.5  # critical velocity in m/s
-    wind_pressure = 0.613 * K_z * K_zt * K_d * V ** 2
+    k_z = 2.01 * (z / z_g) ** (2 / a)  # exposure factor
+    k_d = 0.95  # wind directionality factor
+    k_zt = 1  # topographic factor
+    v = 52.5  # critical velocity in m/s
+    wind_pressure = 0.613 * k_z * k_zt * k_d * v ** 2
 
     # calculate wind loads on each tower component
-    G = 0.85  # gust factor
-    C_f = 0.6  # coefficient of force
-    F_t = (wind_pressure * G * C_f * A_f) * multiplier_tower
+    g = 0.85  # gust factor
+    c_f = 0.6  # coefficient of force
+    f_t = (wind_pressure * g * c_f * a_f) * multiplier_tower
 
     # calculate drag rotor
     rho = 1.225  # air density in kg/m^3
-    F_r = (0.5 * rho * C_d * A_f * V ** 2) * multiplier_rotor
+    f_r = (0.5 * rho * c_d * a_f * v ** 2) * multiplier_rotor
 
-    F = (F_t + F_r)
+    f = (f_t + f_r)
 
     # calculate dead load in N
     g = 9.8  # m / s ^ 2
-    F_dead = component_data['Mass tonne'].sum() * g * kg_per_tonne / (1.15)  # scaling factor to adjust dead load for uplift
+    f_dead = component_data['Mass tonne'].sum() * g * kg_per_tonne / 1.15  # scaling factor to adjust dead load for uplift
 
     # calculate moment from each component at base of tower
-    M_overturn = F * L
+    m_overturn = f * l
 
     safety_overturn = 1.5
     unit_weight_fill = 17.3e3  # in N / m^3
@@ -131,45 +128,45 @@ def calculate_foundation_loads(component_data, tower_type, depth):
     bearing_pressure = 203500 * 1.2  # N / m^2 # todo: update to user input
 
     # get total lateral load (N) and moment (N * m)
-    F_lat = F.sum()
-    M_overturn = M_overturn.sum()
+    f_lat = f.sum()
+    m_overturn = m_overturn.sum()
 
-    M_thrust = rated_thrust * max(L)
-    M_tot = max(M_thrust, M_overturn)
+    m_thrust = rated_thrust * max(l)
+    m_tot = max(m_thrust, m_overturn)
 
-    F_horiz = max(F_lat, rated_thrust)
+    f_horiz = max(f_lat, rated_thrust)
 
-    p = [(np.pi * depth * (2 / 3 * unit_weight_fill + 1 / 3 *unit_weight_concrete)),
+    p = [(np.pi * depth * (2 / 3 * unit_weight_fill + 1 / 3 * unit_weight_concrete)),
          0,
-         F_dead,
-         - (safety_overturn * (M_tot + F_horiz * depth))]
+         f_dead,
+         - (safety_overturn * (m_tot + f_horiz * depth))]
 
     # calculate foundation radius based on overturning moment
-    R = np.roots(p)
-    R = np.real(R[np.isreal(R)])[0]
+    r = np.roots(p)
+    r = np.real(r[np.isreal(r)])[0]
 
     # calculate foundation radius based on shear
-    foundation_vol = np.pi * R ** 2 * depth
-    V_1 = (foundation_vol * ((2 / 3 * unit_weight_fill + 1 / 3 * unit_weight_concrete)) + F_dead)
-    e = M_tot / V_1
-    R_2 = e * 3 / 2
+    foundation_vol = np.pi * r ** 2 * depth
+    v_1 = (foundation_vol * (2 / 3 * unit_weight_fill + 1 / 3 * unit_weight_concrete) + f_dead)
+    e = m_tot / v_1
+    r_2 = e * 3 / 2
 
     # calculate foundation radius based on bearing pressure
-    R_pick = max(R, R_2)
-    A_eff = V_1 / bearing_pressure
+    r_pick = max(r, r_2)
+    a_eff = v_1 / bearing_pressure
     x = Symbol('x')
-    R_3 = max(solve(2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - A_eff, x))
+    r_3 = max(solve(2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - a_eff, x))
 
     # pick the largest foundation radius based on all three foundation design criteria: moment, shear, bearing
-    R_pick = max(R_pick, R_3)
+    r_pick = max(r_pick, r_3)
 
-    foundation_loads = {'F_dead_kN': F_dead / 1e3,
-                        'F_horiz_kN': F_lat / 1e3,
-                        'M_tot_kN_m': M_tot / 1e3,
-                        'Radius_o_m': R,
-                        'Radius_s_m': R_2,
-                        'Radius_b_m': R_3,
-                        'Radius_m': R_pick}
+    foundation_loads = {'F_dead_kN': f_dead / 1e3,
+                        'F_horiz_kN': f_lat / 1e3,
+                        'M_tot_kN_m': m_tot / 1e3,
+                        'Radius_o_m': r,
+                        'Radius_s_m': r_2,
+                        'Radius_b_m': r_3,
+                        'Radius_m': r_pick}
 
     return foundation_loads
 
@@ -180,13 +177,12 @@ def determine_foundation_size(foundation_loads, depth):
     Assumes foundation made of concrete with 1 m thickness
 
     :param foundation_loads: dictionary of foundation loads (forces in N; moments in N*m)
-    :param buoyant_design: flag for buoyant design - currently unused
-    :param type_of_tower: flag for type of tower - currently unused
+    :param depth: depth of foundation (in meters)
     :return:
     """
 
-    R = float(foundation_loads['Radius_m'])
-    foundation_cubic_meters = np.pi * R ** 2 * depth * 0.4  # only compute the portion of the foundation that is composed of concrete (1/3 concrete; other portion is backfill)
+    r = float(foundation_loads['Radius_m'])
+    foundation_cubic_meters = np.pi * r ** 2 * depth * 0.4  # only compute the portion of the foundation that is composed of concrete (1/3 concrete; other portion is backfill)
 
     return foundation_cubic_meters
 
@@ -214,6 +210,7 @@ def estimate_material_needs(foundation_volume, num_turbines):
 def estimate_construction_time(throughput_operations, material_needs, duration_construction):
     """
 
+    :param throughput_operations:
     :param material_needs:
     :param duration_construction:
     :return:
@@ -246,6 +243,8 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
     :param start_delay: the delay from the start of the weather window for the operation of interest
     :param critical_wind_speed: the critical wind speed for determining wind delay
     :param operational_hrs_per_day: number of hours of operation per day
+    :param height_interest: height of interest for weather delay calculations
+    :param wind_shear_exponent: wind shear exponent
     :return: the total wind delay (in hours) as estimated based on the input parameters
     """
 
@@ -269,7 +268,7 @@ def calculate_weather_delay(weather_window, duration_construction, start_delay, 
 
 
 def calculate_costs(input_data, num_turbines, construction_time, weather_window, operational_hrs_per_day,
-                    overtime_multiplier, wind_shear_exponent, tower_type, depth):
+                    overtime_multiplier, wind_shear_exponent, depth):
     """
 
     :param input_data:
@@ -277,10 +276,13 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
     :param construction_time:
     :param weather_window:
     :param operational_hrs_per_day:
+    :param overtime_multiplier:
+    :param wind_shear_exponent:
+    :param depth:
     :return:
     """
 
-    foundation_loads = calculate_foundation_loads(component_data=input_data['components'], tower_type=tower_type, depth=depth)
+    foundation_loads = calculate_foundation_loads(component_data=input_data['components'], depth=depth)
     # print(foundation_loads)
     foundation_volume = determine_foundation_size(foundation_loads=foundation_loads, depth=depth)
     # print(foundation_volume)
@@ -306,8 +308,8 @@ def calculate_costs(input_data, num_turbines, construction_time, weather_window,
 
     labor_equip_data = pd.merge(material_vol, input_data['rsmeans'], on=['Material type ID'])
     per_diem = operation_data['Number of workers'] * operation_data['Number of crews'] * (operation_data['Time construct days'] + round(operation_data['Time construct days'] / 7)) * 144
-    where_are_NaNs = np.isnan(per_diem)
-    per_diem[where_are_NaNs] = 0
+    where_are_na_ns = np.isnan(per_diem)
+    per_diem[where_are_na_ns] = 0
     labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * overtime_multiplier + per_diem) * wind_multiplier
 
     foundation_cost = labor_equip_data[['Operation ID', 'Type of cost', 'Cost USD']]

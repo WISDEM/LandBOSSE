@@ -141,26 +141,26 @@ def calculate_erection_operation_time(project_specs, project_data, construct_dur
 
             # calculate max permissible wind speed
             # equation for calculating permissible wind speed:
-            # vmax = max_TAB * sqrt(1.2 * mh / AW), where
+            # vmax = max_TAB * sqrt(1.2 * mh / aw), where
             # mh = hoist load
-            # AW = area exposed to wind = surface area * coeff drag
+            # aw = area exposed to wind = surface area * coeff drag
             # 1.2 = constant in m^2 / t
-            # vmax_TAB = maximum load speed per load chart
+            # vmax_tab = maximum load speed per load chart
             # source: pg. 33 of Liebherr
 
             mh = component_group['Mass tonne']
-            AW = component_group['Surface area sq m'] * component_group['Coeff drag']
-            vmax_TAB = crane['Max wind speed m per s']
-            vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
+            aw = component_group['Surface area sq m'] * component_group['Coeff drag']
+            vmax_tab = crane['Max wind speed m per s']
+            vmax_calc = vmax_tab * sqrt(1.2 * mh / aw)
 
-            # if vmax_calc is less than vmax_TAB then vmax_calc, otherwise vmax_TAB (based on pg. 33 of Liebherr)
-            # todo: check vmax - should it be set to calculated value rather than vmax_TAB if greater?
+            # if vmax_calc is less than vmax_tab then vmax_calc, otherwise vmax_tab (based on pg. 33 of Liebherr)
+            # todo: check vmax - should it be set to calculated value rather than vmax_tab if greater?
             component_group_new = pd.DataFrame(component_group,
                                                columns=list(component_group.columns.values) + ['vmax',
                                                                                                'Crane name',
                                                                                                'Boom system',
                                                                                                'crane_bool'])
-            component_group_new['vmax'] = list((min(vmax_TAB, x) for x in vmax_calc))
+            component_group_new['vmax'] = list((min(vmax_tab, x) for x in vmax_calc))
             component_group_new['Crane name'] = crane['Crane name']
             component_group_new['Boom system'] = crane['Boom system']
             component_group_new['crane_bool'] = bool_list
@@ -301,26 +301,26 @@ def calculate_offload_operation_time(project_specs, project_data, operational_co
 
         # calculate max permissible wind speed
         # equation for calculating permissible wind speed:
-        # vmax = max_TAB * sqrt(1.2 * mh / AW), where
+        # vmax = max_TAB * sqrt(1.2 * mh / aw), where
         # mh = hoist load
-        # AW = area exposed to wind = surface area * coeff drag
+        # aw = area exposed to wind = surface area * coeff drag
         # 1.2 = constant in m^2 / t
-        # vmax_TAB = maximum load speed per load chart
+        # vmax_tab = maximum load speed per load chart
         # source: pg. 33 of Liebherr
 
         mh = component_group['Mass tonne'] / 2  # divided by two because assuming two offload cranes are used
-        AW = component_group['Surface area sq m'] * component_group['Coeff drag']
-        vmax_TAB = crane['Max wind speed m per s']
-        vmax_calc = vmax_TAB * sqrt(1.2 * mh / AW)
+        aw = component_group['Surface area sq m'] * component_group['Coeff drag']
+        vmax_tab = crane['Max wind speed m per s']
+        vmax_calc = vmax_tab * sqrt(1.2 * mh / aw)
 
-        # if vmax_calc is less than vmax_TAB then vmax_calc, otherwise vmax_TAB (based on pg. 33 of Liebherr)
-        # todo: check vmax - should it be set to calculated value rather than vmax_TAB if greater?
+        # if vmax_calc is less than vmax_tab then vmax_calc, otherwise vmax_tab (based on pg. 33 of Liebherr)
+        # todo: check vmax - should it be set to calculated value rather than vmax_tab if greater?
         component_group_new = pd.DataFrame(component_group,
                                            columns=list(component_group.columns.values) + ['vmax',
                                                                                            'Crane name',
                                                                                            'Boom system',
                                                                                            'crane_bool'])
-        component_group_new['vmax'] = list((min(vmax_TAB, x) for x in vmax_calc))
+        component_group_new['vmax'] = list((min(vmax_tab, x) for x in vmax_calc))
         component_group_new['Crane name'] = crane['Crane name']
         component_group_new['Boom system'] = crane['Boom system']
         component_group_new['crane_bool'] = bool_list
@@ -624,7 +624,7 @@ def find_minimum_cost_cranes(separate_basetop, same_basetop, allow_same_flag):
 
 
 def calculate_costs(project_specs, project_data, hour_day, time_construct, weather_window, construction_time,
-                    rate_of_deliveries, overtime_multiplier, project_size, wind_shear_exponent):
+                    rate_of_deliveries, overtime_multiplier, wind_shear_exponent):
     """
     Calculates BOS costs for erection including selecting cranes that can lift components, incorporating wind delays,
     and finding the least cost crane options for erection.
@@ -637,7 +637,6 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
     :param construction_time: time allowed for construction (in months)
     :param rate_of_deliveries: rate of deliveries (number of turbines per week)
     :param overtime_multiplier: multiplier for overtime work (working 60 hr/wk vs 40 hr/wk)
-    :param project_size: project size in MW
     :param wind_shear_exponent: exponent used for wind shear calculations
      :return:
     """
@@ -694,26 +693,6 @@ def calculate_costs(project_specs, project_data, hour_day, time_construct, weath
     erection_wind_mult = erection_wind_mult.reset_index(drop=True).mean()
 
     return erection_cost_output, erection_wind_mult
-
-if __name__ == "__main__":
-    crane_specs_project = calculate_erection_operation_time(project_data=data_csv)
-
-    weather_window_project = WD.create_weather_window(weather_data=data_csv['weather'],
-                                                      season_id=season_dict,
-                                                      season_construct=['spring', 'summer'],
-                                                      time_construct='normal')
-
-    possible_cranes = calculate_wind_delay_by_component(crane_specs=crane_specs_project,
-                                                        weather_window=weather_window_project)
-
-    [separate_basetop_cranes, same_basetop_cranes] = aggregate_erection_costs(crane_data=possible_cranes,
-                                                                              project_data=data_csv)
-
-    crane_cost = find_minimum_cost_cranes(separate_basetop=separate_basetop_cranes, same_basetop=same_basetop_cranes)
-
-    # for debugging
-    #print(crane_cost[['Operation', 'Crane name', 'Boom system']])
-
 
 
 # OTHER NOTES ABOUT WEATHER DELAYS
