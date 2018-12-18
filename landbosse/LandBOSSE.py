@@ -1,8 +1,8 @@
 """
-BOSModel.py
+LandBOSSE.py
 Created by Annika Eberle and Owen Roberts on Feb. 28, 2018
 
-Calculates the following balance of system costs for land-based wind projects:
+Calculates the following balance-of-system costs for utility-scale, land-based wind projects:
 
 - Development (currently input by the user)
 - Management
@@ -10,7 +10,8 @@ Calculates the following balance of system costs for land-based wind projects:
 - Foundations
 - Erection
 - Collection system
-- Transmission and interconnection
+- Transmission and distribution
+- Substation
 """
 
 import WeatherDelay as WD
@@ -27,7 +28,6 @@ import pandas as pd
 import numpy as np
 import os
 import seaborn as sns
-import matplotlib.pyplot as plt
 
 # constants
 kilowatt_per_megawatt = 1000
@@ -35,15 +35,33 @@ development_cost = 5e6  # value input by the user (generally ranges from $3-10 m
 per_diem = 144  # USD per day
 season_construct = ['spring', 'summer']
 time_construct = 'normal'
-construction_time_months = 13
+construction_time_months = 9
 num_hwy_permits = 1  # assuming number of highway permits = 1
 
-# financial parameters
+# default financial parameters
 markup_constants = {'contingency': 0.03,
                     'warranty_management': 0.0002,
                     'sales_and_use_tax': 0,
                     'overhead': 0.05,
                     'profit_margin': 0.05}
+
+# default electrical parameters
+interconnect_voltage = 137
+pad_mount_transformer = True
+MV_thermal_backfill_mi = 0
+MV_overhead_collector_mi = 0
+rock_trenching_percent = 0.1
+distance_to_interconnect = 5
+new_switchyard = True
+
+# default road parameters
+road_width_ft = 20  # feet 16
+road_thickness_in = 8  # inches
+crane_width_m = 12.2  # meters 10.7
+num_access_roads = 5
+
+# default labor parameters
+overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
 
 # dictionary of seasons
 season_dict = {'winter':   [12, 1, 2],
@@ -97,24 +115,6 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
     foundation_depth = float(project_data['Foundation depth m'])
     project_size = num_turbines * turbine_rating_kilowatt / kilowatt_per_megawatt  # project size in megawatts
 
-    # default electrical parameters
-    interconnect_voltage = 137
-    pad_mount_transformer = True
-    MV_thermal_backfill_mi = 0
-    MV_overhead_collector_mi = 0
-    rock_trenching_percent = 0.1
-    distance_to_interconnect = 5
-    new_switchyard = True
-
-    # default road parameters
-    road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter)
-    road_width_ft = 20  # feet 16
-    road_thickness_in = 8  # inches
-    crane_width_m = 12.2  # meters 10.7
-    num_access_roads = 5
-
-    # default labor parameters
-    overtime_multiplier = 1.4  # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
 
     # create data frame to store cost data for each module
     bos_cost = pd.DataFrame(list(product(phase_list, type_of_cost)), columns=['Phase of construction', 'Type of cost'])
@@ -130,6 +130,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
 
     # calculate road costs
     print("Calculating road costs...")
+    road_length_m = ((np.sqrt(num_turbines) - 1) ** 2 * turbine_spacing * rotor_diameter)
     [road_cost, road_wind_mult] = RoadsCost.calculate_costs(road_length=road_length_m,
                                                             road_width=road_width_ft,
                                                             road_thickness=road_thickness_in,
