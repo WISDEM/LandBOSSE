@@ -18,6 +18,9 @@ import ErectionCost
 import ManagementCost
 import FoundationCost
 import RoadsCost
+import SubstationCost
+import TransDistCost
+import CollectionCost
 from itertools import product
 import pandas as pd
 import numpy as np
@@ -56,7 +59,7 @@ phase_list = {'Collection system': '',
               'Management': '',
               'Foundations': '',
               'Roads': '',
-              'Transmission and interconnection': '',
+              'Transmission and distribution': '',
               'Substation': ''}
 
 type_of_cost = ['Labor', 'Equipment rental', 'Mobilization', 'Fuel', 'Materials', 'Development', 'Management', 'Other']
@@ -154,57 +157,23 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                                                                              tower_type=tower_type,
                                                                              depth=foundation_depth)
 
-    # set values in bos_cost data frame - since formatting is already correct for foundation_cost, then overwrite values
-    for value in foundation_cost['Type of cost']:
-        bos_cost.loc[(bos_cost['Phase of construction'] == 'Foundations') &
-                     (bos_cost['Type of cost'] == value), ['Cost USD']] = foundation_cost.loc[
-        (foundation_cost['Phase of construction'] == 'Foundations') &
-        (foundation_cost['Type of cost'] == value), ['Cost USD']].values
 
-    # set values in bos_cost data frame - since formatting is already correct for road_cost, then overwrite values
-    for value in road_cost['Type of cost']:
-        bos_cost.loc[(bos_cost['Phase of construction'] == 'Roads') &
-                     (bos_cost['Type of cost'] == value), ['Cost USD']] = road_cost.loc[
-        (road_cost['Phase of construction'] == 'Roads') &
-        (road_cost['Type of cost'] == value), ['Cost USD']].values
+    # calculate substation costs
+    print("Calculating substation costs...")
+    substation_cost = SubstationCost.calculate_costs(interconnect_voltage=interconnect_voltage,
+                                                     project_size=project_size)
 
-    # todo: move electrical calculations to separate modules
-    print("Calculating electrical costs...")
-    substation = 11652 * (interconnect_voltage + project_size) + 11795 * (project_size ** 0.3549) + 1526800
+    # calculate transmission and distribution costs
+    print("Calculating transmission and distribution costs...")
+    trans_dist_cost = TransDistCost.calculate_costs(distance_to_interconnect=distance_to_interconnect,
+                                                       new_switchyard=new_switchyard,
+                                                       interconnect_voltage=interconnect_voltage)
 
-    if distance_to_interconnect == 0:
-        trans_interconnect = 0
-    else:
-        if new_switchyard is True:
-            interconnect_adder = 18115 * interconnect_voltage + 165944
-        else:
-            interconnect_adder = 0
-        trans_interconnect = ((1176 * interconnect_voltage + 218257) * (distance_to_interconnect ** (-0.1063))
-                              * distance_to_interconnect) + interconnect_adder
-
-    if pad_mount_transformer is True:
-        multipier_material = 66733.4
-    else:
-        multipier_material = 27088.4
-    electrical_materials = num_turbines * multipier_material + int(project_size / 25) * 35375 + \
-                         int(project_size / 100) * 50000 + rotor_diameter * num_turbines * 545.4 + \
-                         MV_thermal_backfill_mi * 5 + 41945
-    if project_size > 200:
-        material_adder = 300000
-    else:
-        material_adder = 155000
-    electrical_installation = int(project_size / 25) * 14985 + material_adder + \
-                           num_turbines * (7059.3 + rotor_diameter * (352.4 + 297 * rock_trenching_percent)) + \
-                           MV_overhead_collector_mi * 200000 + 10000
-
-    bos_cost.loc[(bos_cost['Phase of construction'] == 'Transmission and interconnection') &
-                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = trans_interconnect
-
-    bos_cost.loc[(bos_cost['Phase of construction'] == 'Substation') &
-                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = substation
-
-    bos_cost.loc[(bos_cost['Phase of construction'] == 'Collection system') &
-                 (bos_cost['Type of cost'] == 'Other'), ['Cost USD']] = electrical_installation + electrical_materials
+    # calculate collection system costs
+    print("Calculating collection system costs...")
+    collection_system_cost = CollectionCost.calculate_costs(pad_mount_transformer, num_turbines, project_size,
+                                                                  rotor_diameter, MV_thermal_backfill_mi,
+                                                                  rock_trenching_percent, MV_overhead_collector_mi)
 
     # calculate erection costs
     print("Calculating erection costs...")
@@ -220,11 +189,20 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
                                                                          wind_shear_exponent=wind_shear_exponent
                                                                          )
 
-    for value in erection_cost['Type of cost']:
-        bos_cost.loc[(bos_cost['Phase of construction'] == 'Erection') &
-                     (bos_cost['Type of cost'] == value), ['Cost USD']] = erection_cost.loc[
-        (erection_cost['Phase of construction'] == 'Erection') &
-        (erection_cost['Type of cost'] == value), ['Cost USD']].values
+    # set values in bos_cost data frame
+    data_dict = {'Collection system': collection_system_cost,
+              'Erection': erection_cost,
+              'Foundations': foundation_cost,
+              'Roads': road_cost,
+              'Transmission and distribution': trans_dist_cost,
+              'Substation': substation_cost}
+
+    for key in data_dict:
+        for value in data_dict[key]['Type of cost']:
+            bos_cost.loc[(bos_cost['Phase of construction'] == key) &
+                         (bos_cost['Type of cost'] == value), ['Cost USD']] = data_dict[key].loc[
+            (data_dict[key]['Phase of construction'] == key) &
+            (data_dict[key]['Type of cost'] == value), ['Cost USD']].values
 
     bos_cost = save_cost_data(phase='Development',
                               phase_cost=pd.DataFrame([[development]], columns=['Development cost USD']),
@@ -313,7 +291,7 @@ if __name__ == '__main__':
         scenario = project_data['Project ID'][i]
         height = project_data['Hub height m'][i]
         scenario_filename = scenario + ".csv"
-        print(scenario)
+        print("\n" + scenario)
         #print(height)
 
         # define model inputs
@@ -343,21 +321,21 @@ if __name__ == '__main__':
         scenario_data['Scenario'] = ([scenario] * 8)
         scenario_data['Phase of construction'] = sum_bos.index.values.tolist()
         scenario_data['Cost USD'] = sum_bos['Cost USD'].values.tolist()
-        scenario_data_compiled = scenario_data_compiled.append(scenario_data)
+        scenario_data_compiled = scenario_data_compiled.append(scenario_data, sort=False)
 
         # add row for total costs (sum of all module costs)
         scenario_sum = pd.DataFrame(columns=["Scenario", "Phase of construction", "Cost USD"])
         scenario_sum['Scenario'] = [scenario] * 3
         scenario_sum['Phase of construction'] = ['Total', 'Total per turbine', 'Total per MW']
         scenario_sum['Cost USD'] = [scenario_data['Cost USD'].sum(), scenario_data['Cost USD'].sum()/num_turbines, scenario_data['Cost USD'].sum()/project_size]
-        scenario_data_compiled = scenario_data_compiled.append(scenario_sum)
+        scenario_data_compiled = scenario_data_compiled.append(scenario_sum, sort=False)
 
         # other outputs
         scenario_weather = pd.DataFrame(columns=["Scenario", "Parameter", "Value"])
         scenario_weather['Scenario'] = [scenario] * 2
         scenario_weather['Parameter'] = ['Wind delay multiplier', 'Road length m']
         scenario_weather['Value'] = [wind_mult_1.iloc[0]['Wind multiplier'], road_length]
-        other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather)
+        other_scenario_data_compiled = other_scenario_data_compiled.append(scenario_weather, sort=False)
 
         # save data to csv files
         scenario_data_compiled.to_csv(os.path.join(output_data_path, file_name_main_outputs), index=False)
@@ -368,7 +346,7 @@ if __name__ == '__main__':
         scenario_data_full['Phase of construction'] = bos_cost_1['Phase of construction'].values.tolist()
         scenario_data_full['Type of cost'] = bos_cost_1['Type of cost'].values.tolist()
         scenario_data_full['Cost USD'] = bos_cost_1['Cost USD'].values.tolist()
-        scenario_data_full_compiled = scenario_data_full_compiled.append(scenario_data_full)
+        scenario_data_full_compiled = scenario_data_full_compiled.append(scenario_data_full, sort=False)
 
     # data frame manipulation for plotting
     split_names = pd.DataFrame(scenario_data_full_compiled['Scenario'].str.split('_', expand=True))
