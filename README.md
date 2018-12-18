@@ -6,7 +6,7 @@ Author: [A. Eberle](annika.eberle@nrel.gov)
 
 ## Prerequisites
 
-Python, NumPy, SciPy
+Python, numpy, scipy, shapely, pandas, seaborn
 
 ## Installation
 
@@ -20,7 +20,7 @@ Install LandBOSSE with the following command.
 To check if installation was successful try to import the module
 
     $ python
-    > import rotorse.rotor
+    > import ErectionCost
 
 You may also run the unit tests.
 
@@ -29,7 +29,6 @@ You may also run the unit tests.
 
 ## Detailed Documentation
 
-[describe where to find documentation for your code]
 Access the online version at <http://wisdem.github.io/CCBlade/>
 
 
