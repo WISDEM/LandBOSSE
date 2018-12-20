@@ -7,11 +7,19 @@ import seaborn as sns
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
 
 # define file paths for inputs and outputs
-# current NREL filepath for inputs: "//nrel.gov/shared/Wind/Public/Projects/Projects T-Z/TAMA/WTT/BOS modeling/current_model_inputs_and_example_outputs/"
-# suggest creating a local copy of this folder when you run the model
-input_data_path = "/Users/aeberle/Desktop/bos_model/inputs_open_release_real/"
-component_folder = "component_data_proprietary/"  # subfolder for component data
-output_data_path = "/Users/aeberle/Desktop/bos_model/outputs/"
+cwd = os.getcwd()
+input_data_path = os.path.join(cwd, "inputs")
+component_folder = os.path.join(input_data_path, "component_data")  # subfolder for component data
+output_data_path = os.path.join(cwd, "outputs")
+
+# create output folder if it doesn't already exist
+if os.path.isdir(output_data_path) is False:
+    try:
+        os.mkdir(output_data_path)
+    except OSError:
+        print("Creation of the directory %s failed" % output_data_path)
+    else:
+        print("Successfully created the directory %s " % output_data_path)
 
 # define file names for outputs
 file_name_main_outputs = 'output_100turbine.csv'  # main outputs are costs
@@ -38,7 +46,7 @@ for i in range(0, len(project_data)):
     file_list = {'crane_specs': os.path.join(input_data_path, "crane_specs_columnO-proprietary.csv"),
                  'equip': os.path.join(input_data_path, "equip.csv"),
                  'crew': os.path.join(input_data_path, "crews.csv"),
-                 'components': os.path.join(input_data_path + component_folder, scenario_filename),
+                 'components': os.path.join(component_folder, scenario_filename),
                  'project': project_path,
                  'equip_price': os.path.join(input_data_path, "equip_price_proprietary.csv"),
                  'crew_price': os.path.join(input_data_path, "crew_price_proprietary.csv"),
@@ -98,21 +106,21 @@ data_total = scenario_data_full_compiled.groupby(by=['Scenario']).sum().reset_in
 sns.set()
 sns.set_style("darkgrid")
 sns.set_context("poster")
-phase_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total_by_phase, hue="Phase of construction",
-                            kind="bar", size=8, palette=sns.cubehelix_palette(8, start=0.3, rot=-.75),
-                            margin_titles=True)
+phase_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total_by_phase, hue="Phase of construction",
+                         kind="bar", height=8, palette=sns.cubehelix_palette(8, start=0.3, rot=-.75),
+                         margin_titles=True)
 phase_plot.fig.subplots_adjust(top=0.9)
 phase_plot.fig.suptitle('Cost by Phase', fontsize=16)
 phase_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_phase_construction.png"))
 
-type_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total_by_type, hue="Type of cost",
-                           kind="bar", size=8, palette=sns.cubehelix_palette(8))
+type_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total_by_type, hue="Type of cost",
+                        kind="bar", height=8, palette=sns.cubehelix_palette(8))
 type_plot.fig.subplots_adjust(top=0.9)
 type_plot.fig.suptitle('Cost by Type', fontsize=16)
 type_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_type_cost.png"))
 
-total_plot = sns.factorplot(x="Scenario", y="Cost USD", data=data_total, kind="bar", size=8,
-                            palette=sns.color_palette("muted"))
+total_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total, kind="bar", height=8,
+                         palette=sns.color_palette("muted"))
 total_plot.fig.subplots_adjust(top=0.9)
 total_plot.fig.suptitle('Total Cost', fontsize=16)
 total_plot.savefig(os.path.join(output_data_path, "scenario_total.png"))
