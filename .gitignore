@@ -4,3 +4,6 @@
 *.iml
 
 *.xml
+landbosse/outputs/
+landbosse/inputs/
+
