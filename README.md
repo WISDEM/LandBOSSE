@@ -1,6 +1,6 @@
 # LandBOSSE
 
-This is a design-based land-based wind power plant balance of system cost model.
+This is a balance-of-system cost model for land-based wind plants.
 
 Author: [A. Eberle](annika.eberle@nrel.gov)
 
