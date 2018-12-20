@@ -14,18 +14,19 @@ Calculates the following balance-of-system costs for utility-scale, land-based w
 - Substation
 """
 
-import WeatherDelay as WD
-import ErectionCost
-import ManagementCost
-import FoundationCost
-import RoadsCost
-import SubstationCost
-import TransDistCost
-import CollectionCost
-import DevelopmentCost
+from landbosse import WeatherDelay as WD
+from landbosse import ErectionCost
+from landbosse import ManagementCost
+from landbosse import FoundationCost
+from landbosse import RoadsCost
+from landbosse import SubstationCost
+from landbosse import TransDistCost
+from landbosse import CollectionCost
+from landbosse import DevelopmentCost
 from itertools import product
 import pandas as pd
 import numpy as np
+import warnings
 
 # constants
 kilowatt_per_megawatt = 1000
@@ -97,6 +98,15 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
     data_csv = dict()
     for file in files:
         data_csv[file] = pd.DataFrame(pd.read_csv(files[file], engine='python'))
+
+    # check for fake data that has not been replaced; proprietary data that are not available are flagged with 99
+    check_files = [True in [99 in data_csv[key][col].values for col in data_csv[key].columns] for key in data_csv.keys()]
+    proprietary_flag = True in check_files
+    if proprietary_flag is True:
+        warnings.warn("WARNING: Flags for fake data were found in the input data files. Make sure you replace 99 flags with real data. Check output carefully to ensure results are reasonable.", category=Warning)
+        check_results_carefully = 1
+    else:
+        check_results_carefully = 0
 
     # extract project parameters from input data
     project_data = data_csv['project'].where((data_csv['project']['Project ID'] == scenario_name) & (data_csv['project']['Hub height m'] == scenario_height))
@@ -246,7 +256,7 @@ def calculate_bos_cost(files, scenario_name, scenario_height, development):
 
     #print(wind_multiplier)
 
-    return bos_cost, wind_multiplier, road_length_m, num_turbines, project_size
+    return bos_cost, wind_multiplier, road_length_m, num_turbines, project_size, check_results_carefully
 
 
 def save_cost_data(phase, phase_cost, bos_cost):
