@@ -2,6 +2,7 @@ import LandBOSSE
 import pandas as pd
 import os
 import seaborn as sns
+import warnings
 
 # set development cost
 development_cost = 5e6  # value input by the user (generally ranges from $3-10 million)
@@ -55,10 +56,10 @@ for i in range(0, len(project_data)):
                  'rsmeans': os.path.join(input_data_path, "rsmeans_data_proprietary.csv")}
 
     # execute BOS model
-    [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size] = LandBOSSE.calculate_bos_cost(files=file_list,
-                                                                                                      scenario_name=scenario,
-                                                                                                      scenario_height=height,
-                                                                                                      development=development_cost)
+    [bos_cost_1, wind_mult_1, road_length, num_turbines, project_size, check_check_results] = LandBOSSE.calculate_bos_cost(files=file_list,
+                                                                                                                           scenario_name=scenario,
+                                                                                                                           scenario_height=height,
+                                                                                                                           development=development_cost)
 
     # compile results into output data frames
     sum_bos = bos_cost_1.groupby(by="Phase of construction").sum()
@@ -94,6 +95,15 @@ for i in range(0, len(project_data)):
     scenario_data_full['Cost USD'] = bos_cost_1['Cost USD'].values.tolist()
     scenario_data_full_compiled = scenario_data_full_compiled.append(scenario_data_full, sort=False)
 
+    output_list = [os.path.join(output_data_path, file_name_main_outputs), os.path.join(output_data_path, file_name_other_outputs)]
+
+    for filename in output_list:
+        if check_check_results == 1:
+            with open(filename, 'r+') as f:
+                content = 'WARNING: Flags for fake data were found in the input data files. Make sure you replace 99 flags with real data. Check output carefully to ensure results are reasonable. \n'
+                f.seek(0)
+                f.write(content)
+
 # data frame manipulation for plotting
 split_names = pd.DataFrame(scenario_data_full_compiled['Scenario'].str.split('_', expand=True))
 scenario_data_full_compiled['Hub height'] = split_names[1]
@@ -111,16 +121,32 @@ phase_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total_by_phase, h
                          margin_titles=True)
 phase_plot.fig.subplots_adjust(top=0.9)
 phase_plot.fig.suptitle('Cost by Phase', fontsize=16)
-phase_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_phase_construction.png"))
 
 type_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total_by_type, hue="Type of cost",
                         kind="bar", height=8, palette=sns.cubehelix_palette(8))
 type_plot.fig.subplots_adjust(top=0.9)
 type_plot.fig.suptitle('Cost by Type', fontsize=16)
-type_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_type_cost.png"))
 
 total_plot = sns.catplot(x="Scenario", y="Cost USD", data=data_total, kind="bar", height=8,
                          palette=sns.color_palette("muted"))
 total_plot.fig.subplots_adjust(top=0.9)
 total_plot.fig.suptitle('Total Cost', fontsize=16)
+
+# add watermark to figures if fake data flags found in input files
+if check_check_results == 1:
+    warnings.warn(
+        "WARNING: Flags for fake data were found in the input data files. Make sure you replace 99 flags with real data. Check output carefully to ensure results are reasonable.",
+        category=Warning)
+    type_plot.fig.text(0.95, 0.05, 'WARNING: Flags for fake data were found in the input data files. \n Make sure you replace 99 flags with real data. \n Check output carefully to ensure results are reasonable.',
+                         fontsize=50, color='gray',
+                         ha='left', va='top', alpha=0.5)
+    phase_plot.fig.text(0.95, 0.05, 'WARNING: Flags for fake data were found in the input data files. \n Make sure you replace 99 flags with real data. \n Check output carefully to ensure results are reasonable.',
+                         fontsize=50, color='gray',
+                         ha='left', va='top', alpha=0.5)
+    total_plot.fig.text(0.95, 0.05, 'WARNING: Flags for fake data were found in the input data files. \n Make sure you replace 99 flags with real data. \n Check output carefully to ensure results are reasonable.',
+                         fontsize=50, color='gray',
+                         ha='left', va='top', alpha=0.5)
+
+phase_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_phase_construction.png"))
+type_plot.savefig(os.path.join(output_data_path, "scenario_totals_by_type_cost.png"))
 total_plot.savefig(os.path.join(output_data_path, "scenario_total.png"))
