@@ -20,11 +20,11 @@ Install LandBOSSE with the following command.
 To check if installation was successful try to import the module
 
     $ python
-    > import ErectionCost
+    > from landbosse import ErectionCost
 
 
 ## Detailed Documentation
 
-Access to detailed documentation is not yet available online. 
+Access to detailed documentation is not yet available online. A link will be posted here when it is released.
 
 

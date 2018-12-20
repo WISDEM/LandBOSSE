@@ -14,15 +14,15 @@ Calculates the following balance-of-system costs for utility-scale, land-based w
 - Substation
 """
 
-import WeatherDelay as WD
-import ErectionCost
-import ManagementCost
-import FoundationCost
-import RoadsCost
-import SubstationCost
-import TransDistCost
-import CollectionCost
-import DevelopmentCost
+from landbosse import WeatherDelay as WD
+from landbosse import ErectionCost
+from landbosse import ManagementCost
+from landbosse import FoundationCost
+from landbosse import RoadsCost
+from landbosse import SubstationCost
+from landbosse import TransDistCost
+from landbosse import CollectionCost
+from landbosse import DevelopmentCost
 from itertools import product
 import pandas as pd
 import numpy as np

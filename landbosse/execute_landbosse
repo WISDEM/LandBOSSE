@@ -1,4 +1,4 @@
-import LandBOSSE
+from landbosse import LandBOSSE
 import pandas as pd
 import os
 import seaborn as sns

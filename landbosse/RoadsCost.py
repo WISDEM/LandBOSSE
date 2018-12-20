@@ -54,7 +54,7 @@ Return total road costs by type of cost
 import pandas as pd
 import numpy as np
 import math
-import WeatherDelay as WD
+from landbosse import WeatherDelay as WD
 
 # conversion factors
 meters_per_foot = 0.3
