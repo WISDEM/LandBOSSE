@@ -1,0 +1,9 @@
+Material type ID,Material price USD per unit,Unit,Notes
+unique identifier for the material ,price of material per unit ,unit of measure used for cost,
+Concrete 3000 psi,99,cubic yard,"Source RSMeans 2016 - Price includes aggregate, sand, cement, water, and delivery overhead and profit not included"
+Concrete 5000 psi,99,cubic yard,"Source RSMeans 2016 - Price includes aggregate, sand, cement, water, and delivery overhead and profit not included"
+Concrete 8000 psi,99,cubic yard,"Source RSMeans 2016 - Price includes aggregate, sand, cement, water, and delivery overhead and profit not included"
+Steel - rebar,99,ton (short),"Source RSMeans 2016 - #3-#18 bars delivered, does not include handling (cranework)"
+Road base - 3/4 inch crushed stone,99,Loose cubic yard,Source RSMeans 2016 31 05 16.10 0320
+Excavated dirt,99,cubic yard,
+Backfill,99,cubic yard,

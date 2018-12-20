@@ -1,0 +1,16 @@
+Equipment ID,Operation ,Equipment name,Number of equipment
+E1,Base,500t crawler,1
+E1,Base,50t Truck crane,1
+E1,Top,500t crawler,1
+E1,Top,50t Truck crane,2
+E2,Top,600t crawler,1
+E2,Top,50t Truck crane,2
+E2,Top,100t RT,2
+E3,Top,750t crawler,1
+E3,Top,100t RT,2
+E4,Top,1000t crawler,1
+E4,Top,100t RT,2
+ST1,Top,200t mobile,1
+ST1,Top,100t RT,2
+OL1,Offload,75t mobile,2
+OL2,Offload,200t mobile,2
