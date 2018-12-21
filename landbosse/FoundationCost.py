@@ -51,7 +51,7 @@ Calculate the total foundation cost based on amount of equipment, amount of labo
 """
 import pandas as pd
 import numpy as np
-import WeatherDelay as WD
+from landbosse import WeatherDelay as WD
 from sympy.solvers import solve
 from sympy import Symbol
 

@@ -1,12 +1,12 @@
 # LandBOSSE
 
-This is a design-based land-based wind power plant balance of system cost model.
+This is a balance-of-system cost model for land-based wind plants.
 
 Author: [A. Eberle](annika.eberle@nrel.gov)
 
 ## Prerequisites
 
-Python, numpy, scipy, shapely, pandas, seaborn
+Python, numpy, scipy, shapely, pandas, seaborn, sympy
 
 ## Installation
 
@@ -20,15 +20,11 @@ Install LandBOSSE with the following command.
 To check if installation was successful try to import the module
 
     $ python
-    > import ErectionCost
-
-You may also run the unit tests.
-
-    $ python src/rotorse/test/test_rotor_gradients.py
+    > from landbosse import ErectionCost
 
 
 ## Detailed Documentation
 
-Access the online version at <http://wisdem.github.io/CCBlade/>
+Access to detailed documentation is not yet available online. A link will be posted here when it is released.
 
 

@@ -51,7 +51,7 @@ import numpy as np
 from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-import WeatherDelay as WD
+from landbosse import WeatherDelay as WD
 import sys
 
 # constants
