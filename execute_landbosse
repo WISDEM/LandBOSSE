@@ -9,9 +9,9 @@ development_cost = 5e6  # value input by the user (generally ranges from $3-10 m
 
 # define file paths for inputs and outputs
 cwd = os.getcwd()
-input_data_path = os.path.join(cwd, "inputs")
+input_data_path = os.path.join(cwd, "landbosse", "inputs")
 component_folder = os.path.join(input_data_path, "component_data")  # subfolder for component data
-output_data_path = os.path.join(cwd, "outputs")
+output_data_path = os.path.join(cwd, "landbosse", "outputs")
 
 # create output folder if it doesn't already exist
 if os.path.isdir(output_data_path) is False:
