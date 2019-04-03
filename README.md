@@ -2,18 +2,17 @@
 
 This is a balance-of-system cost model for land-based wind plants.
 
-Author: [A. Eberle](annika.eberle@nrel.gov)
+Author: [NREL WISDEM Team](mailto:systems.engineering@nrel.gov) 
 
-## Prerequisites
+## Documentation
 
-Python, numpy, scipy, shapely, pandas, seaborn, sympy
+See local documentation in the `docs`-directory or access the online version at <http://wisdem.github.io/LandBOSSE/>
 
 ## Installation
 
-Install LandBOSSE with the following command.
+For detailed installation instructions of WISDEM modules see <https://github.com/WISDEM/WISDEM> or to install LandBOSSE by itself do:
 
     $ python setup.py install
-
 
 ## Run Unit Tests
 
@@ -22,9 +21,5 @@ To check if installation was successful try to import the module
     $ python
     > from landbosse import ErectionCost
 
-
-## Detailed Documentation
-
-Access to detailed documentation is not yet available online. A link will be posted here when it is released.
-
+For software issues please use <https://github.com/WISDEM/LandBOSSE/issues>.  For functionality and theory related questions and comments please use the NWTC forum for [Systems Engineering Software Questions](https://wind.nrel.gov/forum/wind/viewtopic.php?f=34&t=1002).
 
