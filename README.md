@@ -2,6 +2,8 @@
 
 This is a balance-of-system cost model for land-based wind plants.
 
+Revisions are currently underway; a new release is planned for June 2019. 
+
 Author: [NREL WISDEM Team](mailto:systems.engineering@nrel.gov) 
 
 ## Documentation
