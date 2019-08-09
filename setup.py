@@ -1,17 +1,35 @@
-#!/usr/bin/env python
-# encoding: utf-8
+import setuptools
 
-from setuptools import setup
+name = 'landbosse'
+version = '2.0.0'
 
-setup(
-    name='LandBOSSE',
-    version='0.1.0',
-    description='Land-based Balance-of-System Systems Engineering Model',
-    author='NREL WISDEM Team',
-    author_email='systems.engineering@nrel.gov',
-    install_requires=['pandas', 'numpy', 'seaborn', 'scipy', 'shapely', 'sympy'],
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name=name,
+    version=version,
+    author='NREL NWTC',
+    author_email='alicia.key@nrel.gov',
+    description='LandBOSSE',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=['landbosse'],
-    license='Apache License, Version 2.0',
-    dependency_links=['https://github.com/WISDEM/LandBOSSE'],
-    zip_safe=False
+    test_suite='nose.collector',
+    tests_require=['nose'],
+    install_requires=[
+        'pandas',
+        'numpy',
+        'sympy',
+        'scipy',
+        'shapely',
+        'xlsxwriter',
+        'xlrd'
+    ],
+    command_options={
+            'build_sphinx': {
+                'project': ('setup.py', name),
+                'version': ('setup.py', version),
+                # 'release': ('setup.py', release),  # Not yet needed
+                'source_dir': ('setup.py', 'docs')}}
 )

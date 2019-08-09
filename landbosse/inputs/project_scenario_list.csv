@@ -1,3 +1,0 @@
-Project ID,Turbine rating MW,Hub height m,Rotor diameter m,Number of breakdowns per 100 MW,Turbine spacing (times rotor diameter),Number of sections per tower,Number of RNA picks (at hub height),Number of turbines,Number of turbines per day,Breakpoint between base and topping (percent),Fuel cost USD per gal,Rate of deliveries (turbines per week),Wind shear exponent,Tower type,Foundation depth m
-IEA36_85m,3.6,85,130,1,4,4,4,100,2,0.75,1,10,0.2,steel,3
-IEA36_120m,3.6,120,130,1,4,6,4,100,2,0.75,1,10,0.2,steel,3
