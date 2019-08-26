@@ -8,7 +8,7 @@ from landbosse.tests.model.test_filename_functions import landbosse_test_input_d
 pd.set_option('display.width', 6000)
 pd.set_option('display.max_columns', 20)
 
-class TestRoadsCost(TestCase):
+class TestSitePreparationCost(TestCase):
 
     def setUp(self):
         self.input_dict = dict()
@@ -73,7 +73,7 @@ class TestRoadsCost(TestCase):
 
         self.output_dict = dict()
 
-    def test_RoadsCostModule(self):
+    def test_SitePreparationCostModule(self):
         """
         Black box test to check whether module is ran successfully or not
         """
@@ -83,13 +83,13 @@ class TestRoadsCost(TestCase):
 
         if trial_run[0] == 0 :
             print('\n\n================== MODULE EXECUTION SUCCESS =========================\n')
-            print(' RoadsCost module ran successfully. See the list of inputs'
+            print(' SitePreparationCost module ran successfully. See the list of inputs'
                   '\n and outputs below used by the module in its calculations:')
             print( '\n=====================================================================\n')
 
         elif trial_run[0] == 1 :
             print('\n\n====================================== MODULE EXECUTION FAILURE ======================================\n')
-            print(' > RoadsCost module failed to run successfully. Error detected: ', trial_run[1],
+            print(' > SitePreparationCost module failed to run successfully. Error detected: ', trial_run[1],
                   '\n > Scroll below to see detailed information about error encountered.'
                   '\n > See the list of inputs below used by the module in its calculations:')
             print('\n========================================================================================================\n')
