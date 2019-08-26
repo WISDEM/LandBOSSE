@@ -4,8 +4,8 @@ import math
 from .ManagementCost import ManagementCost
 from .FoundationCost import FoundationCost
 from .SubstationCost import SubstationCost
-from .TransmissionCost import TransmissionCost
-from .RoadsCost import RoadsCost
+from .GridConnectionCost import GridConnectionCost
+from .SitePreparationCost import SitePreparationCost
 from .CollectionCost import Cable, Array, ArraySystem
 from .ErectionCost import ErectionCost
 from .DevelopmentCost import DevelopmentCost
@@ -55,7 +55,7 @@ class Manager:
             self.log.debug('End foundation cost calculation')
 
             self.log.debug('Begin roads cost calculation')
-            roads_cost = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
+            roads_cost = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             roads_cost.run_module()
             self.log.debug('End roads cost calculation')
 
@@ -65,7 +65,7 @@ class Manager:
             self.log.debug('End substation cost calculation')
 
             self.log.debug('Begin transmission distribution cost calculation')
-            transdist_cost = TransmissionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
+            transdist_cost = GridConnectionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             transdist_cost.run_module()
             self.log.debug('End transmission distribution cost calculation')
 
