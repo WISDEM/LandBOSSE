@@ -5,14 +5,9 @@ from .WeatherDelay import WeatherDelay as WD
 import traceback
 
 
-
-#TODO: We need to adjust the 'Other' Costs. We also need to add labor for management of the scope. (Owen, 2019 | | Mood: Grumpy)
-#TODO: Next step should be varying road length and make sure all algebra does what it should. (Owen, 2019 | Mood: Grumpy)
-
-
-class RoadsCost:
+class SitePreparationCost:
     """
-    **RoadsCost.py**
+    **SitePreparationCost.py**
 
     - Created by Annika Eberle and Owen Roberts on Apr. 3, 2018
 

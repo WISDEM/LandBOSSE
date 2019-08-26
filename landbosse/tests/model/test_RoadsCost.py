@@ -1,5 +1,5 @@
 from unittest import TestCase
-from landbosse.model import RoadsCost
+from landbosse.model import SitePreparationCost
 import pandas as pd
 from landbosse.tests.model.test_WeatherDelay import generate_a_year
 import os
@@ -77,7 +77,7 @@ class TestRoadsCost(TestCase):
         """
         Black box test to check whether module is ran successfully or not
         """
-        run_RoadsCost = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        run_RoadsCost = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         trial_run = run_RoadsCost.run_module()
 
 
@@ -111,11 +111,11 @@ class TestRoadsCost(TestCase):
                     print(key, ':', value)
 
     def test_calculate_road_properties(self):
-        road_properties = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        road_properties = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         road_properties.run_module()
 
     def test_estimate_construction_time(self):
-        construction_time = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        construction_time = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         construction_time.run_module()
 
     def test_calculate_weather_delay(self):
@@ -124,9 +124,9 @@ class TestRoadsCost(TestCase):
 
         """
 
-        weatherDelay = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        weatherDelay = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         weatherDelay.run_module()
 
     def test_calculate_costs(self):
-        calculate_costs = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        calculate_costs = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         calculate_costs.run_module()
