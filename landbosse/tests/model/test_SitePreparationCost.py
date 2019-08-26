@@ -1,5 +1,5 @@
 from unittest import TestCase
-from landbosse.model import RoadsCost
+from landbosse.model import SitePreparationCost
 import pandas as pd
 from landbosse.tests.model.test_WeatherDelay import generate_a_year
 import os
@@ -8,7 +8,7 @@ from landbosse.tests.model.test_filename_functions import landbosse_test_input_d
 pd.set_option('display.width', 6000)
 pd.set_option('display.max_columns', 20)
 
-class TestRoadsCost(TestCase):
+class TestSitePreparationCost(TestCase):
 
     def setUp(self):
         self.input_dict = dict()
@@ -73,23 +73,23 @@ class TestRoadsCost(TestCase):
 
         self.output_dict = dict()
 
-    def test_RoadsCostModule(self):
+    def test_SitePreparationCostModule(self):
         """
         Black box test to check whether module is ran successfully or not
         """
-        run_RoadsCost = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        run_RoadsCost = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         trial_run = run_RoadsCost.run_module()
 
 
         if trial_run[0] == 0 :
             print('\n\n================== MODULE EXECUTION SUCCESS =========================\n')
-            print(' RoadsCost module ran successfully. See the list of inputs'
+            print(' SitePreparationCost module ran successfully. See the list of inputs'
                   '\n and outputs below used by the module in its calculations:')
             print( '\n=====================================================================\n')
 
         elif trial_run[0] == 1 :
             print('\n\n====================================== MODULE EXECUTION FAILURE ======================================\n')
-            print(' > RoadsCost module failed to run successfully. Error detected: ', trial_run[1],
+            print(' > SitePreparationCost module failed to run successfully. Error detected: ', trial_run[1],
                   '\n > Scroll below to see detailed information about error encountered.'
                   '\n > See the list of inputs below used by the module in its calculations:')
             print('\n========================================================================================================\n')
@@ -111,11 +111,11 @@ class TestRoadsCost(TestCase):
                     print(key, ':', value)
 
     def test_calculate_road_properties(self):
-        road_properties = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        road_properties = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         road_properties.run_module()
 
     def test_estimate_construction_time(self):
-        construction_time = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        construction_time = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         construction_time.run_module()
 
     def test_calculate_weather_delay(self):
@@ -124,9 +124,9 @@ class TestRoadsCost(TestCase):
 
         """
 
-        weatherDelay = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        weatherDelay = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         weatherDelay.run_module()
 
     def test_calculate_costs(self):
-        calculate_costs = RoadsCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        calculate_costs = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         calculate_costs.run_module()
