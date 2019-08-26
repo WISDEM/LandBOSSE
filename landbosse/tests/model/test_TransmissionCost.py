@@ -1,7 +1,7 @@
 from unittest import TestCase
 import pandas as pd
 import pytest
-from landbosse.model import TransmissionCost
+from landbosse.model import GridConnectionCost
 
 class TestTransmissionCost(TestCase):
 
@@ -18,7 +18,7 @@ class TestTransmissionCost(TestCase):
         """
         Black box test to check whether module is ran successfully or not
         """
-        run_TransmissionCost = TransmissionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
+        run_TransmissionCost = GridConnectionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=self.project_name)
         trial_run = run_TransmissionCost.run_module()
 
 

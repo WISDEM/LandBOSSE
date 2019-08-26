@@ -6,7 +6,7 @@ import math
 from .SharedOutputMixin import SharedOutputMixin
 
 
-class TransmissionCost(SharedOutputMixin):
+class GridConnectionCost(SharedOutputMixin):
     """
     TransDistCost.py
      - Created by Annika Eberle and Owen Roberts on Dec. 17, 2018
