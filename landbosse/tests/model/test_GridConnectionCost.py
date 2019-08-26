@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from landbosse.model import GridConnectionCost
 
-class TestTransmissionCost(TestCase):
+class TestGridConnectionCost(TestCase):
 
     def setUp(self):
 
@@ -14,7 +14,7 @@ class TestTransmissionCost(TestCase):
         self.project_name = 'Project_1'
         self.output_dict = dict()
 
-    def test_TransmissionCost(self):
+    def test_GridConnectionCost(self):
         """
         Black box test to check whether module is ran successfully or not
         """
@@ -24,23 +24,23 @@ class TestTransmissionCost(TestCase):
 
         if trial_run[0] == 0 :
             print('\n\n================== MODULE EXECUTION SUCCESS =========================\n')
-            print(' TransmissionCost module ran successfully. See the list of inputs'
+            print(' GridConnectionCost module ran successfully. See the list of inputs'
                   '\n and outputs below used by the module in its calculations:')
             print( '\n=====================================================================\n')
 
         elif trial_run[0] == 1 :
             print('\n\n================== MODULE EXECUTION FAILURE ==================\n')
-            print(' TransmissionCost module failed to run successfully. See the list'
+            print(' GridConnectionCost module failed to run successfully. See the list'
                   '\n of inputs below used by the module in its calculations:')
             print('\n================================================================\n')
 
 
-        print('\nGiven below is the set of inputs fed into TransmissionCost module:\n')
+        print('\nGiven below is the set of inputs fed into GridConnectionCost module:\n')
         for key, value in self.input_dict.items():
             print(key, ':', value)
 
         if trial_run[0] == 0:  # Only print outputs if module ran successfully.
-            print('\nGiven below is the set of outputs calculated by the TransmissionCost module:\n')
+            print('\nGiven below is the set of outputs calculated by the GridConnectionCost module:\n')
             for key, value in self.output_dict.items():
                 if isinstance(value, pd.DataFrame):
                     print('\nNow printing DataFrame ->', key, ':\n', value)
