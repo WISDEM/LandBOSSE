@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # debugger which can slow down when it is being used to debug multiple
     # processes.
 
-    run_parallel = False
+    run_parallel = True
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
     projects_xlsx = os.path.join(landbosse_input_dir(), 'project_list.xlsx')
 
