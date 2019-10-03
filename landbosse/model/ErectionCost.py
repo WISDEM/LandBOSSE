@@ -254,6 +254,8 @@ class ErectionCost(CostModule):
 
         return result
 
+        return result
+
     def calculate_erection_operation_time(self):
         """
         Calculates operation time required for each type of equipment included in project data.

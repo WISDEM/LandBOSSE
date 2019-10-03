@@ -752,6 +752,21 @@ class ArraySystem(CostModule):
             'value': float(self.output_dict['total_turb'])
         })
 
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total trench length',
+            'value': float(self.output_dict['trench_length_km'])
+        })
+
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total cable length',
+            'value': float(self.output_dict['total_cable_len_km'])
+        })
+
+
 
         result.append({
             'unit': '',
@@ -781,13 +796,13 @@ class ArraySystem(CostModule):
             'unit': '',
             'type': 'variable',
             'variable_df_key_col_name': 'Trench Length to Substation (km)',
-            'value': float(self.output_dict['trench_len_to_substation_km'])
+            'value': float(self.output_dict['distance_to_grid_connection_km'])
         })
         result.append({
             'unit': '',
             'type': 'variable',
             'variable_df_key_col_name': 'Cable Length to Substation (km)',
-            'value': float(self.output_dict['cable_len_to_substation_km'])
+            'value': float(self.output_dict['cable_len_to_grid_connection_km'])
         })
 
         cables = ''
