@@ -384,7 +384,6 @@ class ErectionCost(CostModule):
                     raise Exception(
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
-            self.log.debug('Crane(s) found for all components for {} installation'.format(operation))
 
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
@@ -504,7 +503,6 @@ class ErectionCost(CostModule):
         for component in unique_components:
             if component not in unique_component_crane:
                 raise Exception('Error: Unable to find offload crane for {}'.format(component))
-        self.log.debug('Crane(s) found for all components for offloading')
 
         return possible_cranes, operation_time
 
