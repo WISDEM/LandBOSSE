@@ -17,7 +17,7 @@ import numpy as np
 import traceback
 import pandas as pd
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay as WD
 
 
@@ -245,7 +245,7 @@ class Array(Cable):
 
 
 
-class ArraySystem(SharedOutputMixin):
+class ArraySystem(CostModule):
     """
 
 
@@ -751,6 +751,21 @@ class ArraySystem(SharedOutputMixin):
             'variable_df_key_col_name': 'Total Number of Turbines',
             'value': float(self.output_dict['total_turb'])
         })
+
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total trench length',
+            'value': float(self.output_dict['trench_length_km'])
+        })
+
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total cable length',
+            'value': float(self.output_dict['total_cable_len_km'])
+        })
+
 
 
         result.append({

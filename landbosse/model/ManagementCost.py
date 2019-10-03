@@ -464,47 +464,49 @@ class ManagementCost:
         """
         result = []
         module = type(self).__name__
+        turbine_rating_MW = self.input_dict['turbine_rating_MW']
+        num_turbines = self.input_dict['num_turbines']
+        project_size_kw = num_turbines * turbine_rating_MW * 1000
 
         result.append({
             'type_of_cost': 'insurance',
-            'cost': self.output_dict['insurance_usd']
+            'raw_cost': self.output_dict['insurance_usd']
         })
-
         result.append({
             'type_of_cost': 'Construction Permitting',
-            'cost': self.output_dict['construction_permitting_usd']
+            'raw_cost': self.output_dict['construction_permitting_usd']
         })
-
         result.append({
             'type_of_cost': 'Project Management',
-            'cost': self.output_dict['project_management_usd']
+            'raw_cost': self.output_dict['project_management_usd']
         })
-
         result.append({
             'type_of_cost': 'Bonding',
-            'cost': self.output_dict['bonding_usd']
+            'raw_cost': self.output_dict['bonding_usd']
         })
-
         result.append({
             'type_of_cost': 'Markup Contingency',
-            'cost': self.output_dict['markup_contingency_usd']
+            'raw_cost': self.output_dict['markup_contingency_usd']
         })
-
         result.append({
             'type_of_cost': 'Engineering Foundation and Collections System (includes met mast)',
-            'cost': self.output_dict['engineering_usd']
+            'raw_cost': self.output_dict['engineering_usd']
         })
-
         result.append({
             'type_of_cost': 'Site Facility',
-            'cost': self.output_dict['site_facility_usd']
+            'raw_cost': self.output_dict['site_facility_usd']
         })
 
         for _dict in result:
+            _dict['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
+            _dict['num_turbines'] = self.input_dict['num_turbines']
             _dict['project_id'] = self.project_name
             _dict['operation_id'] = 'Management'
             _dict['module'] = module
-            _dict['total_or_turbine'] = 'total'
+            _dict['raw_cost_total_or_per_turbine'] = 'total'
+            _dict['cost_per_turbine'] = _dict['raw_cost'] / num_turbines
+            _dict['cost_per_project'] = _dict['raw_cost']
+            _dict['usd_per_kw_per_project'] = _dict['raw_cost'] / project_size_kw
 
         return result
 
