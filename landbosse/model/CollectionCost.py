@@ -17,7 +17,7 @@ import numpy as np
 import traceback
 import pandas as pd
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay as WD
 
 
@@ -245,7 +245,7 @@ class Array(Cable):
 
 
 
-class ArraySystem(SharedOutputMixin):
+class ArraySystem(CostModule):
     """
 
 

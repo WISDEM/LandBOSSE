@@ -3,10 +3,10 @@ import pandas as pd
 import math
 
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 
 
-class GridConnectionCost(SharedOutputMixin):
+class GridConnectionCost(CostModule):
     """
     TransDistCost.py
      - Created by Annika Eberle and Owen Roberts on Dec. 17, 2018

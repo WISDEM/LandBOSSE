@@ -5,7 +5,7 @@ from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
 
 import traceback
@@ -16,7 +16,7 @@ hr_per_min = 1/60
 m_per_ft = 0.3048
 
 
-class ErectionCost(SharedOutputMixin):
+class ErectionCost(CostModule):
     """
     ErectionCost.py
     Created by Annika Eberle and Owen Roberts on Mar. 16, 2018
