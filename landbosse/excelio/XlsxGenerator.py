@@ -113,16 +113,116 @@ class XlsxGenerator:
             sheet.
         """
         worksheet = self.workbook.add_worksheet('costs_by_module_type_operation')
-        for idx, col_name in enumerate(['project_id', 'module', 'operation_id', 'type_of_cost', 'total_or_turbine', 'cost']):
+        for idx, col_name in enumerate(['Project ID',
+                                        'Number of turbines',
+                                        'Turbine rating MW',
+                                        'Module',
+                                        'Operation ID',
+                                        'Type of cost',
+                                        # 'Raw cost is total or per turbine',
+                                        # 'Raw cost',
+                                        'Cost per turbine',
+                                        'Cost per project',
+                                        'USD/kW per project']):
             worksheet.write(0, idx, col_name, self.header_format)
         for row_idx, row in enumerate(rows):
             worksheet.write(row_idx + 1, 0, row['project_id'])
-            worksheet.write(row_idx + 1, 1, row['module'])
-            worksheet.write(row_idx + 1, 2, row['operation_id'])
-            worksheet.write(row_idx + 1, 3, row['type_of_cost'])
-            worksheet.write(row_idx + 1, 4, row['total_or_turbine'])
-            worksheet.write(row_idx + 1, 5, row['cost'], self.accounting_format)
+            worksheet.write(row_idx + 1, 1, row['num_turbines'])
+            worksheet.write(row_idx + 1, 2, row['turbine_rating_MW'])
+            worksheet.write(row_idx + 1, 3, row['module'])
+            worksheet.write(row_idx + 1, 4, row['operation_id'])
+            worksheet.write(row_idx + 1, 5, row['type_of_cost'])
+
+            # If these lines are uncommented then column ordering will need to be changed
+            # worksheet.write(row_idx + 1, 6, row['raw_cost_total_or_per_turbine'])
+            # worksheet.write(row_idx + 1, 7, row['raw_cost'], self.accounting_format)
+
+            worksheet.write(row_idx + 1, 6, row['cost_per_turbine'], self.accounting_format)
+            worksheet.write(row_idx + 1, 7, row['cost_per_project'], self.accounting_format)
+            worksheet.write(row_idx + 1, 8, row['usd_per_kw_per_project'], self.accounting_format)
             worksheet.set_column(0, 5, 25)
+            worksheet.set_column(6, 10, 17)
+        worksheet.freeze_panes(1, 0)  # Freeze the first row.
+
+    def tab_costs_by_module_type_operation_with_inputs(self, rows):
+        """
+        This writes the costs_by_module_type_operation_with_inputs tab
+        This like the tab written by tab_costs_by_module_type_operation above
+        except it adds all the inputs that generated those outputs to the
+        right of the outputs.
+
+        Parameters
+        ----------
+        rows : list
+            List of dictionaries that are each row in the output
+            sheet.
+        """
+        col_names = [
+           'project_id',
+           'module',
+           'operation_id',
+           'type_of_cost',
+           'turbine_rating_MW',
+           'num_turbines',
+           'cost_per_turbine',
+           'cost_per_project',
+           'usd_per_kw_per_project',
+           'Project data file',
+           'Total project construction time (months)',
+           'Hub height m',
+           'Rotor diameter m',
+           'Turbine spacing (times rotor diameter)',
+           'Row spacing (times rotor diameter)',
+           'Breakpoint between base and topping (percent)',
+           'Fuel cost USD per gal',
+           'Rate of deliveries (turbines per week)',
+           'Wind shear exponent',
+           'Foundation depth m',
+           'Rated Thrust (N)',
+           'Bearing Pressure (n/m2)',
+           '50-year Gust Velocity (m/s)',
+           'Line Frequency (Hz)',
+           'Flag for user-defined home run trench length (0 = no; 1 = yes)',
+           'Combined Homerun Trench Length to Substation (km)',
+           'Non-Erection Wind Delay Critical Height (m)',
+           'Non-Erection Wind Delay Critical Speed (m/s)',
+           'Distance to interconnect (miles)',
+           'Interconnect Voltage (kV)',
+           'New Switchyard (y/n)',
+           'Road length adder (m)',
+           'Road Quality (0-1)',
+           'Percent of roads that will be constructed',
+           'Road width (ft)',
+           'Road thickness (in)',
+           'Calculate road cost for distributed wind? (y/n)',
+           'Site prep area for Distributed wind (m2)',
+           'Crane width (m)',
+           'Number of highway permits',
+           'Number of access roads',
+           'Overtime multiplier',
+           'Allow same flag',
+           'Override total management cost for distributed (0 does not override)',
+           'Markup contingency',
+           'Markup warranty management',
+           'Markup sales and use tax',
+           'Markup overhead',
+           'Markup profit margin'
+        ]
+
+        worksheet = self.workbook.add_worksheet('costs_with_inputs')
+
+        for col_idx, col_name in enumerate(col_names):
+            worksheet.write(0, col_idx, col_name, self.header_format)
+
+        for row_idx, row in enumerate(rows):
+            for col_idx, col_name in enumerate(col_names):
+                if col_name in ['cost_per_turbine', 'cost_per_project', 'usd_per_kw_per_project']:
+                    worksheet.write(row_idx + 1, col_idx, row[col_name], self.accounting_format)
+                else:
+                    worksheet.write(row_idx + 1, col_idx, row[col_name])
+
+        worksheet.set_column(0, 5, 25)
+        worksheet.set_column(6, 10, 17)
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
     def tab_details(self, rows):
@@ -138,11 +238,6 @@ class XlsxGenerator:
         ----------
         rows : list
             list of dicts. See above.
-
-        Returns
-        -------
-        str
-            The string of the full pathname to the file just written.
         """
         worksheet = self.workbook.add_worksheet('details')
         worksheet.set_column(3, 3, 66)
@@ -166,6 +261,84 @@ class XlsxGenerator:
                     worksheet.write(row_idx + 1, 6, row['last_number'], self.scientific_format)
                 else:
                     worksheet.write(row_idx + 1, 6, str(row['last_number']))
+        worksheet.freeze_panes(1, 0)  # Freeze the first row.
+
+    def tab_details_with_inputs(self, rows):
+        """
+        This writes a detailed outputs tab. It takes a list of dictionaries
+        as the parameters and in each of those dictionaries it looks at the keys:
+
+        ['project_id', 'module', 'type', 'variable_df_key_col_name', 'unit', 'value']
+
+        in addition to keys representing all inputs into the model.
+
+        The values of each of those keys become each cell in the row.
+
+        Parameters
+        ----------
+        rows : list
+            list of dicts. See above.
+        """
+        col_names = [
+            'Project ID',
+            'module',
+            'type',
+            'variable_df_key_col_name',
+            'unit',
+            'value',
+            'last_number',
+            'Project data file',
+            'Total project construction time (months)',
+            'Hub height m',
+            'Rotor diameter m',
+            'Turbine spacing (times rotor diameter)',
+            'Row spacing (times rotor diameter)',
+            'Breakpoint between base and topping (percent)',
+            'Fuel cost USD per gal',
+            'Rate of deliveries (turbines per week)',
+            'Wind shear exponent',
+            'Foundation depth m',
+            'Rated Thrust (N)',
+            'Bearing Pressure (n/m2)',
+            '50-year Gust Velocity (m/s)',
+            'Line Frequency (Hz)',
+            'Flag for user-defined home run trench length (0 = no; 1 = yes)',
+            'Combined Homerun Trench Length to Substation (km)',
+            'Non-Erection Wind Delay Critical Height (m)',
+            'Non-Erection Wind Delay Critical Speed (m/s)',
+            'Distance to interconnect (miles)',
+            'Interconnect Voltage (kV)',
+            'New Switchyard (y/n)',
+            'Road length adder (m)',
+            'Road Quality (0-1)',
+            'Percent of roads that will be constructed',
+            'Road width (ft)',
+            'Road thickness (in)',
+            'Calculate road cost for distributed wind? (y/n)',
+            'Site prep area for Distributed wind (m2)',
+            'Crane width (m)',
+            'Number of highway permits',
+            'Number of access roads',
+            'Overtime multiplier',
+            'Allow same flag',
+            'Override total management cost for distributed (0 does not override)',
+            'Markup contingency',
+            'Markup warranty management',
+            'Markup sales and use tax',
+            'Markup overhead',
+            'Markup profit margin'
+        ]
+        worksheet = self.workbook.add_worksheet('details_with_inputs')
+
+        for col_idx, col_name in enumerate(col_names):
+            worksheet.write(0, col_idx, col_name, self.header_format)
+
+        for row_idx, row in enumerate(rows):
+            for col_idx, col_name in enumerate(col_names):
+                worksheet.write(row_idx + 1, col_idx, row.get(col_name, ''))
+
+        # worksheet.set_column(0, 5, 25)
+        # worksheet.set_column(6, 10, 17)
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
     def tab_details_with_validation(self, rows, validation_xlsx):
