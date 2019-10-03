@@ -792,18 +792,18 @@ class ArraySystem(CostModule):
             'variable_df_key_col_name': 'Number of Partial Strings',
             'value': float(self.output_dict['num_partial_strings'])
         })
-        # result.append({
-        #     'unit': '',
-        #     'type': 'variable',
-        #     'variable_df_key_col_name': 'Trench Length to Substation (km)',
-        #     'value': float(self.output_dict['distance_to_interconnect_mi'])
-        # })
-        # result.append({
-        #     'unit': '',
-        #     'type': 'variable',
-        #     'variable_df_key_col_name': 'Cable Length to Substation (km)',
-        #     'value': float(self.output_dict['cable_len_to_grid_connection_km'])
-        # })
+        result.append({
+            'unit': '',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Trench Length to Substation (km)',
+            'value': float(self.output_dict['trench_len_to_substation_km'])
+        })
+        result.append({
+            'unit': '',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Cable Length to Substation (km)',
+            'value': float(self.output_dict['cable_len_to_substation_km'])
+        })
 
         cables = ''
         n = 1  # to keep tab of number of cables input by user.
