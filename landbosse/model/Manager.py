@@ -49,39 +49,25 @@ class Manager:
             self.input_dict['weather_window'] = filtered_weather_window
             self.input_dict['weather_data_user_input'] = weather_data_user_input
 
-            self.log.debug('Begin foundation cost calculation')
             foundation_cost = FoundationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             foundation_cost.run_module()
-            self.log.debug('End foundation cost calculation')
 
-            self.log.debug('Begin roads cost calculation')
             roads_cost = SitePreparationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             roads_cost.run_module()
-            self.log.debug('End roads cost calculation')
 
-            self.log.debug('Begin substation cost calculation')
             substation_cost = SubstationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             substation_cost.run_module()
-            self.log.debug('End substation cost calculation')
 
-            self.log.debug('Begin transmission distribution cost calculation')
             transdist_cost = GridConnectionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             transdist_cost.run_module()
-            self.log.debug('End transmission distribution cost calculation')
 
-            self.log.debug('Begin collection cost calculation')
             collection_cost = ArraySystem(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             collection_cost.run_module()
-            self.log.debug('End collection cost calculation')
 
-            self.log.debug('Begin development cost calculation')
             development_cost = DevelopmentCost(input_dict=self.input_dict, output_dict=self.output_dict,
                                           project_name=project_name)
             development_cost.run_module()
-            self.log.debug('End development cost calculation')
 
-
-            self.log.debug('Begin erection cost calculation')
             erection_cost_output_dict = dict()
             erection_cost = ErectionCost(
                 input_dict=self.input_dict,
@@ -91,7 +77,6 @@ class Manager:
             )
             erection_cost.run_module()
             self.output_dict['erection_cost'] = erection_cost_output_dict
-            self.log.debug('End erection cost calculation')
 
             total_costs = self.output_dict['total_collection_cost']
             total_costs = total_costs.append(self.output_dict['total_road_cost'], sort=False)
@@ -103,10 +88,9 @@ class Manager:
 
             self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
             self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost'].sum(numeric_only=True)[0]
-            self.log.debug('Begin management cost calculation')
+
             management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             management_cost.run_module()
-            self.log.debug('End management cost calculation')
 
             return 0
         except Exception:
