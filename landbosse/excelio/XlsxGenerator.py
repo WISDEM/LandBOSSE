@@ -113,16 +113,35 @@ class XlsxGenerator:
             sheet.
         """
         worksheet = self.workbook.add_worksheet('costs_by_module_type_operation')
-        for idx, col_name in enumerate(['project_id', 'module', 'operation_id', 'type_of_cost', 'total_or_turbine', 'cost']):
+        for idx, col_name in enumerate(['Project ID',
+                                        'Number of turbines',
+                                        'Turbine rating MW',
+                                        'Module',
+                                        'Operation ID',
+                                        'Type of cost',
+                                        # 'Raw cost is total or per turbine',
+                                        # 'Raw cost',
+                                        'Cost per turbine',
+                                        'Cost per project',
+                                        'USD/kW per project']):
             worksheet.write(0, idx, col_name, self.header_format)
         for row_idx, row in enumerate(rows):
             worksheet.write(row_idx + 1, 0, row['project_id'])
-            worksheet.write(row_idx + 1, 1, row['module'])
-            worksheet.write(row_idx + 1, 2, row['operation_id'])
-            worksheet.write(row_idx + 1, 3, row['type_of_cost'])
-            worksheet.write(row_idx + 1, 4, row['total_or_turbine'])
-            worksheet.write(row_idx + 1, 5, row['cost'], self.accounting_format)
+            worksheet.write(row_idx + 1, 1, row['num_turbines'])
+            worksheet.write(row_idx + 1, 2, row['turbine_rating_MW'])
+            worksheet.write(row_idx + 1, 3, row['module'])
+            worksheet.write(row_idx + 1, 4, row['operation_id'])
+            worksheet.write(row_idx + 1, 5, row['type_of_cost'])
+
+            # If these lines are uncommented then column ordering will need to be changed
+            # worksheet.write(row_idx + 1, 6, row['raw_cost_total_or_per_turbine'])
+            # worksheet.write(row_idx + 1, 7, row['raw_cost'], self.accounting_format)
+
+            worksheet.write(row_idx + 1, 6, row['cost_per_turbine'], self.accounting_format)
+            worksheet.write(row_idx + 1, 7, row['cost_per_project'], self.accounting_format)
+            worksheet.write(row_idx + 1, 8, row['usd_per_kw_per_project'], self.accounting_format)
             worksheet.set_column(0, 5, 25)
+            worksheet.set_column(6, 10, 17)
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
     def tab_details(self, rows):
@@ -138,11 +157,6 @@ class XlsxGenerator:
         ----------
         rows : list
             list of dicts. See above.
-
-        Returns
-        -------
-        str
-            The string of the full pathname to the file just written.
         """
         worksheet = self.workbook.add_worksheet('details')
         worksheet.set_column(3, 3, 66)

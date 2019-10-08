@@ -49,14 +49,14 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        log.debug('>>> Project list loaded')
+        # log.debug('>>> Project list loaded')
 
         # Prep all task for the executor
         all_tasks = []
         for _, project_series in projects.iterrows():
-            project_id = project_series['Project ID']
+            project_data_basename = project_series['Project data file']
             task = dict()
-            task['input_xlsx'] = os.path.join(landbosse_input_dir(), 'project_data', '{}.xlsx'.format(project_id))
+            task['project_data_xlsx'] = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_id'] = project_series['Project ID']
             task['project_series'] = project_series
             all_tasks.append(task)
@@ -69,12 +69,14 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         # Get the output dictionary ready
         runs_dict = {project_id: result for project_id, result in executor_result}
 
-        # .csv lists for all runs
-        csv_lists = self.extract_csv_lists(runs_dict)
-        module_type_operation_lists = self.extract_module_type_operation_lists(runs_dict)
+        # Assemble the dictionary with content for the details, details with inputs,
+        #  cost_by_module_type_operation and cost_by_module_type_operation_with_input tabs
+        final_result = dict()
+        final_result['details_list'] = self.extract_details_lists(runs_dict)
+        final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
 
         # Return the runs for all the scenarios.
-        return runs_dict, csv_lists, module_type_operation_lists
+        return final_result
 
 
 """
@@ -127,21 +129,23 @@ def run_single_project(task_dict):
     log.addHandler(out_hdlr)
     log.setLevel(logging.DEBUG)
 
-    input_xlsx = task_dict['input_xlsx']
+    project_data_xlsx = task_dict['project_data_xlsx']
     project_series = task_dict['project_series']
     project_id = task_dict['project_id']
 
-    # Log each project
-    log.debug('<><><><><><><><><><><><><><><><><><> {} <><><><><><><><><><><><><><><><><><>'.format(project_id))
-    log.debug('>>> project_id: {}'.format(project_id))
-    log.debug('>>> Input: {}'.format(input_xlsx))
+    # Log each project. Use print because it works better for multiple processes.
+    print(f'START {project_id}, project data in {project_data_xlsx}')
 
     # Read the Excel
     xlsx_reader = XlsxReader()
-    master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(input_xlsx, project_series)
+    master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_xlsx, project_series)
 
     # Now run the manager and accumulate its result into the runs_dict
     output_dict = dict()
+    output_dict['project_series'] = project_series
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict, log=log)
     mc.execute_landbosse(project_name=project_id)
+
+    print(f'END {project_id}')
+
     return project_id, output_dict

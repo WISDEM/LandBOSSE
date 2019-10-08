@@ -38,12 +38,14 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
         Returns
         -------
-        OrderedDict, list, list
+        OrderedDict, list, list, list
             First element of tuple is an ordered dict that is the result of
             all the runs. Each key is the name of a project and each value
             is the output dictionary of that project. The second element
             is the list of rows for the csv. The third element is the list
-            of costs for the spreadsheets.
+            of costs for the spreadsheets. The fourth element is the same as
+            module_type_operation_lists, but every row has all the inputs
+            on each row.
         """
         # Load the project list
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
@@ -55,28 +57,31 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Loop over every project
         for _, project_series in projects.iterrows():
             project_id = project_series['Project ID']
+            project_data_basename = project_series['Project data file']
 
             # Input path for the Xlsx
-            input_xlsx = os.path.join(landbosse_input_dir(), 'project_data', '{}.xlsx'.format(project_id))
+            project_data_xlsx = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
-            log.debug('<><><><><><><><><><><><><><><><><><> {} <><><><><><><><><><><><><><><><><><>'.format(project_id))
+            log.debug(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
             log.debug('>>> project_id: {}'.format(project_id))
-            log.debug('>>> Input: {}'.format(input_xlsx))
+            log.debug('>>> Project data: {}'.format(project_data_xlsx))
 
             # Create the master input dictionary.
             xlsx_reader = XlsxReader()
-            master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(input_xlsx, project_series)
+            master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_xlsx, project_series)
 
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()
             mc = Manager(input_dict=master_input_dict, output_dict=output_dict, log=log)
             mc.execute_landbosse(project_name=project_id)
+            output_dict['project_series'] = project_series
             runs_dict[project_id] = output_dict
 
-        # .csv lists for all runs
-        csv_lists = self.extract_csv_lists(runs_dict)
-        module_type_operation_lists = self.extract_module_type_operation_lists(runs_dict)
+        final_result = dict()
+        final_result['details_list'] = self.extract_details_lists(runs_dict)
+        final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
 
         # Return the runs for all the scenarios.
-        return runs_dict, csv_lists, module_type_operation_lists
+        # return runs_dict, details_list, module_type_operation_list, module_type_operation_list_with_inputs
+        return final_result

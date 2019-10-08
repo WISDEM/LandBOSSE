@@ -2,10 +2,10 @@ import traceback
 import pandas as pd
 import math
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 
 
-class SubstationCost(SharedOutputMixin):
+class SubstationCost(CostModule):
     """
     **SubstationCost.py**
 
