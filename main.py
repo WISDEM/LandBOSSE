@@ -35,7 +35,4 @@ if __name__ == '__main__':
 
     with XlsxGenerator('landbosse-output') as xlsx:
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-        xlsx.tab_costs_by_module_type_operation_with_inputs(rows=final_result['module_type_operation_list_with_inputs'])
         xlsx.tab_details(rows=final_result['details_list'])
-        xlsx.tab_details_with_inputs(rows=final_result['details_list_with_inputs'])
-        # xlsx.tab_details_with_validation(rows=csv_lists, validation_xlsx='validation.xlsx')
