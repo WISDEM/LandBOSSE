@@ -69,15 +69,8 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         # Get the output dictionary ready
         runs_dict = {project_id: result for project_id, result in executor_result}
 
-        # .csv lists for all runs
-        # csv_lists = self.extract_details_lists(runs_dict)
-        # module_type_operation_lists = self.extract_module_type_operation_lists(runs_dict)
-        # module_type_operation_lists_combine_with_inputs = \
-        #     self.extract_module_type_operation_lists_combine_with_inputs(runs_dict)
-        #
-        # # Return the runs for all the scenarios.
-        # return runs_dict, csv_lists, module_type_operation_lists, module_type_operation_lists_combine_with_inputs
-
+        # Assemble the dictionary with content for the details, details with inputs,
+        #  cost_by_module_type_operation and cost_by_module_type_operation_with_input tabs
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
         final_result['details_list_with_inputs'] = self.extract_details_list_with_inputs(runs_dict)
@@ -86,7 +79,6 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             self.extract_module_type_operation_lists_combine_with_inputs(runs_dict)
 
         # Return the runs for all the scenarios.
-        # return runs_dict, details_list, module_type_operation_list, module_type_operation_list_with_inputs
         return final_result
 
 
