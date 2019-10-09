@@ -3,9 +3,10 @@ import numpy as np
 import math
 from .WeatherDelay import WeatherDelay as WD
 import traceback
+from .CostModule import CostModule
 
 
-class SitePreparationCost:
+class SitePreparationCost(CostModule):
     """
     **SitePreparationCost.py**
 
@@ -551,10 +552,17 @@ class SitePreparationCost:
         })
 
         result.append({
+        'unit': 'm',
+        'type': 'variable',
+        'variable_df_key_col_name': 'Road length',
+        'value': float(self.output_dict['road_length_m'])
+        })
+
+        result.append({
             'unit': 'm',
             'type': 'variable',
-            'variable_df_key_col_name': 'Road length',
-            'value': float(self.output_dict['road_length_m'])
+            'variable_df_key_col_name': 'Road width',
+            'value': self.output_dict['road_width_m']
         })
 
         result.append({
@@ -564,12 +572,7 @@ class SitePreparationCost:
             'value': self.output_dict['road_thickness_m']
         })
 
-        result.append({
-            'unit': 'm',
-            'type': 'variable',
-            'variable_df_key_col_name': 'Road width',
-            'value': self.output_dict['road_width_m']
-        })
+
 
         result.append({
             'unit': 'cubic yards',
@@ -639,6 +642,7 @@ class SitePreparationCost:
         """
         result = []
         module = type(self).__name__
+        num_turbines = self.input_dict['num_turbines']
 
         costs_by_module_type_operation = output_dict['total_road_cost']
         for _, row in costs_by_module_type_operation.iterrows():
@@ -653,6 +657,7 @@ class SitePreparationCost:
             _dict['project_id'] = self.project_name
             _dict['module'] = module
             _dict['total_or_turbine'] = 'total'
+            _dict['num_turbines'] = num_turbines
 
         output_dict['roads_cost_module_type_operation'] = result
         return result
@@ -687,7 +692,12 @@ class SitePreparationCost:
             self.calculate_weather_delay(self.weather_input_dict, self.output_dict)
             self.calculate_costs(self.input_dict, self.output_dict)
             self.outputs_for_detailed_tab(self.input_dict, self.output_dict)
-            self.outputs_for_module_type_operation(self.input_dict, self.output_dict)
+            # self.outputs_for_module_type_operation(self.input_dict, self.output_dict)
+            self.output_dict['siteprep_module_type_operation'] = self.outputs_for_costs_by_module_type_operation(
+                input_df=self.output_dict['total_road_cost'],
+                project_id=self.project_name,
+                total_or_turbine=True
+            )
             return 0, 0  # module ran successfully
         except Exception as error:
             traceback.print_exc()

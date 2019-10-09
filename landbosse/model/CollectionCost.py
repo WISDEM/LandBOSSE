@@ -17,7 +17,7 @@ import numpy as np
 import traceback
 import pandas as pd
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay as WD
 
 
@@ -245,7 +245,7 @@ class Array(Cable):
 
 
 
-class ArraySystem(SharedOutputMixin):
+class ArraySystem(CostModule):
     """
 
 
@@ -710,8 +710,7 @@ class ArraySystem(SharedOutputMixin):
         trenching_labor_cost_df = pd.DataFrame([['Labor',calculate_costs_output_dict['Labor Cost USD with weather delays'], 'Collection']],
                                                columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
 
-
-        # #Calculate cable cost:
+        #Calculate cable cost:
         cable_cost_usd_per_LF_df = pd.DataFrame([['Materials',self._total_cable_cost, 'Collection']],
                                                columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
 
@@ -726,8 +725,6 @@ class ArraySystem(SharedOutputMixin):
         mobilization_cost = pd.DataFrame([['Mobilization', collection_cost['Cost USD'].sum() * 0.05 , 'Collection']],
                                          columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         collection_cost = collection_cost.append(mobilization_cost)
-
-        # todo: output collection cost using same format as described in foundation cost and shown in spreadsheet, which I'll send via email
 
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
 
@@ -752,6 +749,19 @@ class ArraySystem(SharedOutputMixin):
             'value': float(self.output_dict['total_turb'])
         })
 
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total trench length',
+            'value': float(self.output_dict['trench_length_km'])
+        })
+
+        result.append({
+            'unit': 'km',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Total cable length',
+            'value': float(self.output_dict['total_cable_len_km'])
+        })
 
         result.append({
             'unit': '',
@@ -858,8 +868,6 @@ class ArraySystem(SharedOutputMixin):
         self.output_dict['collection_cost_csv'] = result
         return result
 
-
-
     def run_module(self):
         """
         Runs the CollectionCost module and populates the IO dictionaries with calculated values.
@@ -897,12 +905,9 @@ class ArraySystem(SharedOutputMixin):
             self.output_dict['collection_cost_module_type_operation'] = self.outputs_for_costs_by_module_type_operation(
                 input_df=self.output_dict['total_collection_cost'],
                 project_id=self.project_name,
-                total_or_turbine=False
+                total_or_turbine=True
             )
             return 0, 0  # module ran successfully
         except Exception as error:
             traceback.print_exc()
             return 1, error  # module did not run successfully
-
-
-    #TODO: Add percent trenching as input in Collection Cost (GitHub Issue #45)
