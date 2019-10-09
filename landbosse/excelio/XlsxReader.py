@@ -8,6 +8,45 @@ from ..model import DefaultMasterInputDict
 class XlsxReader:
     """
     This class is for reading input data from .xlsx files.
+
+    There are two sets of data to be read from .xlsx files. The first set
+    of data is read from the following tabs:
+
+    - components
+
+    - cable_specs
+
+    - equip
+
+    - crane_specs
+
+    - development
+
+    - crew_price
+
+    - crew
+
+    - equip_price
+
+    - material_price
+
+    - rsmeans
+
+    - site_facility_building_area
+
+    - weather_window
+
+    And the second set is read from a
+
+    The first set of data represent a database used by the various modules. Queries
+    on these data allow calculation based on labor, material, crane capacity
+    and so on. These data can be shared among different projects. These data
+    are called project_data.
+
+    The second set of data represent the parameters specific to each project.
+    These parameters include things values like hub height, rotor diameter,
+    etc. These data are particular to a single project. These data are
+    referred to as the project.
     """
 
     def read_xlsx_and_fill_defaults(self, input_xlsx, project):
@@ -20,10 +59,16 @@ class XlsxReader:
         Parameters
         ----------
         input_xlsx : str
-            The filename of an Excel workbook that contains input data.
+            The filename of an Excel workbook that contains first set of
+            data as described in the XlsxReader class docstring.
 
         project : pandas.Series
-            Series representing the project.
+            Series representing the project data, which is the second set
+            of data described in the XlsxReader class docstring. The caller
+            of this function is responsible for parsing out the project
+            data into a series from which these data can be extracted.
+            See the subclasses of XlsxManagerRunner for examples on how this
+            project series is read from a spreadsheet.
 
         Returns
         -------
@@ -57,15 +102,11 @@ class XlsxReader:
         for worksheet in erection_input_worksheets:
             erection_project_data_dict[worksheet] = pd.read_excel(input_xlsx, worksheet)
 
-        # TODO This is a hack: project_specs requires a subset of all the keys and values
-        # in the complete project dictionary, so it is just referenced here.
-        incomplete_input_dict['project_specs'] = project
-
         # The erection module takes in a bunch of keys and values under the
         # 'project_data' key
         incomplete_input_dict['project_data'] = erection_project_data_dict
 
-        # Get the input dataframes from the .xlsx
+        # Get the first set of data
         weather_window_input_df = pd.read_excel(input_xlsx, 'weather_window')
         incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
         incomplete_input_dict['rsmeans'] = pd.read_excel(input_xlsx, 'rsmeans')
@@ -103,8 +144,8 @@ class XlsxReader:
         incomplete_input_dict['line_frequency_hz'] = project['Line Frequency (Hz)']
         incomplete_input_dict['plant_capacity_MW'] = project['Turbine rating MW'] * project['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project['Row spacing (times rotor diameter)']
-        incomplete_input_dict['user_defined_home_run_trench'] = project['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-        incomplete_input_dict['trench_len_to_substation_km'] = project['Combined Homerun Trench Length to Substation (km)']
+        incomplete_input_dict['user_defined_distance_to_grid_connection'] = project['Flag for user-defined home run trench length (0 = no; 1 = yes)']
+        incomplete_input_dict['distance_to_grid_connection_km'] = project['Combined Homerun Trench Length to Substation (km)']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
         incomplete_input_dict['crew_cost'] = incomplete_input_dict['project_data']['crew_price']
 
@@ -145,17 +186,16 @@ class XlsxReader:
         incomplete_input_dict['overtime_multiplier'] = project['Overtime multiplier']
         incomplete_input_dict['allow_same_flag'] = True if project['Allow same flag'] == 'y' else False
 
-        # self.default_input_dict['markup_contingency'] = 0.03  # management cost
-        # self.default_input_dict['markup_warranty_management'] = 0.0002
-        # self.default_input_dict['markup_sales_and_use_tax'] = 0  # management cost
-        # self.default_input_dict['markup_overhead'] = 0.05  # management cost
-        # self.default_input_dict['markup_profit_margin'] = 0.05  # management cost
-
-        incomplete_input_dict['markup_contingency'] = project['Markup contingency']
-        incomplete_input_dict['markup_warranty_management'] = project['Markup warranty management']
-        incomplete_input_dict['markup_sales_and_use_tax'] = project['Markup sales and use tax']
-        incomplete_input_dict['markup_overhead'] = project['Markup overhead']
-        incomplete_input_dict['markup_profit_margin'] = project['Markup profit margin']
+        override_total_mgmt_cost_col_name = 'Override total management cost (0 does not override)'
+        if override_total_mgmt_cost_col_name in project and project[override_total_mgmt_cost_col_name] > 0:
+            incomplete_input_dict['override_total_management_cost'] = \
+                project[override_total_mgmt_cost_col_name]
+        else:
+            incomplete_input_dict['markup_contingency'] = project['Markup contingency']
+            incomplete_input_dict['markup_warranty_management'] = project['Markup warranty management']
+            incomplete_input_dict['markup_sales_and_use_tax'] = project['Markup sales and use tax']
+            incomplete_input_dict['markup_overhead'] = project['Markup overhead']
+            incomplete_input_dict['markup_profit_margin'] = project['Markup profit margin']
 
         #Read development tab:
         incomplete_input_dict['development_df'] = pd.read_excel(input_xlsx, 'development')

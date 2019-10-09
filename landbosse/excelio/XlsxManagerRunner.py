@@ -1,11 +1,5 @@
-from collections import OrderedDict
-import os
-
 import pandas as pd
-
-from ..model import Manager
-from .filename_functions import landbosse_input_dir
-from .XlsxReader import XlsxReader
+from collections import OrderedDict
 
 
 class XlsxManagerRunner:
@@ -87,7 +81,7 @@ class XlsxManagerRunner:
                     result.extend(value)
         return result
 
-    def extract_csv_lists(self, runs_dict):
+    def extract_details_lists(self, runs_dict):
         """
         This method extract all .csv lists from the OrderDict of runs to output
         into an Excel or .csv file.

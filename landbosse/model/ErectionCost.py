@@ -5,7 +5,7 @@ from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
 
 import traceback
@@ -16,7 +16,7 @@ hr_per_min = 1/60
 m_per_ft = 0.3048
 
 
-class ErectionCost(SharedOutputMixin):
+class ErectionCost(CostModule):
     """
     ErectionCost.py
     Created by Annika Eberle and Owen Roberts on Mar. 16, 2018
@@ -384,7 +384,6 @@ class ErectionCost(SharedOutputMixin):
                     raise Exception(
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
-            self.log.debug('Crane(s) found for all components for {} installation'.format(operation))
 
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
@@ -504,7 +503,6 @@ class ErectionCost(SharedOutputMixin):
         for component in unique_components:
             if component not in unique_component_crane:
                 raise Exception('Error: Unable to find offload crane for {}'.format(component))
-        self.log.debug('Crane(s) found for all components for offloading')
 
         return possible_cranes, operation_time
 

@@ -8,10 +8,10 @@ from sympy.solvers import solve
 from sympy import Symbol
 
 from .WeatherDelay import WeatherDelay as WD
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 
 
-class FoundationCost(SharedOutputMixin):
+class FoundationCost(CostModule):
     """
     **FoundationCost.py**
 

@@ -1,9 +1,9 @@
 import traceback
-from .SharedOutputMixin import SharedOutputMixin
+from .CostModule import CostModule
 import pandas as pd
 import math
 
-class DevelopmentCost(SharedOutputMixin):
+class DevelopmentCost(CostModule):
     """
     **DevelopmentCost.py
 
