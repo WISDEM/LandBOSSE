@@ -551,20 +551,19 @@ class SitePreparationCost(CostModule):
             'value': self.output_dict['crane_path_width_m']     #TODO: Rename variable to: crane_path_width_ft
         })
 
-        if input_dict['road_distributed_wind'] == False:
-            result.append({
+        result.append({
+        'unit': 'm',
+        'type': 'variable',
+        'variable_df_key_col_name': 'Road length',
+        'value': float(self.output_dict['road_length_m'])
+        })
+
+        result.append({
             'unit': 'm',
             'type': 'variable',
-            'variable_df_key_col_name': 'Road length',
-            'value': float(self.output_dict['road_length_m'])
-            })
-
-            result.append({
-                'unit': 'm',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Road width',
-                'value': self.output_dict['road_width_m']
-            })
+            'variable_df_key_col_name': 'Road width',
+            'value': self.output_dict['road_width_m']
+        })
 
         result.append({
             'unit': 'm',

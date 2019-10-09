@@ -139,12 +139,6 @@ class XlsxReader:
         incomplete_input_dict['road_length_adder_m'] = project['Road length adder (m)']
         incomplete_input_dict['fraction_new_roads'] = project['Percent of roads that will be constructed']
         incomplete_input_dict['road_quality'] = project['Road Quality (0-1)']
-        incomplete_input_dict['site_prep_area_m2'] = project['Site prep area for Distributed wind (m2)']
-        if project['Calculate road cost for distributed wind? (y/n)'] == 'y':
-            incomplete_input_dict['road_distributed_wind'] = True
-        else:
-            incomplete_input_dict['road_distributed_wind'] = False
-
 
         incomplete_input_dict['cable_specs_pd'] = pd.read_excel(input_xlsx, 'cable_specs')
         incomplete_input_dict['line_frequency_hz'] = project['Line Frequency (Hz)']
