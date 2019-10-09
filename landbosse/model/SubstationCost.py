@@ -139,7 +139,7 @@ class SubstationCost(CostModule):
             self.output_dict['substation_module_type_operation'] = self.outputs_for_costs_by_module_type_operation(
                 input_df=self.output_dict['substation_cost_output_df'],
                 project_id=self.project_name,
-                total_or_turbine=False
+                total_or_turbine=True
             )
             return 0, 0
         except Exception as error:
