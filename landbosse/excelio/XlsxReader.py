@@ -186,7 +186,7 @@ class XlsxReader:
         incomplete_input_dict['overtime_multiplier'] = project['Overtime multiplier']
         incomplete_input_dict['allow_same_flag'] = True if project['Allow same flag'] == 'y' else False
 
-        override_total_mgmt_cost_col_name = 'Override total management cost for distributed (0 does not override)'
+        override_total_mgmt_cost_col_name = 'Override total management cost (0 does not override)'
         if override_total_mgmt_cost_col_name in project and project[override_total_mgmt_cost_col_name] > 0:
             incomplete_input_dict['override_total_management_cost'] = \
                 project[override_total_mgmt_cost_col_name]
