@@ -83,16 +83,27 @@ class XlsxFileOperations:
     def landbosse_output_dir(self):
         """
         See the get_input_output_paths_from_argv_or_env() function above. This
-        function is simply a wrapper around that function to get the output
-        path.
+        method gets the base path from there. Then, it checks for a timestamped
+        directory that matches the timestamp in this instance. If it finds that
+        directory, it simply returns the path to that directory. If it does
+        not find that directory, it creates the directory and returns the path
+        to the newly created directory.
 
         Returns
         -------
         str
             The output directory.
         """
-        _, output_path = self.get_input_output_paths_from_argv_or_env()
-        return output_path
+        _, output_base_path = self.get_input_output_paths_from_argv_or_env()
+        output_path = os.path.join(output_base_path, f'landbosse-{self.timestamp}')
+
+        if os.path.exists(output_path) and not os.path.isdir(output_path):
+            raise FileExistsError(f'Cannot overwrite {output_path} with LandBOSSE data.')
+        elif not os.path.exists(output_path):
+            os.mkdir(output_path)
+            return output_path
+        else:
+            return output_path
 
     def landbosse_input_dir(self):
         """

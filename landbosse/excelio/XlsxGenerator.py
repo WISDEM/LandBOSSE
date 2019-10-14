@@ -42,7 +42,7 @@ class XlsxGenerator:
         self.percent_format = None
 
         file_ops = XlsxFileOperations()
-        self.output_xlsx_path = file_ops.timestamp_filename(file_ops.landbosse_output_dir(), output_xlsx, 'xlsx')
+        self.output_xlsx_path = os.path.join(file_ops.landbosse_output_dir(), f'{output_xlsx}.xlsx')
 
     def __enter__(self):
         """
