@@ -6,7 +6,7 @@ import sys
 import pandas as pd
 
 from ..model import Manager
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 
@@ -56,7 +56,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         for _, project_series in projects.iterrows():
             project_data_basename = project_series['Project data file']
             task = dict()
-            task['project_data_xlsx'] = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            task['project_data_xlsx'] = os.path.join(XlsxFileOperations.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_id'] = project_series['Project ID']
             task['project_series'] = project_series
             all_tasks.append(task)

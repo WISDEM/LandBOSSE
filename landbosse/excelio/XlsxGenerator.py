@@ -1,13 +1,10 @@
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell
 import pandas as pd
-import numpy as np
 import os
 import traceback
 
-from .filename_functions import timestamp_filename
-from .filename_functions import landbosse_output_dir
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 
 
 class XlsxGenerator:
@@ -43,7 +40,10 @@ class XlsxGenerator:
         self.header_format = None
         self.scientific_format = None
         self.percent_format = None
-        self.output_xlsx_path = timestamp_filename(landbosse_output_dir(), output_xlsx, 'xlsx')
+
+        # TODO Refactor the timestamp
+
+        self.output_xlsx_path = XlsxFileOperations.timestamp_filename(XlsxFileOperations.landbosse_output_dir(), output_xlsx, 'xlsx')
 
     def __enter__(self):
         """
@@ -213,8 +213,8 @@ class XlsxGenerator:
         str
             The string of the full pathname to the file just written.
         """
-        # Read the validation inputs. Validation data assumed to be on 'Sheet1'
-        validation_xlsx_path = os.path.join(landbosse_input_dir(), validation_xlsx)
+        # Read the validation inputs. Validation data are assumed to be on 'Sheet1'
+        validation_xlsx_path = os.path.join(XlsxFileOperations.landbosse_input_dir(), validation_xlsx)
         validation = pd.read_excel(validation_xlsx_path, 'Sheet1')
         validation_row_dicts = [row.to_dict() for _, row in validation.iterrows()]
 

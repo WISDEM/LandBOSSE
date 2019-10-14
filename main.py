@@ -7,7 +7,7 @@ from landbosse.excelio import XlsxParallelManagerRunner
 from landbosse.excelio import XlsxGenerator
 
 # LandBOSSE, small utility functions
-from landbosse.excelio import landbosse_input_dir
+from landbosse.excelio import XlsxFileOperations
 
 if __name__ == '__main__':
     log = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     run_parallel = True
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
-    projects_xlsx = os.path.join(landbosse_input_dir(), 'project_list.xlsx')
+    projects_xlsx = os.path.join(XlsxFileOperations.landbosse_input_dir(), 'project_list.xlsx')
 
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, log)
 

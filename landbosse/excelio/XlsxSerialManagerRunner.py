@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from ..model import Manager
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 
@@ -60,7 +60,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_basename = project_series['Project data file']
 
             # Input path for the Xlsx
-            project_data_xlsx = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            project_data_xlsx = os.path.join(XlsxFileOperations.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
             log.debug(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
