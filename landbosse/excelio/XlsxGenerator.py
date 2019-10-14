@@ -41,9 +41,8 @@ class XlsxGenerator:
         self.scientific_format = None
         self.percent_format = None
 
-        # TODO Refactor the timestamp
-
-        self.output_xlsx_path = XlsxFileOperations.timestamp_filename(XlsxFileOperations.landbosse_output_dir(), output_xlsx, 'xlsx')
+        file_ops = XlsxFileOperations()
+        self.output_xlsx_path = file_ops.timestamp_filename(file_ops.landbosse_output_dir(), output_xlsx, 'xlsx')
 
     def __enter__(self):
         """

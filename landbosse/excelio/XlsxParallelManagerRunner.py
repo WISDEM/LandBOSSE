@@ -51,12 +51,15 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
         # log.debug('>>> Project list loaded')
 
+        # Prepare the file operations
+        file_ops = XlsxFileOperations()
+
         # Prep all task for the executor
         all_tasks = []
         for _, project_series in projects.iterrows():
             project_data_basename = project_series['Project data file']
             task = dict()
-            task['project_data_xlsx'] = os.path.join(XlsxFileOperations.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            task['project_data_xlsx'] = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_id'] = project_series['Project ID']
             task['project_series'] = project_series
             all_tasks.append(task)

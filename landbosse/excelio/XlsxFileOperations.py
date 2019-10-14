@@ -5,13 +5,18 @@ from datetime import datetime
 
 class XlsxFileOperations:
     """
-    This class has methods to find, name and copy files. It is not meant
-    to be instantiated. All the methods are class methods and are held
-    in this class for organization.
+    This class is made to handle file naming and copying.
     """
 
-    @classmethod
-    def get_input_output_paths_from_argv_or_env(cls):
+    def __init__(self):
+        """
+        The __init__() method just makes a timestamp that will be used throughout
+        the lifetime of this instance.
+        """
+        dt = datetime.now()
+        self.timestamp = f'{dt.year}-{dt.month}-{dt.day}-{dt.hour}-{dt.minute}-{dt.second}'
+
+    def get_input_output_paths_from_argv_or_env(self):
         """
         This uses the sys.argv object to inspect the command line to find input
         and output paths as specified on the command line. It expects the
@@ -75,8 +80,7 @@ class XlsxFileOperations:
 
         return input_path, output_path
 
-    @classmethod
-    def landbosse_output_dir(cls):
+    def landbosse_output_dir(self):
         """
         See the get_input_output_paths_from_argv_or_env() function above. This
         function is simply a wrapper around that function to get the output
@@ -87,11 +91,10 @@ class XlsxFileOperations:
         str
             The output directory.
         """
-        _, output_path = cls.get_input_output_paths_from_argv_or_env()
+        _, output_path = self.get_input_output_paths_from_argv_or_env()
         return output_path
 
-    @classmethod
-    def landbosse_input_dir(cls):
+    def landbosse_input_dir(self):
         """
         See the get_input_output_paths_from_argv_or_env() function above. This
         function is simply a wrapper around that function to get the input
@@ -102,11 +105,10 @@ class XlsxFileOperations:
         str
             The input directory.
         """
-        input_path, _ = cls.get_input_output_paths_from_argv_or_env()
+        input_path, _ = self.get_input_output_paths_from_argv_or_env()
         return input_path
 
-    @classmethod
-    def timestamp_filename(cls, directory, basename, extension):
+    def timestamp_filename(self, directory, basename, extension):
         """
         This function creates a timestamped filename. It uses a filename in the
         format of:
@@ -132,8 +134,6 @@ class XlsxFileOperations:
         str
             The path for the host operating system.
         """
-        dt = datetime.now()
-        timestamp = '{}-{}-{}-{}-{}-{}'.format(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
-        filename = '{}-{}.{}'.format(basename, timestamp, extension)
+        filename = '{}-{}.{}'.format(basename, self.timestamp, extension)
         result = os.path.join(directory, filename)
         return result

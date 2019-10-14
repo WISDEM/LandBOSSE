@@ -29,7 +29,8 @@ if __name__ == '__main__':
 
     run_parallel = True
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
-    projects_xlsx = os.path.join(XlsxFileOperations.landbosse_input_dir(), 'project_list.xlsx')
+    file_ops = XlsxFileOperations()
+    projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
 
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, log)
 
