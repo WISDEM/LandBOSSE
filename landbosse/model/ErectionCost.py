@@ -125,7 +125,7 @@ class ErectionCost(CostModule):
     rsmeans
         (p.DataFrame) RSMeans data
     """
-    def __init__(self, input_dict, output_dict, project_name, log):
+    def __init__(self, input_dict, output_dict, project_name):
         """
         Parameters
         ----------
@@ -136,14 +136,10 @@ class ErectionCost(CostModule):
         output_dict : dict
             The output dictionary with key value pairs as found on the
             output documentation.
-
-        log
-            Python logging service for logging.
         """
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
-        self.log = log
 
     def run_module(self):
         """
@@ -987,7 +983,7 @@ class ErectionCost(CostModule):
             crane_specs_withoffload = crane_specs.append(offload_specs, sort=True)
             operation_time_withoffload = operation_time.append(offload_time, sort=True)
         else:
-            self.log.debug('ErectionCost calculate_costs(): offload_specs empty')
+            raise Exception('ErectionCost calculate_costs(): offload_specs empty')
 
         self.output_dict['crane_specs_withoffload'] = crane_specs_withoffload
         self.output_dict['operation_time_withoffload'] = operation_time_withoffload
