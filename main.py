@@ -32,12 +32,13 @@ if __name__ == '__main__':
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
 
     # Switch to either validation or non validation producing code.
-    _, _, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
+    input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
 
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
         print('Running validation.')
-        XlsxValidator.compare_expected_to_actual(None, final_result['module_type_operation_list'])
+        landbosse_output_path = os.path.join(input_path, 'landbosse-output.xlsx')
+        XlsxValidator.compare_expected_to_actual(landbosse_output_path, final_result['module_type_operation_list'])
     else:
         # XlsxGenerator has a context manager that writes each individual
         # worksheet to the output .xlsx. Also, copy file input structure.
