@@ -1,0 +1,74 @@
+# Input and Output File Structure
+
+LandBOSSE reads multiple files in a folder structure as an input and produces multiple files in a folder structure as an output. To find these files, LandBOSSE looks at its command line or to environment variables for the locations. This document explains how to set up the inputs and outputs.
+
+## Input file structure
+
+The input is comprised of two parts:
+
++ Project data, which are `.xlsx` spreadsheets that contain sheets of data about components, equipment, crews and so on. There is always at least one, and maybe more, files of project data.
+
++ A project list which combines parameters that define projects with reference to the project data those projects use. There is only one file that has the project list.
+
+There is a many-to-many correspondence of projects to project data files: multiple projects can reference the same project data.
+
+``` 
+|--- project_list.xlsx
+|---|
+    |--- project_data_1.xlsx
+    |--- project_data_2.xlsx
+    |--- ...
+    |--- project_data_N.xlsx
+```
+
+There can be other files in the input directory, but LandBOSSE will ignore the extra files if they are not needed.
+
+## Output file structure
+
+The output file structure is comprised of two parts:
+
++ The actual data output from the model in the form of an `.xlsx` spreadsheet.
+
++ All the input files that created the output data.
+
+An output folder structure can be reused as an input into LandBOSSE to reproduce results from, or modify inputs into, a particular run of the LandBOSSE model.
+
+When LandBOSSE runs, you give it the path to an output folder. In turn, LandBOSSE puts a timestamped subfolder into the parent folder you specify and places all the output files into that folder. As you run LandBOSSE successive time with the same output folder, you will get an output folder that looks like this:
+
+``` 
+|--- landbosse-YEAR-MONTH-DAY-HOUR-MINUTE-SECOND
+|---|
+|   |--- landbosse-output.xlsx
+|   |--- project_list.xlsx
+|   |--- project_data
+|      |--- project_data_1.xlsx
+|      |--- project_data_2.xlsx
+|      |--- etc.
+|
+|--- landbosse-YEAR-MONTH-DAY-HOUR-MINUTE-SECOND
+|---|
+    |--- landbosse-output.xlsx
+    |--- project_list.xlsx
+    |--- project_data
+       |--- project_data_1.xlsx
+       |--- project_data_2.xlsx
+       |--- etc.
+```
+
+At the top level are directories timestamped with the date and time the model executed.
+
+## Specifying files during LandBOSSE runs
+
+The easiest way to specify paths to LandBOSSE folders is on the command line, as shown below.
+
+``` 
+python main.py --input PATH_TO_INPUT_FOLDER --output PATH_TO_OUTPUT_FOLDER
+```
+
+If you prefer shorter command lines, you have the following option:
+
+``` 
+python main.py -i PATH_TO_INPUT_FOLDER -o PATH_TO_OUTPUT_FOLDER
+```
+
+If you don't want to set the paths every time you execute LandBOSSE, you can set the `LANDBOSSE_INPUT_DIR` and `LANDBOSSE_OUTPUT_DIR` environment variables, but that is not necessary.
