@@ -45,4 +45,6 @@ class XlsxValidator:
             'Cost per project': 'cost_per_project',
             'USD/kW per project': 'usd_per_kw_per_project'
         }, inplace=True)
-        print(expected_df)
+        for (_, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
+            print(expected_row)
+            print(actual_row)
