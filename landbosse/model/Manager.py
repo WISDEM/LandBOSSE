@@ -72,8 +72,7 @@ class Manager:
             erection_cost = ErectionCost(
                 input_dict=self.input_dict,
                 output_dict=self.output_dict,
-                project_name=project_name,
-                log=self.log
+                project_name=project_name
             )
             erection_cost.run_module()
             self.output_dict['erection_cost'] = erection_cost_output_dict
