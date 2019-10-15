@@ -32,7 +32,7 @@ class XlsxValidator:
         # First, make the list of dictionaries into a dataframe, and drop
         # the raw_cost and raw_cost_total_or_per_turbine columns.
         actual_df = pd.DataFrame(actual_module_type_operation_list)
-        actual_df.drop(['raw_cost', 'raw_cost_total_or_per_turbine'], axis=1)
+        actual_df.drop(['raw_cost', 'raw_cost_total_or_per_turbine'], axis=1, inplace=True)
         expected_df = pd.read_excel(expected_xlsx, 'costs_by_module_type_operation')
         expected_df.rename(columns={
             'Project ID': 'project_id',
@@ -46,5 +46,12 @@ class XlsxValidator:
             'USD/kW per project': 'usd_per_kw_per_project'
         }, inplace=True)
         for (_, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
-            print(expected_row)
-            print(actual_row)
+            # print(expected_row.equals(actual_row))
+            expected_values = expected_row.sort_index().astype(str)
+            actual_values = actual_row.sort_index().astype(str)
+            print(expected_values)
+            print('----')
+            print(actual_values)
+            print('---')
+            print(expected_values.equals(actual_values))
+            break
