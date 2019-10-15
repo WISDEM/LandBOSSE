@@ -73,6 +73,10 @@ python main.py -i PATH_TO_INPUT_FOLDER -o PATH_TO_OUTPUT_FOLDER
 
 If you don't want to set the paths every time you execute LandBOSSE, you can set the `LANDBOSSE_INPUT_DIR` and `LANDBOSSE_OUTPUT_DIR` environment variables, but that is not necessary.
 
+Here's a flowchart of how the model gathers and copies input data during normal operation:
+
+![flowchart of validation process](normal-operation-flowchart.png)
+
 ## Validating model output
 
 Recall that a LandBOSSE output folder can be used as an input folder. This means that every output folder is a record of inputs, with their associated outputs, that have been created by the LandBOSSE model at a certain point in time. As software development of the model takes place, software defects may be introduced.
@@ -81,6 +85,8 @@ The validation functionality of LandBOSSE helps guard against these bugs from cr
 
 Here is a flowchart of the validation process:
 
-![flowchart of validation process](validation-flowchart.png).
+![flowchart of validation process](validation-flowchart.png)
 
-First, the model runs. However, instead of the final output being written as a file, it is compared to the previously calculated LandBOSSE output. If the outputs compare successfully, the model is working the same as it did at a previous point time.
+First, the model runs. However, instead of the final output being written as a file, it is compared to the previously calculated LandBOSSE output. If the outputs compare successfully, the model is working the same as it did at the previous point time when it was verified to be working properly.
+
+
