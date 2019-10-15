@@ -1,6 +1,4 @@
 import os
-import logging
-import sys
 
 from landbosse.excelio import XlsxSerialManagerRunner
 from landbosse.excelio import XlsxParallelManagerRunner
@@ -10,13 +8,6 @@ from landbosse.excelio import XlsxGenerator
 from landbosse.excelio import XlsxFileOperations
 
 if __name__ == '__main__':
-    log = logging.getLogger(__name__)
-    out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
-    out_hdlr.setLevel(logging.DEBUG)
-    log.addHandler(out_hdlr)
-    log.setLevel(logging.DEBUG)
-
     # If run_parallel is True, an XlsxParallelManagerRunner will calculate the
     # projects in parallel. This takes advantage of multicore architecture
     # available on most hardware.
@@ -37,7 +28,7 @@ if __name__ == '__main__':
     projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
 
     # Final result aggregates all the results from all the projects.
-    final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, log)
+    final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
 
     # XlsxGenerator has a context manager that writes each individual
     # worksheet to the output .xlsx
