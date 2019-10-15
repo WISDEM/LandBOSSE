@@ -31,15 +31,29 @@ class XlsxFileOperations:
 
         If all of them are missing the method defaults to 'inputs/' and 'outputs/'
 
+        There is a third option this method looks for:
+
+        --validate or -v
+
+        If that parameter is present, then --output or -o is optional. If enabled,
+        validation mode will accept an input directory with --input that must also have a
+        landbosse-output.xlsx file. The model will then run on the inputs. Instead
+        of writing a file of the output, the output will stay in memory. The
+        landbosse-output.xlsx will then be loaded and compared against the in
+        memory output. If the outputs are the same, the validation passes
+        because the results were reproduced. Otherwise, the validation failed
+        because something broke in the model.
+
         Parameters
         ----------
         This function takes no parameters.
 
         Returns
         -------
-        str, str
-            The paths for input and output, repectively. These paths aren't checked
-            for validity.
+        str, str, bool
+            The first two strings are paths to the input and output files
+            respectively. The third bool is True if validation mode is
+            enabled, False for normal operation.
         """
 
         # Get the fallback paths from the environment variables and set their
@@ -53,6 +67,9 @@ class XlsxFileOperations:
 
         input_path_from_arg = None
         output_path_from_arg = None
+
+        # This is for validation option detection
+        validation_enabled =  '--validate' in sys.argv or '-v' in sys.argv
 
         # Look for the input path on command line
         if '--input' in sys.argv and sys.argv.index('--input') + 1 < len(sys.argv):
@@ -80,7 +97,8 @@ class XlsxFileOperations:
         input_path = input_path_from_arg if input_path_from_arg is not None else input_path_from_env
         output_path = output_path_from_arg if output_path_from_arg is not None else output_path_from_env
 
-        return input_path, output_path
+        # Return the state of the command lin arguments.
+        return input_path, output_path, validation_enabled
 
     def landbosse_input_dir(self):
         """
@@ -93,7 +111,7 @@ class XlsxFileOperations:
         str
             The input directory.
         """
-        input_path, _ = self.get_input_output_paths_from_argv_or_env()
+        input_path, _, _ = self.get_input_output_paths_from_argv_or_env()
         return input_path
 
     def landbosse_output_dir(self):
@@ -110,7 +128,7 @@ class XlsxFileOperations:
         str
             The output directory.
         """
-        _, output_base_path = self.get_input_output_paths_from_argv_or_env()
+        _, output_base_path, _ = self.get_input_output_paths_from_argv_or_env()
         output_path = os.path.join(output_base_path, f'landbosse-{self.timestamp}')
 
         if os.path.exists(output_path) and not os.path.isdir(output_path):

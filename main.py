@@ -27,15 +27,21 @@ if __name__ == '__main__':
     # project_xlsx is the absolute path of the project_list.xlsx
     projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
 
-    # Final result aggregates all the results from all the projects.
+    # final_result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
 
-    # XlsxGenerator has a context manager that writes each individual
-    # worksheet to the output .xlsx
+    # Switch to either validation or non validation producing code.
+    _, _, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
 
-    with XlsxGenerator('landbosse-output', file_ops) as xlsx:
-        xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-        xlsx.tab_details(rows=final_result['details_list'])
-
-    # Copy the input file structure
-    file_ops.copy_input_data()
+    # Run validation or not depending on whether validation was enabled.
+    if validation_enabled:
+        print('Running validation.')
+        print('Validation mode not supported at this time.')
+    else:
+        # XlsxGenerator has a context manager that writes each individual
+        # worksheet to the output .xlsx. Also, copy file input structure.
+        print('Writing final output folder')
+        with XlsxGenerator('landbosse-output', file_ops) as xlsx:
+            xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
+            xlsx.tab_details(rows=final_result['details_list'])
+        file_ops.copy_input_data()
