@@ -3,6 +3,7 @@ import os
 from landbosse.excelio import XlsxSerialManagerRunner
 from landbosse.excelio import XlsxParallelManagerRunner
 from landbosse.excelio import XlsxGenerator
+from landbosse.excelio import XlsxValidator
 
 # LandBOSSE, small utility functions
 from landbosse.excelio import XlsxFileOperations
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
         print('Running validation.')
-        print('Validation mode not supported at this time.')
+        XlsxValidator.compare_expected_to_actual(None, final_result['module_type_operation_list'])
     else:
         # XlsxGenerator has a context manager that writes each individual
         # worksheet to the output .xlsx. Also, copy file input structure.
