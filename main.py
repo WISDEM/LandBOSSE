@@ -29,11 +29,22 @@ if __name__ == '__main__':
 
     run_parallel = True
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
+
+    # The file_ops object handles file names for input and output data.
     file_ops = XlsxFileOperations()
+
+    # project_xlsx is the absolute path of the project_list.xlsx
     projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
 
+    # Final result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, log)
 
-    with XlsxGenerator('landbosse-output') as xlsx:
+    # XlsxGenerator has a context manager that writes each individual
+    # worksheet to the output .xlsx
+
+    with XlsxGenerator('landbosse-output', file_ops) as xlsx:
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
         xlsx.tab_details(rows=final_result['details_list'])
+
+    # Copy the input file structure
+    file_ops.copy_input_data()

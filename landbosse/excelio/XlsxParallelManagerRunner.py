@@ -49,7 +49,6 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        # log.debug('>>> Project list loaded')
 
         # Prepare the file operations
         file_ops = XlsxFileOperations()

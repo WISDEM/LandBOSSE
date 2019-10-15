@@ -19,7 +19,7 @@ class XlsxGenerator:
     output Excel workbook.
     """
 
-    def __init__(self, output_xlsx):
+    def __init__(self, output_xlsx, file_ops):
         """
         This constructor sets the name of the .xlsx file for writing
 
@@ -32,6 +32,9 @@ class XlsxGenerator:
             The name of the .xlsx file to write. Do not include the .xlsx at
             the end of the filename. Also, this filename will be timestamped
             before it is written.
+
+        file_ops : XlsxFileOperations
+            An instance of XlsxFileOperations to manage file names.
         """
 
         # Set all instance attributes to None first in the constructor as good
@@ -40,8 +43,6 @@ class XlsxGenerator:
         self.header_format = None
         self.scientific_format = None
         self.percent_format = None
-
-        file_ops = XlsxFileOperations()
         self.output_xlsx_path = os.path.join(file_ops.landbosse_output_dir(), f'{output_xlsx}.xlsx')
 
     def __enter__(self):

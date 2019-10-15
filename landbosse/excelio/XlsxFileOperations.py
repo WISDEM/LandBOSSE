@@ -1,6 +1,7 @@
 import os
 import sys
 from datetime import datetime
+from shutil import copy2
 
 
 class XlsxFileOperations:
@@ -80,6 +81,20 @@ class XlsxFileOperations:
 
         return input_path, output_path
 
+    def landbosse_input_dir(self):
+        """
+        See the get_input_output_paths_from_argv_or_env() function above. This
+        function is simply a wrapper around that function to get the input
+        path.
+
+        Returns
+        -------
+        str
+            The input directory.
+        """
+        input_path, _ = self.get_input_output_paths_from_argv_or_env()
+        return input_path
+
     def landbosse_output_dir(self):
         """
         See the get_input_output_paths_from_argv_or_env() function above. This
@@ -105,19 +120,16 @@ class XlsxFileOperations:
         else:
             return output_path
 
-    def landbosse_input_dir(self):
+    def copy_input_data(self):
         """
-        See the get_input_output_paths_from_argv_or_env() function above. This
-        function is simply a wrapper around that function to get the input
-        path.
+        This copies all input data including:
 
-        Returns
-        -------
-        str
-            The input directory.
+        - project_list.xlsx
+        - everything under project_data/
         """
-        input_path, _ = self.get_input_output_paths_from_argv_or_env()
-        return input_path
+        src_project_list_xlsx = os.path.join(self.landbosse_input_dir(), 'project_list.xlsx')
+        dst_project_list_xlsx = os.path.join(self.landbosse_output_dir(), 'project_list.xlsx')
+        copy2(src_project_list_xlsx, dst_project_list_xlsx)
 
     def timestamp_filename(self, directory, basename, extension):
         """
