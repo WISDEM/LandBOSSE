@@ -18,7 +18,7 @@ class Manager:
     structure.
     """
 
-    def __init__(self, input_dict, output_dict, log):
+    def __init__(self, input_dict, output_dict):
         """
         This initializer sets up the instance variables of:
 
@@ -31,7 +31,6 @@ class Manager:
         """
         self.input_dict = input_dict
         self.output_dict = output_dict
-        self.log = log
 
     def execute_landbosse(self, project_name):
         try:
