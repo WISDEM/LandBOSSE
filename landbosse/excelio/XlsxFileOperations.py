@@ -2,6 +2,7 @@ import os
 import sys
 from datetime import datetime
 from shutil import copy2
+from shutil import copytree
 
 
 class XlsxFileOperations:
@@ -129,7 +130,10 @@ class XlsxFileOperations:
         """
         src_project_list_xlsx = os.path.join(self.landbosse_input_dir(), 'project_list.xlsx')
         dst_project_list_xlsx = os.path.join(self.landbosse_output_dir(), 'project_list.xlsx')
+        src_project_data_dir = os.path.join(self.landbosse_input_dir(), 'project_data')
+        dst_project_data_dir = os.path.join(self.landbosse_output_dir(), 'project_data')
         copy2(src_project_list_xlsx, dst_project_list_xlsx)
+        copytree(src_project_data_dir, dst_project_data_dir)
 
     def timestamp_filename(self, directory, basename, extension):
         """
