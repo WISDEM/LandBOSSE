@@ -55,12 +55,12 @@ class XlsxValidator:
             if equal:
                 print(f'{idx} PASS')
             else:
-                print('------------------ FAIL --------------------')
-                print('Expected')
+                print(f'------------------ {idx} FAIL --------------------')
+                print('EXPECTED')
                 print(expected_row)
-                print('Actual')
+                print('ACTUAL')
                 print(actual_row)
-                print('--------------------------------------------')
+                print('------------------------------------------------')
             result.append(equal)
 
         # Return True if and only if all expected/actual comparisons were True
