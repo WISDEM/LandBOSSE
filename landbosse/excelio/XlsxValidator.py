@@ -6,8 +6,7 @@ class XlsxValidator:
     to the results of a current model run.
     """
 
-    @classmethod
-    def compare_expected_to_actual(cls, expected_xlsx, actual_module_type_operation_list):
+    def compare_expected_to_actual(self, expected_xlsx, actual_module_type_operation_list):
         """
         This compares the expected costs as calculated by a prior model run
         with the actual results from a current model run.
@@ -51,7 +50,7 @@ class XlsxValidator:
 
         # Iterate over each row, reporting results as they come up.
         for (idx, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
-            equal = cls._compare_rows(expected_row, actual_row)
+            equal = self._compare_rows(expected_row, actual_row)
             if equal:
                 print(f'{idx} PASS')
             else:
@@ -66,8 +65,7 @@ class XlsxValidator:
         # Return True if and only if all expected/actual comparisons were True
         return all(result)
 
-    @classmethod
-    def _compare_rows(cls, expected, actual, ndigits=3):
+    def _compare_rows(self, expected, actual, ndigits=3):
         """
         This compares two pandas.Series for equality while handling
         rounding errors and string comparisons gracefully.
