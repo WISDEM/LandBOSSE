@@ -160,10 +160,10 @@ class ErectionCost(CostModule):
                 project_id=self.project_name,
                 total_or_turbine=True
             )
-            return 0
-        except Exception:
+            return 0, 0 # Module ran successfully
+        except Exception as error:
             traceback.print_exc()
-            return 1
+            return 1, error # Module did not run successfully
 
     def outputs_for_detailed_tab(self):
         """
