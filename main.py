@@ -38,7 +38,12 @@ if __name__ == '__main__':
     if validation_enabled:
         print('Running validation.')
         landbosse_output_path = os.path.join(input_path, 'landbosse-output.xlsx')
-        XlsxValidator.compare_expected_to_actual(landbosse_output_path, final_result['module_type_operation_list'])
+        validation_was_successful = XlsxValidator.compare_expected_to_actual(landbosse_output_path,
+                                                                             final_result['module_type_operation_list'])
+        if validation_was_successful:
+            print('Validation passed.')
+        else:
+            print('Validation failed. See mismatched data above.')
     else:
         # XlsxGenerator has a context manager that writes each individual
         # worksheet to the output .xlsx. Also, copy file input structure.

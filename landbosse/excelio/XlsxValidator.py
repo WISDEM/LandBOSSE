@@ -45,13 +45,56 @@ class XlsxValidator:
             'Cost per project': 'cost_per_project',
             'USD/kW per project': 'usd_per_kw_per_project'
         }, inplace=True)
-        for (_, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
-            # print(expected_row.equals(actual_row))
-            expected_values = expected_row.sort_index().astype(str)
-            actual_values = actual_row.sort_index().astype(str)
-            print(expected_values)
-            print('----')
-            print(actual_values)
-            print('---')
-            print(expected_values.equals(actual_values))
-            break
+
+        # Result will hold all the True/False equalities for each row
+        result = []
+
+        # Iterate over each row, reporting results as they come up.
+        for (idx, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
+            equal = cls._compare_rows(expected_row, actual_row)
+            if equal:
+                print(f'{idx} PASS')
+            else:
+                print('------------------ FAIL --------------------')
+                print('Expected')
+                print(expected_row)
+                print('Actual')
+                print(actual_row)
+                print('--------------------------------------------')
+            result.append(equal)
+
+        # Return True if and only if all expected/actual comparisons were True
+        return all(result)
+
+    @classmethod
+    def _compare_rows(cls, expected, actual, ndigits=3):
+        """
+        This compares two pandas.Series for equality while handling
+        rounding errors and string comparisons gracefully.
+
+        Parameters
+        ----------
+        expected : pandas.Series
+            The expected values in the series
+
+        actual : pandas.Series
+            The actual values in the series
+
+        ndigits : int
+            The number of digits after the decimal place to round to.
+
+        Returns
+        -------
+        bool
+            True if the rows have the same data, False otherwise.
+        """
+        sorted_expected = expected.sort_index()
+        sorted_actual = actual.sort_index()
+        for (_, expected_item), (_, actual_item) in zip(sorted_expected.iteritems(), sorted_actual.iteritems()):
+            if type(actual_item) == float and type(expected_item) == float:
+                match = round(expected_item, ndigits) == round(actual_item, ndigits)
+            else:
+                match = expected_item == actual_item
+            if not match:
+                return False
+        return True
