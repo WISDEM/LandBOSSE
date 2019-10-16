@@ -44,6 +44,7 @@ class XlsxGenerator:
         self.scientific_format = None
         self.percent_format = None
         self.output_xlsx_path = os.path.join(file_ops.landbosse_output_dir(), f'{output_xlsx}.xlsx')
+        self.file_ops = file_ops
 
     def __enter__(self):
         """
@@ -214,7 +215,7 @@ class XlsxGenerator:
             The string of the full pathname to the file just written.
         """
         # Read the validation inputs. Validation data are assumed to be on 'Sheet1'
-        validation_xlsx_path = os.path.join(XlsxFileOperations.landbosse_input_dir(), validation_xlsx)
+        validation_xlsx_path = os.path.join(self.file_ops.landbosse_input_dir(), validation_xlsx)
         validation = pd.read_excel(validation_xlsx_path, 'Sheet1')
         validation_row_dicts = [row.to_dict() for _, row in validation.iterrows()]
 
