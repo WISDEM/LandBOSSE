@@ -89,4 +89,10 @@ Here is a flowchart of the validation process:
 
 First, the model runs. However, instead of the final output being written as a file, it is compared to the previously calculated LandBOSSE output. If the outputs compare successfully, the model is working the same as it did at the previous point time when it was verified to be working properly.
 
+To run this validation process, you need to have an output folder of LandBOSSE that will be used as the **expected** data. The expected data is the data you know to be true. In contrast, the data being validated are referred to as **actual** data. The command will look something like this:
 
+```
+python main.py --input PATH_TO_PRIOR_LANDBOSSE_OUTPUT --validate
+```
+
+When this command executes, instead of writing another output file, LandBOSSE will display a report of the validation results, row by row. For each row where the expected and actual data match, `PASS` will be displayed. If the expected and actual data do not match, the `FAIL` will be displayed along with the two rows that do not match.
