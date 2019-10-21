@@ -165,7 +165,7 @@ class XlsxGenerator:
         worksheet.set_column(5, 5, 66)
         worksheet.set_column(0, 2, 17)
 
-        for idx, col_name in enumerate(['Project ID', 'Module', 'Variable of DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
+        for idx, col_name in enumerate(['Project ID', 'Module', 'Variable or DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
             worksheet.write(0, idx, col_name, self.header_format)
 
         # Go through each row and create Excel rows from each of those rows.
