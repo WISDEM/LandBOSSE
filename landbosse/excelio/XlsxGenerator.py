@@ -150,7 +150,7 @@ class XlsxGenerator:
         This writes a detailed outputs tab. It takes a list of dictionaries
         as the parameters and in each of those dictionaries it looks at the keys:
 
-        ['project_id', 'module', 'type', 'variable_df_key_col_name', 'unit', 'value']
+        ['project_id', 'module', 'type', 'variable_df_key_col_name', 'unit', 'numeric value', 'non_numeric_value']
 
         The values of each of those keys become each cell in the row.
 
@@ -164,23 +164,31 @@ class XlsxGenerator:
         worksheet.set_column(4, 4, 17)
         worksheet.set_column(5, 5, 66)
         worksheet.set_column(0, 2, 17)
-        for idx, col_name in enumerate(['project_id', 'module', 'type', 'variable_df_key_col_name', 'unit', 'value', 'last number']):
+
+        for idx, col_name in enumerate(['Project ID', 'Module', 'Variable of DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
             worksheet.write(0, idx, col_name, self.header_format)
+
+        # Go through each row and create Excel rows from each of those rows.
         for row_idx, row in enumerate(rows):
             worksheet.write(row_idx + 1, 0, row['project'])
             worksheet.write(row_idx + 1, 1, row['module'])
             worksheet.write(row_idx + 1, 2, row['type'])
             worksheet.write(row_idx + 1, 3, row['variable_df_key_col_name'])
             worksheet.write(row_idx + 1, 4, row['unit'])
-            if type(row['value']) is str or type(row['value']) is int or type(row['value']) is float:
-                worksheet.write(row_idx + 1, 5, row['value'], self.scientific_format)
+
+            value = row['value']
+            value_is_number = self._is_numeric(value)
+            if value_is_number:
+                worksheet.write(row_idx + 1, 5, value, self.scientific_format)
             else:
-                worksheet.write(row_idx + 1, 5, str(row['value']))
+                worksheet.write(row_idx + 1, 6, value)
+
+            # If there is a last_number, which means this is a dataframe row that has a number
+            # at the end, write this into the numeric value column.
+
             if 'last_number' in row:
-                if type(row['last_number']) is int or type(row['last_number']) is float:
-                    worksheet.write(row_idx + 1, 6, row['last_number'], self.scientific_format)
-                else:
-                    worksheet.write(row_idx + 1, 6, str(row['last_number']))
+                worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
+
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
     def tab_details_with_validation(self, rows, validation_xlsx):
@@ -278,3 +286,28 @@ class XlsxGenerator:
             worksheet.write(row_idx, 9, '=CONCATENATE({}, {})'.format(pk_part_1_cell, pk_part_2_cell))
             row_idx += 1
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
+
+    def _is_numeric(self, value):
+        """
+        This method determines if the given value is numeric (an int or a
+        float). If it is numeric, the value can be placed into a numeric
+        column. If it is non-numeric, the value can be placed into a non-
+        numeric column.
+
+        This is accomplished by attempting to parse the value as a float.
+
+        Parameters
+        ----------
+        value
+            The value to be tested.
+
+        Returns
+        -------
+        bool
+            True if the value can be parsed as a float, False otherwise.
+        """
+        try:
+            float(value)
+        except ValueError:
+            return False
+        return True
