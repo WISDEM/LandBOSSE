@@ -6,7 +6,7 @@ class XlsxValidator:
     to the results of a current model run.
     """
 
-    def compare_expected_to_actual(self, expected_xlsx, actual_module_type_operation_list):
+    def compare_expected_to_actual(self, expected_xlsx, actual_module_type_operation_list, validation_output_xlsx):
         """
         This compares the expected costs as calculated by a prior model run
         with the actual results from a current model run.
@@ -21,6 +21,10 @@ class XlsxValidator:
         actual_module_type_operation_list : str
             The module_type_operation_list as returned by a subclass of
             XlsxManagerRunner.
+
+        validation_output_xlsx : str
+            The absolute pathname to the output file with the comparison
+            results.
 
         Returns
         -------
@@ -45,54 +49,45 @@ class XlsxValidator:
             'USD/kW per project': 'usd_per_kw_per_project'
         }, inplace=True)
 
-        # Result will hold all the True/False equalities for each row
-        result = []
+        cost_per_project_actual = actual_df[
+            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
+        cost_per_project_expected = expected_df[
+            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
 
-        # Iterate over each row, reporting results as they come up.
-        for (idx, expected_row), (_, actual_row) in zip(expected_df.iterrows(), actual_df.iterrows()):
-            equal = self._compare_rows(expected_row, actual_row)
-            if equal:
-                print(f'{idx} PASS')
-            else:
-                print(f'------------------ {idx} FAIL --------------------')
-                print('EXPECTED')
-                print(expected_row)
-                print('ACTUAL')
-                print(actual_row)
-                print('------------------------------------------------')
-            result.append(equal)
+        comparison = cost_per_project_actual.merge(
+            cost_per_project_expected,
+            on=['project_id', 'module', 'operation_id', 'type_of_cost'])
 
-        # Return True if and only if all expected/actual comparisons were True
-        return all(result)
+        comparison.rename(columns={'cost_per_project_x': 'cost_per_project_actual',
+                                    'cost_per_project_y': 'cost_per_project_expected'}, inplace=True)
 
-    def _compare_rows(self, expected, actual, ndigits=3):
-        """
-        This compares two pandas.Series for equality while handling
-        rounding errors and string comparisons gracefully.
+        comparison['difference_validation'] = comparison['cost_per_project_actual'] - comparison['cost_per_project_expected']
 
-        Parameters
-        ----------
-        expected : pandas.Series
-            The expected values in the series
+        # Regardless of the outcome, write the end result of the comparison
+        # to the validation output file.
+        columns_for_comparison_output = [
+            'project_id',
+            'module',
+            'operation_id',
+            'type_of_cost',
+            'cost_per_project_actual',
+            'cost_per_project_expected',
+            'difference_validation'
+        ]
+        comparison.to_excel(validation_output_xlsx, index=False, columns=columns_for_comparison_output)
 
-        actual : pandas.Series
-            The actual values in the series
+        # Find all rows where the difference is unequal to 0. These are rows
+        # that failed validation. Note that, after the join, the rows may be
+        # in a different order than the originals.
+        #
+        # Round the difference to a given number of decimal places.
+        failed_rows = comparison[comparison['difference_validation'].round(decimals=4) != 0]
 
-        ndigits : int
-            The number of digits after the decimal place to round to.
-
-        Returns
-        -------
-        bool
-            True if the rows have the same data, False otherwise.
-        """
-        sorted_expected = expected.sort_index()
-        sorted_actual = actual.sort_index()
-        for (_, expected_item), (_, actual_item) in zip(sorted_expected.iteritems(), sorted_actual.iteritems()):
-            if type(actual_item) == float and type(expected_item) == float:
-                match = round(expected_item, ndigits) == round(actual_item, ndigits)
-            else:
-                match = expected_item == actual_item
-            if not match:
-                return False
-        return True
+        if len(failed_rows) > 0:
+            print('=' * 80)
+            print('The following rows failed validation:')
+            print(failed_rows)
+            print('=' * 80)
+            return False
+        else:
+            return True

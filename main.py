@@ -37,10 +37,19 @@ if __name__ == '__main__':
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
         print('Running validation.')
-        landbosse_output_path = os.path.join(input_path, 'landbosse-output.xlsx')
+
+        # Creates file path for output file from prior LandBOSSE run that will be used to check latest run
+        # Generated based on input_path from command line when --validate option is specified
+        # (validation output file must be in inputs folder and must be called 'landbosse-output-validation.xlsx')
+        expected_validation_data_path = os.path.join(input_path, 'landbosse-expected-validation-data.xlsx')
+        validation_result_path = os.path.join(input_path, 'landbosse-validation-result.xlsx')
+
         validator = XlsxValidator()
-        validation_was_successful = validator.compare_expected_to_actual(landbosse_output_path,
-                                                                         final_result['module_type_operation_list'])
+        validation_was_successful = validator.compare_expected_to_actual(
+            expected_xlsx=expected_validation_data_path,
+            actual_module_type_operation_list=final_result['module_type_operation_list'],
+            validation_output_xlsx=validation_result_path
+        )
         if validation_was_successful:
             print('Validation passed.')
         else:
