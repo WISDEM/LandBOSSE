@@ -45,6 +45,25 @@ class XlsxValidator:
             'USD/kW per project': 'usd_per_kw_per_project'
         }, inplace=True)
 
+        ## Suggested changes... needs some additional development
+        cost_per_project_actual = actual_df[
+            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
+        cost_per_project_expected = expected_df[
+            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
+
+        comparison = cost_per_project_actual.merge(
+            cost_per_project_expected,
+            on=['project_id', 'module', 'operation_id', 'type_of_cost'])
+
+        comparison.rename(columns={'cost_per_project_x': 'cost_per_project_actual',
+                                    'cost_per_project_y':'cost_per_project_expected'}, inplace=True)
+
+        comparison['difference_validation'] = comparison['cost_per_project_actual'] - comparison['cost_per_project_expected']
+
+        ## I would suggest removing the following and checking the value of the difference_validation column in comparision above... not sure if this accomplishes what you're trying to achieve
+        ## Could also output the comparison dataframe to a file so you don't have to report every value as true or false with flags
+
+
         # Result will hold all the True/False equalities for each row
         result = []
 
