@@ -88,5 +88,6 @@ class XlsxValidator:
             print('The following rows failed validation:')
             print(failed_rows)
             print('=' * 80)
+            return False
         else:
             return True
