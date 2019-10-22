@@ -190,3 +190,21 @@ class XlsxGenerator:
                 worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
 
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
+
+    def _is_numeric(self, value):
+        """
+        Parameters
+        ----------
+        value
+            The value to be tested.
+
+        Returns
+        -------
+        bool
+            True if the value is numeric, False otherwise.
+        """
+        try:
+            float(value)
+        except ValueError:
+            return False
+        return True
