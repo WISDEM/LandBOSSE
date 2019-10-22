@@ -59,13 +59,22 @@ class XlsxValidator:
             on=['project_id', 'module', 'operation_id', 'type_of_cost'])
 
         comparison.rename(columns={'cost_per_project_x': 'cost_per_project_actual',
-                                    'cost_per_project_y':'cost_per_project_expected'}, inplace=True)
+                                    'cost_per_project_y': 'cost_per_project_expected'}, inplace=True)
 
         comparison['difference_validation'] = comparison['cost_per_project_actual'] - comparison['cost_per_project_expected']
 
         # Regardless of the outcome, write the end result of the comparison
         # to the validation output file.
-        comparison.to_excel(validation_output_xlsx)
+        columns_for_comparison_output = [
+            'project_id',
+            'module',
+            'operation_id',
+            'type_of_cost',
+            'cost_per_project_actual',
+            'cost_per_project_expected',
+            'difference_validation'
+        ]
+        comparison.to_excel(validation_output_xlsx, index=False, columns=columns_for_comparison_output)
 
         # Find all rows where the difference is unequal to 0. These are rows
         # that failed validation. Note that, after the join, the rows may be
