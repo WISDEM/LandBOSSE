@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # debugger which can slow down when it is being used to debug multiple
     # processes.
 
-    run_parallel = False
+    run_parallel = True
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
 
     # The file_ops object handles file names for input and output data.
@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
     # Switch to either validation or non validation producing code.
     input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
-    validation_enabled = True
 
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
@@ -42,11 +41,15 @@ if __name__ == '__main__':
         # Creates file path for output file from prior LandBOSSE run that will be used to check latest run
         # Generated based on input_path from command line when --validate option is specified
         # (validation output file must be in inputs folder and must be called 'landbosse-output-validation.xlsx')
-        landbosse_validation_file_path = os.path.join(input_path, 'landbosse-output-validation.xlsx')
+        expected_validation_data_path = os.path.join(input_path, 'landbosse-expected-validation-data.xlsx')
+        validation_result_path = os.path.join(input_path, 'landbosse-validation-result.xlsx')
 
         validator = XlsxValidator()
-        validation_was_successful = validator.compare_expected_to_actual(landbosse_validation_file_path,
-                                                                         final_result['module_type_operation_list'])
+        validation_was_successful = validator.compare_expected_to_actual(
+            expected_xlsx=expected_validation_data_path,
+            actual_module_type_operation_list=final_result['module_type_operation_list'],
+            validation_output_xlsx=validation_result_path
+        )
         if validation_was_successful:
             print('Validation passed.')
         else:
