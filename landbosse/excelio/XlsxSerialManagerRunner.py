@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from ..model import Manager
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 
@@ -47,6 +47,9 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
         print('>>> Project list loaded')
 
+        # For file operations
+        file_ops = XlsxFileOperations()
+
         # Get the output dictionary ready
         runs_dict = OrderedDict()
 
@@ -56,7 +59,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_basename = project_series['Project data file']
 
             # Input path for the Xlsx
-            project_data_xlsx = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
             print(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
