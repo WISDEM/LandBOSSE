@@ -193,6 +193,12 @@ class XlsxGenerator:
 
     def _is_numeric(self, value):
         """
+        This method tests if a value is a numeric (that is, can be parsed
+        by float()) or non numeric (which cannot be parsed).
+
+        The decision from this method determines whether values go into
+        the numeric or non-numeric columns.
+
         Parameters
         ----------
         value
