@@ -42,7 +42,7 @@ if __name__ == '__main__':
         # Generated based on input_path from command line when --validate option is specified
         # (validation output file must be in inputs folder and must be called 'landbosse-output-validation.xlsx')
         expected_validation_data_path = os.path.join(input_path, 'landbosse-expected-validation-data.xlsx')
-        validation_result_path = os.path.join(input_path, 'landbosse-validation-result.xlsx')
+        validation_result_path = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-validation-result.xlsx')
 
         validator = XlsxValidator()
         validation_was_successful = validator.compare_expected_to_actual(
@@ -54,11 +54,11 @@ if __name__ == '__main__':
             print('Validation passed.')
         else:
             print('Validation failed. See mismatched data above.')
-    else:
-        # XlsxGenerator has a context manager that writes each individual
-        # worksheet to the output .xlsx. Also, copy file input structure.
-        print('Writing final output folder')
-        with XlsxGenerator('landbosse-output', file_ops) as xlsx:
-            xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-            xlsx.tab_details(rows=final_result['details_list'])
-        file_ops.copy_input_data()
+
+    # XlsxGenerator has a context manager that writes each individual
+    # worksheet to the output .xlsx. Also, copy file input structure.
+    print('Writing final output folder')
+    with XlsxGenerator('landbosse-output', file_ops) as xlsx:
+        xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
+        xlsx.tab_details(rows=final_result['details_list'])
+    file_ops.copy_input_data()

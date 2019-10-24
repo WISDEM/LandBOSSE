@@ -117,7 +117,7 @@ For validating LandBOSSE, the input data are stored in the same folder structure
 To validate the model, you would run the following command.
 
 ```
-python main.py --input PATH_TO_VALIDATION_FOLDER --validate
+python main.py --input PATH_TO_FOLDER_WITH_VALIDATION_DATA --output PATH_TO_YOUR_OUTPUT_FOLDER --validate
 ```
 
-This command will run the model to obtain the actual data and will create the `landbosse-validation-result.xlsx`.
+This command will run the model to obtain the actual data and will create the `landbosse-validation-result.xlsx`. It will write the validation 

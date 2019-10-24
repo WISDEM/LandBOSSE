@@ -153,6 +153,15 @@ class XlsxFileOperations:
         copy2(src_project_list_xlsx, dst_project_list_xlsx)
         copytree(src_project_data_dir, dst_project_data_dir)
 
+        src_expected_validation_data = os.path.join(self.landbosse_input_dir(),
+                                                    'landbosse-expected-validation-data.xlsx')
+
+        dst_expected_validation_data = os.path.join(self.landbosse_output_dir(),
+                                                    'landbosse-expected-validation-data.xlsx')
+
+        if os.path.isfile(src_expected_validation_data):
+            copy2(src_expected_validation_data, dst_expected_validation_data)
+
     def timestamp_filename(self, directory, basename, extension):
         """
         This function creates a timestamped filename. It uses a filename in the
