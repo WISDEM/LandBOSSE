@@ -15,3 +15,8 @@
 - Improve docstrings in source code.
 - Refactor more functionality into a new `CostModule` class.
 - Clean up logging to use simple `print()` statements which are safe to use in multi-process parallel logging operations.
+
+## 2.1.2 (October 24, 2019)
+
+- Add separated "numeric value" and "non-numeric value" to columns on the details sheet.
+- Add support to test current model output against previously known good model output to guard against regressions when the model is changed.
