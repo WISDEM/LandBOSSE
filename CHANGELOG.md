@@ -8,3 +8,10 @@
 - Enhancements to all modules in model.
 - Black box tests.
 - Dictionary based interface to integrate with other modeling codes.
+
+## 2.1.1 (October 9, 2019)
+
+- In the `costs_by_module_type_operation` tab, standardize all costs to USD/kW per project, cost per project, cost per turbine.
+- Improve docstrings in source code.
+- Refactor more functionality into a new `CostModule` class.
+- Clean up logging to use simple `print()` statements which are safe to use in multi-process parallel logging operations.
