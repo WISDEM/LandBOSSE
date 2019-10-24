@@ -1,12 +1,10 @@
 import os
 from concurrent import futures
-import logging
-import sys
 
 import pandas as pd
 
 from ..model import Manager
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 
@@ -17,7 +15,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
     with a ProcessPoolExecutor.
     """
 
-    def run_from_project_list_xlsx(self, projects_xlsx, log):
+    def run_from_project_list_xlsx(self, projects_xlsx):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
         the OrderedDict that holds the results of all the runs. See the return
@@ -27,10 +25,6 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
         Parameters
         ----------
-        log : logger
-            A logger from Pythons library logger.get_logger() for debug output
-            messages.
-
         projects_xlsx : str
             A path name (preferably created with os.path.join()) specific to the
             operating system that is the main input .xlsx file that controls
@@ -49,14 +43,16 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        # log.debug('>>> Project list loaded')
+
+        # Prepare the file operations
+        file_ops = XlsxFileOperations()
 
         # Prep all task for the executor
         all_tasks = []
         for _, project_series in projects.iterrows():
             project_data_basename = project_series['Project data file']
             task = dict()
-            task['project_data_xlsx'] = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            task['project_data_xlsx'] = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_id'] = project_series['Project ID']
             task['project_series'] = project_series
             all_tasks.append(task)
@@ -122,13 +118,6 @@ def run_single_project(task_dict):
         The str is the project_id. The dict is the resulting output
         dictionary.
     """
-    log = logging.getLogger(__name__)
-    out_hdlr = logging.StreamHandler(sys.stdout)
-    out_hdlr.setFormatter(logging.Formatter('%(asctime)s %(message)s'))
-    out_hdlr.setLevel(logging.DEBUG)
-    log.addHandler(out_hdlr)
-    log.setLevel(logging.DEBUG)
-
     project_data_xlsx = task_dict['project_data_xlsx']
     project_series = task_dict['project_series']
     project_id = task_dict['project_id']
@@ -143,7 +132,7 @@ def run_single_project(task_dict):
     # Now run the manager and accumulate its result into the runs_dict
     output_dict = dict()
     output_dict['project_series'] = project_series
-    mc = Manager(input_dict=master_input_dict, output_dict=output_dict, log=log)
+    mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_landbosse(project_name=project_id)
 
     print(f'END {project_id}')

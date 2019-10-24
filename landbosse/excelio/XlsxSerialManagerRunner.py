@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from ..model import Manager
-from .filename_functions import landbosse_input_dir
+from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 
@@ -15,7 +15,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
     in a serial loop.
     """
 
-    def run_from_project_list_xlsx(self, projects_xlsx, log):
+    def run_from_project_list_xlsx(self, projects_xlsx):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
         the OrderedDict that holds the results of all the runs. See the return
@@ -25,10 +25,6 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
         Parameters
         ----------
-        log : logger
-            A logger from Pythons library loger.get_logger() for debug output
-            messages.
-
         projects_xlsx : str
             A path name (preferably created with os.path.join()) specific to the
             operating system that is the main input .xlsx file that controls
@@ -49,7 +45,10 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        log.debug('>>> Project list loaded')
+        print('>>> Project list loaded')
+
+        # For file operations
+        file_ops = XlsxFileOperations()
 
         # Get the output dictionary ready
         runs_dict = OrderedDict()
@@ -60,12 +59,12 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_basename = project_series['Project data file']
 
             # Input path for the Xlsx
-            project_data_xlsx = os.path.join(landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
-            log.debug(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
-            log.debug('>>> project_id: {}'.format(project_id))
-            log.debug('>>> Project data: {}'.format(project_data_xlsx))
+            print(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
+            print('>>> project_id: {}'.format(project_id))
+            print('>>> Project data: {}'.format(project_data_xlsx))
 
             # Create the master input dictionary.
             xlsx_reader = XlsxReader()
@@ -73,7 +72,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()
-            mc = Manager(input_dict=master_input_dict, output_dict=output_dict, log=log)
+            mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
             mc.execute_landbosse(project_name=project_id)
             output_dict['project_series'] = project_series
             runs_dict[project_id] = output_dict
