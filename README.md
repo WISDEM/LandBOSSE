@@ -2,10 +2,14 @@
 
 ## Welcome to LandBOSSE!
 
-LandBOSSE is a system to model the balance of station (BOS) costs of wind plants at utility scale (10 1.5 MW turbines or larger.) It can execute on macOS and Windows. At this time, for both platforms, it is a command line tool that needs to be accessed from the command line.
+The Land-based Balance-of-System Systems Engineering (LandBOSSE) model is a systems engineering tool that estimates the balance-of-system (BOS) costs associated with installing utility scale wind plants (10, 1.5 MW turbines or larger). It can execute on macOS and Windows. At this time, for both platforms, it is a command line tool that needs to be accessed from the command line.
 
-This repository accompanies the report entitled "NREL’s Balance-of-System Cost Model for 
-Land-Based Wind"
+The methods used to develop this model (specifically, LandBOSSE Version 2.1.0) are described in greater detail the following report:
+
+Eberle, Annika, Owen Roberts, Alicia Key, Parangat Bhaskar, and Katherine Dykes.
+2019. NREL’s Balance-of-System Cost Model for Land-Based Wind. Golden, CO:
+National Renewable Energy Laboratory. NREL/TP-6A20-72201.
+https://www.nrel.gov/docs/fy19osti/72201.pdf.
 
 ## User Guides
 
