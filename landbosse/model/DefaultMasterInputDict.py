@@ -1,17 +1,3 @@
-def default_master_input_dict():
-    """
-    Returns a master input dictionary populated with entirely defualt values
-
-    Currently it does not return any of the keys that require dataframes.
-    It only returns the keys that have simple values.
-
-    Returns
-    -------
-    dict
-        Default values for the master input dict
-    """
-
-
 class DefaultMasterInputDict:
     """
     DefaultMasterInput is a class that handles all the default values
