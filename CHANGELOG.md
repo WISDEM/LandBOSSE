@@ -22,3 +22,7 @@
 - Add support to test current model output against previously known good model output to guard against regressions when the model is changed.
 - Add support for command line options to control validation, input folder and output folder so that environment variables are not needed.
 - Added documentation about command line operation with flowcharts about how LandBOSSE processes data according to the command line.
+
+## 2.1.3 (October 29, 2019)
+
+- Removed an empty and unimplemented function from `DefaultMasterInputDict.py`.
