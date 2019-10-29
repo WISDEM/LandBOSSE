@@ -85,6 +85,10 @@ class XlsxReader:
         # configurations.
         incomplete_input_dict = dict()
 
+        # Read all project_data sheets.
+        # The erection module takes in a bunch of keys and values under the
+        # 'project_data' key in the incomplete_input_dict
+
         erection_input_worksheets = [
             'crane_specs',
             'equip',
@@ -92,30 +96,36 @@ class XlsxReader:
             'equip_price',
             'crew_price',
             'material_price',
-            'rsmeans'
+            'components'
         ]
+
         erection_project_data_dict = dict()
-
-        erection_project_data_dict['components'] = pd.read_excel(input_xlsx, 'components')
-
-        # The other dataframes are tabs in the same workbook.
         for worksheet in erection_input_worksheets:
             erection_project_data_dict[worksheet] = pd.read_excel(input_xlsx, worksheet)
 
-        # The erection module takes in a bunch of keys and values under the
-        # 'project_data' key
+        # Add the erection project data to the incomplete_input_dict
         incomplete_input_dict['project_data'] = erection_project_data_dict
 
         # Get the first set of data
-        weather_window_input_df = pd.read_excel(input_xlsx, 'weather_window')
-        incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
         incomplete_input_dict['rsmeans'] = pd.read_excel(input_xlsx, 'rsmeans')
         incomplete_input_dict['site_facility_building_area_df'] = pd.read_excel(input_xlsx,
                                                                                 'site_facility_building_area')
+        incomplete_input_dict['material_price'] = pd.read_excel(input_xlsx, 'material_price')
+
+        # The weather window is stored on a sheet of the project_data, but
+        # needs preprocessing after it is read. The preprocessing changes it
+        # from wind toolkit format to a dataframe.
+        weather_window_input_df = pd.read_excel(input_xlsx, 'weather_window')
+        incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
+
+        # Read development tab:
+        incomplete_input_dict['development_df'] = pd.read_excel(input_xlsx, 'development')
+
+        # FoundationCost needs to have all the component data split into separate
+        # NumPy arrays.
         incomplete_input_dict['component_data'] = erection_project_data_dict['components']
         for component in incomplete_input_dict['component_data'].keys():
             incomplete_input_dict[component] = np.array(incomplete_input_dict['component_data'][component])
-        incomplete_input_dict['material_price'] = pd.read_excel(input_xlsx, 'material_price')
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project['Project ID']
@@ -196,9 +206,6 @@ class XlsxReader:
             incomplete_input_dict['markup_sales_and_use_tax'] = project['Markup sales and use tax']
             incomplete_input_dict['markup_overhead'] = project['Markup overhead']
             incomplete_input_dict['markup_profit_margin'] = project['Markup profit margin']
-
-        #Read development tab:
-        incomplete_input_dict['development_df'] = pd.read_excel(input_xlsx, 'development')
 
         # Now fill any missing values with sensible defaults.
         defaults = DefaultMasterInputDict()
