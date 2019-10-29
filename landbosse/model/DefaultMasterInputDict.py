@@ -21,7 +21,7 @@ class DefaultMasterInputDict:
     def populate_input_dict(self, incomplete_input_dict):
         """
         Completely fills the input_dict. If there are any keys in the
-        default input dictionary that are not on input_dict, those
+        default input dictionary that are not on incomplete_input_dict, those
         missing key/value pairs are placed on a fully populated input
         dictionary.
 

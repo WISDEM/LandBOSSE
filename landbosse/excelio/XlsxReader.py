@@ -10,7 +10,7 @@ class XlsxReader:
     This class is for reading input data from .xlsx files.
 
     There are two sets of data to be read from .xlsx files. The first set
-    of data is read from the following tabs:
+    of data is read from the following sheets:
 
     - components
 
@@ -36,7 +36,7 @@ class XlsxReader:
 
     - weather_window
 
-    And the second set is read from a
+    The second set of data are read from a single sheet as described below.
 
     The first set of data represent a database used by the various modules. Queries
     on these data allow calculation based on labor, material, crane capacity
