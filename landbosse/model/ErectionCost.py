@@ -330,6 +330,8 @@ class ErectionCost(CostModule):
             turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m)
         possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * num_turbines
 
+        # CRANE BREAKDOWNS: This is where you could add time for breakdown.
+
         # calculate erection time
         possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[
             'Hoist speed m per min'] * hr_per_min)
