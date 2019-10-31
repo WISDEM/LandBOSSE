@@ -125,6 +125,9 @@ def run_single_project(task_dict):
     # Log each project. Use print because it works better for multiple processes.
     print(f'START {project_id}, project data in {project_data_xlsx}')
 
+    # PARAMETRICS: Here is where project_data dataframes could be modified
+    # and passed into read_xlsx_and_fill_defaults()
+
     # Read the Excel
     xlsx_reader = XlsxReader()
     master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_xlsx, project_series)

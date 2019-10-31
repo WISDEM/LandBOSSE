@@ -49,6 +49,9 @@ class XlsxReader:
     referred to as the project.
     """
 
+    # PARAMETRICS: This will be called for each step to make a new input dict
+    # Parse the project_data external to this method to prepare all the
+    # dataframes before they are assembled into an input dictionary.
     def read_xlsx_and_fill_defaults(self, input_xlsx, project):
         """
         This method takes an input .xlsx file, reads the tabs as
