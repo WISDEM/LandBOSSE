@@ -26,3 +26,7 @@
 ## 2.1.3 (October 29, 2019)
 
 - Removed an empty and unimplemented function from `DefaultMasterInputDict.py`.
+
+## 2.1.4 (November 1, 2019)
+
+- Enhanced `.xlsx` input performance for faster execution time.
