@@ -53,6 +53,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         for _, project_series in projects.iterrows():
             project_data_basename = project_series['Project data file']
             task = dict()
+            task['project_data_sheets'] = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
             task['project_data_xlsx'] = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_data_basename'] = project_data_basename
             task['project_id'] = project_series['Project ID']
@@ -119,16 +120,13 @@ def run_single_project(task_dict):
         The str is the project_id. The dict is the resulting output
         dictionary.
     """
-    project_data_xlsx = task_dict['project_data_xlsx']
     project_data_basename = task_dict['project_data_basename']
     project_series = task_dict['project_series']
     project_id = task_dict['project_id']
+    project_data_sheets = task_dict['project_data_sheets']
 
     # Log each project. Use print because it works better for multiple processes.
     print(f'START {project_id}, project data in {project_data_basename}')
-
-    # Read the project data sheets.
-    project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
     # Read the Excel
     xlsx_reader = XlsxReader()
