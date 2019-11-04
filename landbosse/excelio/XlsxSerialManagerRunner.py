@@ -7,6 +7,7 @@ from ..model import Manager
 from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
+from .XlsxDataframeCache import XlsxDataframeCache
 
 
 class XlsxSerialManagerRunner(XlsxManagerRunner):
@@ -68,10 +69,11 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
             # PARAMETRICS: Here is where project_data dataframes could be modified
             # and passed into read_xlsx_and_fill_defaults()
+            project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
             # Create the master input dictionary.
             xlsx_reader = XlsxReader()
-            master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_xlsx, project_series)
+            master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_sheets, project_series)
 
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()

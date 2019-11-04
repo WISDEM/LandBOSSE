@@ -77,7 +77,7 @@ class TestErectionCost(TestCase):
 
         xlsx_reader = XlsxReader()
         input_xlsx = os.path.join(landbosse_test_input_dir(), 'erection_cost_tests.xlsx')
-        self.master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(input_xlsx=input_xlsx, project=project)
+        self.master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(input_xlsx=input_xlsx, project_parameters=project)
 
         print('<><>><><><><><><><><> End load of ErectionCost test data <><>><><><><><><><><>')
 

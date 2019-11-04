@@ -5,7 +5,9 @@ from .XlsxFileOperations import XlsxFileOperations
 
 class XlsxDataframeCache:
     """
-    This class does not need to be instantiated.
+    This class does not need to be instantiated. This means that the
+    cache is shared throughout all parts of the code that needs access
+    to any part of the project_data .xlsx files.
 
     This class is made to read all sheets from xlsx files and store those
     sheets as dictionaries. This is so .xlsx files only need to be parsed
@@ -14,7 +16,7 @@ class XlsxDataframeCache:
     One of the use cases for this dataframe cache is in parallel process
     execution using ProcessPoolExecutor. Alternatively, once code use
     the ThreadPoolExecutor (though that wouldn't give the same advantages
-    of parralelization).
+    of paralelization).
 
     Regardless of which executor is used, care must be taken that one thread
     or process cannot mutate the dataframes of another process. So, this
