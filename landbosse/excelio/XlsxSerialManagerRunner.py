@@ -67,8 +67,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             print('>>> project_id: {}'.format(project_id))
             print('>>> Project data: {}'.format(project_data_xlsx))
 
-            # PARAMETRICS: Here is where project_data dataframes could be modified
-            # and passed into read_xlsx_and_fill_defaults()
+            # Read the project data sheets.
             project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
             # Create the master input dictionary.

@@ -60,7 +60,6 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             all_tasks.append(task)
 
         # Execute every project
-        # res = executor.map(download_one, sorted(cc_list))
         with futures.ProcessPoolExecutor() as executor:
             executor_result = executor.map(run_single_project, all_tasks)
 
@@ -128,8 +127,7 @@ def run_single_project(task_dict):
     # Log each project. Use print because it works better for multiple processes.
     print(f'START {project_id}, project data in {project_data_basename}')
 
-    # PARAMETRICS: Here is where project_data dataframes could be modified
-    # and passed into read_xlsx_and_fill_defaults()
+    # Read the project data sheets.
     project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
     # Read the Excel
