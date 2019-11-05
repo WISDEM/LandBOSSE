@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from landbosse.excelio import XlsxSerialManagerRunner
 from landbosse.excelio import XlsxParallelManagerRunner
@@ -9,6 +10,9 @@ from landbosse.excelio import XlsxValidator
 from landbosse.excelio import XlsxFileOperations
 
 if __name__ == '__main__':
+    # Print start timestamp
+    print(f'>>>>>>>> Begin run {datetime.now()} <<<<<<<<<<')
+
     # If run_parallel is True, an XlsxParallelManagerRunner will calculate the
     # projects in parallel. This takes advantage of multicore architecture
     # available on most hardware.
@@ -62,3 +66,6 @@ if __name__ == '__main__':
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
         xlsx.tab_details(rows=final_result['details_list'])
     file_ops.copy_input_data()
+
+    # Print end timestamp
+    print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
