@@ -227,6 +227,16 @@ class ErectionCost(CostModule):
                 'last_number': row[2]
             })
 
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
+            value = row[5]
+            crew_operation = row[2]
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': f'erection_selected_detailed_data: {crew_operation} crew cost',
+                'value': value
+            })
+
         result.append({
             'unit': 'usd',
             'type': 'variable',
@@ -1062,3 +1072,4 @@ class ErectionCost(CostModule):
         # Management crews data
         self.output_dict['management_crews_cost'] = management_crews_cost
         self.output_dict['management_crews_cost_grouped'] = management_crews_cost_grouped
+        self.output_dict['erection_selected_detailed_data'] = selected_detailed_data
