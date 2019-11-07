@@ -228,13 +228,25 @@ class ErectionCost(CostModule):
             })
 
         for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
-            value = row[5]
-            crew_operation = row[2]
+            value = row['Labor cost USD']
+            operation = row['Operation']
             result.append({
-                'unit': '',
+                'unit': 'usd',
                 'type': 'dataframe',
-                'variable_df_key_col_name': f'erection_selected_detailed_data: {crew_operation} crew cost',
-                'value': value
+                'variable_df_key_col_name': f'erection_selected_detailed_data: crew cost',
+                'value': value,
+                'non_numeric_value': operation
+            })
+
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
+            value = row['Mobilization cost USD']
+            crane_boom_operation_concat = row['crane_boom_operation_concat']
+            result.append({
+                'unit': 'usd',
+                'type': 'dataframe',
+                'variable_df_key_col_name': 'erection_selected_detailed_data: mobilization',
+                'value': value,
+                'non_numeric_value': crane_boom_operation_concat
             })
 
         result.append({
