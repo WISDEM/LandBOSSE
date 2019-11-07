@@ -249,6 +249,17 @@ class ErectionCost(CostModule):
                 'non_numeric_value': crane_boom_operation_concat
             })
 
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
+            value = row['Wind multiplier']
+            operation = row['Operation']
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': f'erection_selected_detailed_data: wind multiplier',
+                'value': value,
+                'non_numeric_value': operation
+            })
+
         result.append({
             'unit': 'usd',
             'type': 'variable',
