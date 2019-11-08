@@ -184,10 +184,19 @@ class XlsxGenerator:
                 worksheet.write(row_idx + 1, 6, value)
 
             # If there is a last_number, which means this is a dataframe row that has a number
-            # at the end, write this into the numeric value column.
+            # at the end, write this into the numeric value column. This overrides automatic
+            # type detection.
 
             if 'last_number' in row:
-                worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
+                # worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
+                worksheet.write(row_idx + 1, 5, row['last_number'])
+
+            # Certain data are pairs of numeric and non-numeric values. If a key of
+            # "non_numeric_value" exists, put that in column 6.
+            # An example is mobilization of an LB75-SL3F-Offload at some numeric cost
+
+            if 'non_numeric_value' in row:
+                worksheet.write(row_idx + 1, 6, row['non_numeric_value'])
 
         worksheet.freeze_panes(1, 0)  # Freeze the first row.
 
