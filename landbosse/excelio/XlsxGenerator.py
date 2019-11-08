@@ -179,8 +179,7 @@ class XlsxGenerator:
             value = row['value']
             value_is_number = self._is_numeric(value)
             if value_is_number:
-                # worksheet.write(row_idx + 1, 5, value, self.scientific_format)
-                worksheet.write(row_idx + 1, 5, value)
+                worksheet.write(row_idx + 1, 5, value, self.scientific_format)
             else:
                 worksheet.write(row_idx + 1, 6, value)
 
