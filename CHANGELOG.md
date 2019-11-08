@@ -30,3 +30,7 @@
 ## 2.1.4 (November 1, 2019)
 
 - Enhanced `.xlsx` input performance for faster execution time.
+
+## 2.1.5 (November 8, 2019)
+
+- Added outputs for erection crew cost, wind multiplier and mobilization of each process of the erection to the details output sheet.
