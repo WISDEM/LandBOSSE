@@ -1,15 +1,16 @@
 import setuptools
 
 name = 'landbosse'
-version = '2.0.0'
+version = '2.1.5'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setuptools.setup(
+    url='https://github.com/WISDEM/LandBOSSE',
     name=name,
     version=version,
-    author='NREL NWTC',
+    author='NREL',
     author_email='alicia.key@nrel.gov',
     description='LandBOSSE',
     long_description=long_description,
