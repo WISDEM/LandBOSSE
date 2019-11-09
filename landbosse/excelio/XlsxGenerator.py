@@ -188,8 +188,7 @@ class XlsxGenerator:
             # type detection.
 
             if 'last_number' in row:
-                # worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
-                worksheet.write(row_idx + 1, 5, row['last_number'])
+                worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
 
             # Certain data are pairs of numeric and non-numeric values. If a key of
             # "non_numeric_value" exists, put that in column 6.
