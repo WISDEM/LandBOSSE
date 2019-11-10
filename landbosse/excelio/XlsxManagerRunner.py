@@ -11,6 +11,58 @@ class XlsxManagerRunner:
     or parallel manager runner is needed.
     """
 
+    def create_serial_number(project_name, index, total_project_count):
+        """
+        create_serial_number takes the parameters listed below and
+        returns a string of the following format
+
+        project_0001
+
+        Where a serial number is appended to a project name. The
+        serial number is left padded with zeros to make its alphabetic
+        sort correspond to its numeric sort.
+
+        Parameters
+        ----------
+        project_name : str
+            The name of the project
+
+        index : int
+            The index of the project in the sequence of projects
+
+        total_project_count : int
+            The total number of projects in the sequence.
+
+        Returns
+        -------
+        str
+            The project name with the serial number appended.
+        """
+        total_digit_count = 1
+        index_digit_count = len(str(index))
+
+        if 0 < total_project_count < 1e1 - 1:
+            total_digit_count = 1
+        elif 1e1 <= total_project_count < 1e2 - 1:
+            total_digit_count = 2
+        elif 1e2 <= total_project_count < 1e3 - 1:
+            total_digit_count = 3
+        elif 1e3 <= total_project_count < 1e4 - 1:
+            total_digit_count = 4
+        elif 1e4 <= total_project_count < 1e5 - 1:
+            total_digit_count = 5
+        elif 1e5 <= total_project_count < 1e6 - 1:
+            total_digit_count = 6
+        elif 1e6 <= total_project_count < 1e7 - 1:
+            total_digit_count = 7
+        elif 1e7 <= total_project_count < 1e8 - 1:
+            total_digit_count = 8
+        else:
+            total_digit_count = 9
+
+        padding = '0' * (total_digit_count - index_digit_count)
+        return f'{project_name}_{padding}{index}'
+
     def run_from_project_list_xlsx(self, projects_xlsx, log):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
