@@ -53,7 +53,7 @@ class XlsxReader:
     possible.
     """
 
-    def create_parametric_project_list(self, project_list, parametric_list, steps):
+    def create_parametric_step_list(self, parametric_list, steps):
         """
         Assume that there are fixed number of steps in a parametric run.
         Lets say, for this example, 3 steps.
@@ -88,6 +88,20 @@ class XlsxReader:
         padded with zeros. The left padding means that when the strings are
         sorted alphabetically, they will end up in the same order as numeric
         sorting.
+
+        Parameters
+        ----------
+        parametric_list : pandas.DataFrame
+            The first dataframe shown above.
+
+        steps : int
+            The number of steps between start and end values in each
+            sequence.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The second dataframe shown above.
         """
         # A list of dictionaries to be transformed into a dataframe at the end
         enhanced_project_list = []
