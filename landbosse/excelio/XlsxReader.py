@@ -146,6 +146,57 @@ class XlsxReader:
 
         return enhanced_project_df
 
+    def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
+        """
+        Consider the dataframe we made in step. Call it parametric_value_list:
+
+        Project ID | serial | alpha_fizz_buzz | beta_foo_bar | gamma_spam_eggs
+        -----------|--------|-----------------|--------------|----------------
+        project1   | 0      | 0               | 0            | NaN
+        project1   | 1      | 6               | 3            | NaN
+        project1   | 2      | 12              | 9            | NaN
+        project2   | 0      | NaN             | NaN          | 21
+        project2   | 1      | NaN             | NaN          | 24
+        project 2  | 2      | NaN             | NaN          | 27
+
+        Now consider that we have the following project list data frame called
+        project_list:
+
+        Project ID | Project data file | Total project construction time months | ...
+        -----------|-------------------|----------------------------------------|---
+        project1   | project1_data     | 9                                      | ...
+        project2   | project2_data     | 9                                      | ...
+        project3   | project3_data     | 9                                      | ...
+
+        Left outer join project_list with parametric_value_list such that
+        you get the following data frame:
+
+        Project ID | serial | alpha_fizz_buzz | beta_foo_bar | gamma_spam_eggs | Project data file | ...
+        -----------|--------|-----------------|--------------|-----------------|-------------------| ...
+        project1   | 0      | 0               | 0            | NaN             | project1_data     | ...
+        project1   | 1      | 6               | 3            | NaN             | project1_data     | ...
+        project1   | 2      | 12              | 9            | NaN             | project1_data     | ...
+        project2   | 0      | NaN             | NaN          | 21              | project2_data     | ...
+        project2   | 1      | NaN             | NaN          | 24              | project2_data     | ...
+        project2   | 2      | NaN             | NaN          | 27              | project1_data     | ...
+        project3   | NaN    | NaN             | NaN          | NaN             | project3_data     | ...
+
+        This data frame is in place to run with a modified project manager
+        runner. The modification to the runner will run modifications to the
+        project data dataframes before running them in a project. The columns
+        that contain the modifications are the ones that contain the slashes.
+
+        The outer join will ensure that all projects, including those that do
+        not have parametric modification, are joined in. Further, the outer
+        join will mean that there are no additional flags that can introduce
+        errors in the project list.
+
+        As before, NaN values are expected and signify that a project
+        requires no parametric modifications to the project data.
+        """
+        result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
+        return result
+
     def create_master_input_dictionary(self, project_data_sheets, project_parameters):
         """
         This method takes a dictionary of dataframes that are the project data

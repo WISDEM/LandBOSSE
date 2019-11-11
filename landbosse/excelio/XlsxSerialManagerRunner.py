@@ -58,7 +58,9 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Instantiate and XlsxReader
         xlsx_reader = XlsxReader()
 
-        xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
+        # Join in the parametric variable modifications
+        parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
+        enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list, parametric_value_list)
 
         # Loop over every project
         for _, project_series in project_list.iterrows():
