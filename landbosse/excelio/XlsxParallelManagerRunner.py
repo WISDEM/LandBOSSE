@@ -53,7 +53,11 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         for _, project_series in projects.iterrows():
             project_data_basename = project_series['Project data file']
             task = dict()
+
+            # PARAMETRICS: This is where to put post processing of the dataframes
+            # into the mix
             task['project_data_sheets'] = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
+
             task['project_data_xlsx'] = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
             task['project_data_basename'] = project_data_basename
             task['project_id'] = project_series['Project ID']
