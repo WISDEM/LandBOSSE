@@ -308,7 +308,7 @@ class XlsxReader:
         master_input_dict = defaults.populate_input_dict(incomplete_input_dict=incomplete_input_dict)
         return master_input_dict
 
-    def create_serial_number(self, index, total_project_count):
+    def create_serial_number(self, index, max_index):
         """
         create_serial_number creates serial numbers left padded with
         zeros. By left padding the numbers, alphabetic sorts and numeric
@@ -319,8 +319,8 @@ class XlsxReader:
         index : int
             The index of the project in the sequence of projects
 
-        total_project_count : int
-            The total number of projects in the sequence.
+        max_index : int
+            The total number of indices in the sequence.
 
         Returns
         -------
@@ -330,21 +330,21 @@ class XlsxReader:
         total_digit_count = 1
         index_digit_count = len(str(index))
 
-        if 0 < total_project_count < 1e1 - 1:
+        if 0 < max_index < 1e1 - 1:
             total_digit_count = 1
-        elif 1e1 <= total_project_count < 1e2 - 1:
+        elif 1e1 <= max_index < 1e2 - 1:
             total_digit_count = 2
-        elif 1e2 <= total_project_count < 1e3 - 1:
+        elif 1e2 <= max_index < 1e3 - 1:
             total_digit_count = 3
-        elif 1e3 <= total_project_count < 1e4 - 1:
+        elif 1e3 <= max_index < 1e4 - 1:
             total_digit_count = 4
-        elif 1e4 <= total_project_count < 1e5 - 1:
+        elif 1e4 <= max_index < 1e5 - 1:
             total_digit_count = 5
-        elif 1e5 <= total_project_count < 1e6 - 1:
+        elif 1e5 <= max_index < 1e6 - 1:
             total_digit_count = 6
-        elif 1e6 <= total_project_count < 1e7 - 1:
+        elif 1e6 <= max_index < 1e7 - 1:
             total_digit_count = 7
-        elif 1e7 <= total_project_count < 1e8 - 1:
+        elif 1e7 <= max_index < 1e8 - 1:
             total_digit_count = 8
         else:
             total_digit_count = 9
