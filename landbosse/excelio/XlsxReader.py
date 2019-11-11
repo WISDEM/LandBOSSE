@@ -47,17 +47,81 @@ class XlsxReader:
     These parameters include things values like hub height, rotor diameter,
     etc. These data are particular to a single project. These data are
     referred to as the project.
+
+    This class also handles modifications of project data dataframes for
+    parametric runs and all the other dataframe manipulations that make that
+    possible.
     """
 
-    # PARAMETRICS: This will be called for each step to make a new input dict
-    # Parse the project_data external to this method to prepare all the
-    # dataframes before they are assembled into an input dictionary.
+    def create_parametric_project_list(self, project_list, parametric_list, steps):
+        """
+        Assume that there are fixed number of steps in a parametric run.
+        Lets say, for this example, 3 steps.
+
+        Also assume that we have the following data frame for the parametric
+        variables. This was in the "Parametric list" sheet of the project list
+        spreadsheet.
+
+        | Project ID | Dataframe name       | Row name | Column name | Start | End |
+        |------------|----------------------|----------|-------------|-------|-----|
+        | project1   | alpha                | fizz     | buzz        | 0     | 12  |
+        | project1   | beta                 | foo      | bar         | 0     | 9   |
+        | project2   | gamma                | spam     | eggs        | 21    | 27  |
+
+        Translate this data frame into a data frame of the following format:
+
+        | Project ID | serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        |------------|--------|-----------------|--------------|---------------|
+        | project1   | 0      | 0               | 0            | NaN           |
+        | project1   | 1      | 6               | 3            | NaN           |
+        | project1   | 2      | 12              | 9            | NaN           |
+        | project2   | 0      | NaN             | NaN          | 21            |
+        | project2   | 1      | NaN             | NaN          | 24            |
+        | project2   | 2      | NaN             | NaN          | 27            |
+
+        Here NaN is used in its role as the Pandas equivalent to the SQL
+        NULL. It means that, for a particular project, no modification
+        to the dataframe/row/column is needed and that the value in that
+        dataframe cell should remain unchanged.
+
+        Also, note that the serial numbers are strings that should be left
+        padded with zeros. The left padding means that when the strings are
+        sorted alphabetically, they will end up in the same order as numeric
+        sorting.
+        """
+        # A list of dictionaries to be transformed into a dataframe at the end
+        enhanced_project_list = []
+
+        # A dictionary of numpy arrays will contain all the values in our
+        # sequences
+        sequences_dict = dict()
+
+        # Add project IDs to the top level dictionary
+        for project_id in parametric_list['Project ID'].unique():
+            sequences_dict[project_id] = dict()
+
+        for _, row in parametric_list.iterrows():
+            project_id = row['Project ID']
+            key = f"{row['Row name']}/{row['Column name']}"
+            value = np.linspace(float(row['Start value']), float(row['End value']), steps)
+            sequences_dict[project_id][key] = value
+
+        for project_id, sequences in sequences_dict.items():
+            for step in range(steps):
+                row_dict = {'Project ID': project_id}
+                for parametric_variable, xs in sequences.items():
+                    row_dict[parametric_variable] = xs[step]
+                enhanced_project_list.append(row_dict)
+
+        enhanced_project_df = pd.DataFrame(enhanced_project_list)
+
+        return enhanced_project_df
+
     def read_xlsx_and_fill_defaults(self, project_data_sheets, project_parameters):
         """
-        This method takes an input .xlsx file, reads the tabs as
-        dataframes, unites the dataframes with the "project" series
-        which has non-dataframe inputs to the model and fills
-        missing values with defaults.
+        This method takes a dictionary of dataframes that are the project data
+        and unites them with the project parameters as found in the project list
+        sheet.
 
         Parameters
         ----------
