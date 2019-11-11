@@ -43,7 +43,8 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             of costs for the spreadsheets.
         """
         # Load the project list
-        projects = pd.read_excel(projects_xlsx, 'Sheet1')
+        # projects = pd.read_excel(projects_xlsx, 'Sheet1')
+        projects, _ = self.read_project_and_parametric_list_from_xlsx()
 
         # Prepare the file operations
         file_ops = XlsxFileOperations()

@@ -45,7 +45,8 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             on each row.
         """
         # Load the project list
-        projects = pd.read_excel(projects_xlsx, 'Sheet1')
+        # projects = pd.read_excel(projects_xlsx, 'Sheet1')
+        projects, _ = self.read_project_and_parametric_list_from_xlsx()
         print('>>> Project list loaded')
 
         # For file operations

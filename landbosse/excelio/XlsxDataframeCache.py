@@ -29,7 +29,7 @@ class XlsxDataframeCache:
     _cache = {}
 
     @classmethod
-    def read_all_sheets_from_xlsx(cls, xlsx_basename):
+    def read_all_sheets_from_xlsx(cls, xlsx_basename, xlsx_path=None):
         """
         If the .xlsx file specified by .xlsx_basename has been read before
         (meaning it is stored as a key on cls._cache), a copy of all the
@@ -50,6 +50,10 @@ class XlsxDataframeCache:
             in the dictionary used to access all the sheets in the
             named .xlsx file.
 
+        xlsx_pathname : str
+            The path from which to read the .xlsx file. This parameter
+            has the default value of
+
         Returns
         -------
         dict
@@ -62,7 +66,12 @@ class XlsxDataframeCache:
             return cls.copy_dataframes(original)
 
         file_ops = XlsxFileOperations()
-        xlsx_filename = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{xlsx_basename}.xlsx')
+
+        if xlsx_path is None:
+            xlsx_filename = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{xlsx_basename}.xlsx')
+        else:
+            xlsx_filename = os.path.join(xlsx_path, f'{xlsx_basename}.xlsx')
+
         xlsx = pd.ExcelFile(xlsx_filename)
         sheets_dict = {sheet_name: xlsx.parse(sheet_name) for sheet_name in xlsx.sheet_names}
         cls._cache[xlsx_basename] = sheets_dict
