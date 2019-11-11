@@ -100,19 +100,34 @@ class XlsxReader:
         for project_id in parametric_list['Project ID'].unique():
             sequences_dict[project_id] = dict()
 
+        # Make NumPy arrays that hold the values at each step in all
+        # the sequences.
         for _, row in parametric_list.iterrows():
             project_id = row['Project ID']
             key = f"{row['Row name']}/{row['Column name']}"
             value = np.linspace(float(row['Start value']), float(row['End value']), steps)
             sequences_dict[project_id][key] = value
 
+        # Now, expand all sequences into their values.
+
+        # First, group them by Project ID
         for project_id, sequences in sequences_dict.items():
+
+            # Next group them by steps and make a serial number
             for step in range(steps):
-                row_dict = {'Project ID': project_id}
+                row_dict = {
+                    'Project ID': project_id,
+                    'Serial': self.create_serial_number(step, steps)
+                }
+
+                # Then, line all variable modifications on the same row.
+                # This allows one more parametric variables to be modified
+                # simultaneously.
                 for parametric_variable, xs in sequences.items():
                     row_dict[parametric_variable] = xs[step]
                 enhanced_project_list.append(row_dict)
 
+        # Make a dataframe out of the list of dictionaries
         enhanced_project_df = pd.DataFrame(enhanced_project_list)
 
         return enhanced_project_df
@@ -279,3 +294,46 @@ class XlsxReader:
         master_input_dict = defaults.populate_input_dict(incomplete_input_dict=incomplete_input_dict)
         return master_input_dict
 
+    def create_serial_number(self, index, total_project_count):
+        """
+        create_serial_number creates serial numbers left padded with
+        zeros. By left padding the numbers, alphabetic sorts and numeric
+        sorts create the same sequence.
+
+        Parameters
+        ----------
+        index : int
+            The index of the project in the sequence of projects
+
+        total_project_count : int
+            The total number of projects in the sequence.
+
+        Returns
+        -------
+        str
+            The project name with the serial number appended.
+        """
+        total_digit_count = 1
+        index_digit_count = len(str(index))
+
+        if 0 < total_project_count < 1e1 - 1:
+            total_digit_count = 1
+        elif 1e1 <= total_project_count < 1e2 - 1:
+            total_digit_count = 2
+        elif 1e2 <= total_project_count < 1e3 - 1:
+            total_digit_count = 3
+        elif 1e3 <= total_project_count < 1e4 - 1:
+            total_digit_count = 4
+        elif 1e4 <= total_project_count < 1e5 - 1:
+            total_digit_count = 5
+        elif 1e5 <= total_project_count < 1e6 - 1:
+            total_digit_count = 6
+        elif 1e6 <= total_project_count < 1e7 - 1:
+            total_digit_count = 7
+        elif 1e7 <= total_project_count < 1e8 - 1:
+            total_digit_count = 8
+        else:
+            total_digit_count = 9
+
+        padding = '0' * (total_digit_count - index_digit_count)
+        return f'{padding}{index}'
