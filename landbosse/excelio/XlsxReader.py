@@ -53,7 +53,7 @@ class XlsxReader:
     possible.
     """
 
-    def create_parametric_step_list(self, parametric_list, steps):
+    def create_parametric_value_list(self, parametric_list, steps):
         """
         Assume that there are fixed number of steps in a parametric run.
         Lets say, for this example, 3 steps.
@@ -146,7 +146,7 @@ class XlsxReader:
 
         return enhanced_project_df
 
-    def read_xlsx_and_fill_defaults(self, project_data_sheets, project_parameters):
+    def create_master_input_dictionary(self, project_data_sheets, project_parameters):
         """
         This method takes a dictionary of dataframes that are the project data
         and unites them with the project parameters as found in the project list

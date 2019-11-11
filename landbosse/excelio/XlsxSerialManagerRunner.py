@@ -46,8 +46,8 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         # projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        projects, _ = self.read_project_and_parametric_list_from_xlsx()
-        print('>>> Project list loaded')
+        project_list, parametric_list = self.read_project_and_parametric_list_from_xlsx()
+        print('>>> Project and parametric lists loaded')
 
         # For file operations
         file_ops = XlsxFileOperations()
@@ -55,8 +55,13 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Get the output dictionary ready
         runs_dict = OrderedDict()
 
+        # Instantiate and XlsxReader
+        xlsx_reader = XlsxReader()
+
+        xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
+
         # Loop over every project
-        for _, project_series in projects.iterrows():
+        for _, project_series in project_list.iterrows():
             project_id = project_series['Project ID']
             project_data_basename = project_series['Project data file']
 
@@ -72,8 +77,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
             # Create the master input dictionary.
-            xlsx_reader = XlsxReader()
-            master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_sheets, project_series)
+            master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_series)
 
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()

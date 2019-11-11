@@ -135,7 +135,7 @@ def run_single_project(task_dict):
 
     # Read the Excel
     xlsx_reader = XlsxReader()
-    master_input_dict = xlsx_reader.read_xlsx_and_fill_defaults(project_data_sheets, project_series)
+    master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_series)
 
     # Now run the manager and accumulate its result into the runs_dict
     output_dict = dict()
