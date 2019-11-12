@@ -8,6 +8,7 @@ from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 from .XlsxDataframeCache import XlsxDataframeCache
+from .XlsxGenerator import XlsxGenerator
 
 
 class XlsxSerialManagerRunner(XlsxManagerRunner):
@@ -45,7 +46,6 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             on each row.
         """
         # Load the project list
-        # projects = pd.read_excel(projects_xlsx, 'Sheet1')
         project_list, parametric_list = self.read_project_and_parametric_list_from_xlsx()
         print('>>> Project and parametric lists loaded')
 
@@ -64,10 +64,18 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
         # Loop over every project
         for _, project_parameters in enhanced_project_list.iterrows():
-            project_id = project_parameters['Project ID']
+
+            # If project_parameters['Serial'] is null, that means there are no
+            # parametric modifications to the project data dataframes. Hence,
+            # just the plain Project ID without a serial number should be used.
+            if pd.isnull(project_parameters['Serial']):
+                project_id = project_parameters['Project ID']
+            else:
+                project_id = project_parameters['Serial']
+
             project_data_basename = project_parameters['Project data file']
 
-            # Input path for the Xlsx
+            # Input path for unmodified project input data.
             project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
@@ -81,6 +89,11 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             # Transform the dataframes so that they have the right values for
             # the parametric variables.
             xlsx_reader.modify_project_data_dataframes(project_data_sheets, project_parameters)
+
+            # Write all project_data sheets
+            parametric_project_data_path = \
+                os.path.join(file_ops.project_data_output_path(), f'{project_id}_project_data.xlsx')
+            XlsxGenerator.write_project_data(project_data_sheets, parametric_project_data_path)
 
             # Create the master input dictionary.
             master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
