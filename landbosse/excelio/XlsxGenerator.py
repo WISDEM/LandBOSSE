@@ -46,6 +46,30 @@ class XlsxGenerator:
         self.output_xlsx_path = os.path.join(file_ops.landbosse_output_dir(), f'{output_xlsx}.xlsx')
         self.file_ops = file_ops
 
+    @classmethod
+    def write_project_data(cls, project_data_dataframes, project_data_output_xlsx_path):
+        """
+        This writes a dictionary full of dataframes to an Excel spreadsheet.
+
+        There is no special formatting done to the output Excel sheets.
+
+        This is a class method so an instance of this class does not need
+        to be created to write project data. This enables this method to
+        be nicely accessed from XlsxManagerRunner subclasses.
+
+        Parameters
+        ----------
+        project_data_dataframes : dict
+            The dataframes to write to the output sheets. The key names will
+            be used as the sheet names.
+
+        project_data_output_xlsx_path : str
+            The absolute pathname to write the .xlsx file to.
+        """
+        with pd.ExcelWriter(project_data_output_xlsx_path, mode='w') as writer:
+            for name, df in project_data_dataframes.items():
+                df.to_excel(writer, sheet_name=name)
+
     def __enter__(self):
         """
         Opens the workbook for writing and sets the formatting.

@@ -4,6 +4,8 @@ from datetime import datetime
 from shutil import copy2
 from shutil import copytree
 
+from .XlsxOperationException import XlsxOperationException
+
 
 class XlsxFileOperations:
     """
@@ -138,6 +140,30 @@ class XlsxFileOperations:
             return output_path
         else:
             return output_path
+
+    def project_data_output_path(self):
+        """
+        Returns th path to the project output data folder.
+
+        This folder is to put the parameterized project data sheets generated
+        during model runs.
+
+        If the directory does not exist, it is created.
+
+        Returns
+        -------
+        str
+            Path to project data output folder.
+        """
+        path = os.path.join(self.landbosse_output_dir(), 'parametric_project_data')
+
+        if os.path.exists(path) and os.path.isdir(path):
+            return path
+        elif os.path.exists(path) and not os.path.isdir(path):
+            raise XlsxOperationException(f'Attempt to write project data to {path} failed. File exists and is not a directory.')
+        else:
+            os.mkdir(path)
+            return path
 
     def copy_input_data(self):
         """
