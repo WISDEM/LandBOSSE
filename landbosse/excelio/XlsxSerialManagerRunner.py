@@ -91,7 +91,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
         final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
+        final_result['enhanced_project_list'] = enhanced_project_list
 
-        # Return the runs for all the scenarios.
-        # return runs_dict, details_list, module_type_operation_list, module_type_operation_list_with_inputs
+        # Return the runs for all the projects.
         return final_result

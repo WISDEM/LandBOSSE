@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # debugger which can slow down when it is being used to debug multiple
     # processes.
 
-    run_parallel = True
+    run_parallel = False
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
 
     # The file_ops object handles file names for input and output data.
@@ -34,6 +34,11 @@ if __name__ == '__main__':
 
     # final_result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
+
+    # Write the enhanced_project_list, which has all the parametric values.
+    enhanced_project_list_path = os.path.join(file_ops.landbosse_output_dir(), 'enhanced_project-list.xlsx')
+    enhanced_project_list = final_result['enhanced_project_list']
+    enhanced_project_list.to_excel(enhanced_project_list_path, index=False)
 
     # Switch to either validation or non validation producing code.
     input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()

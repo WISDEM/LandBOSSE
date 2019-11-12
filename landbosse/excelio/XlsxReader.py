@@ -131,11 +131,11 @@ class XlsxReader:
             for step in range(steps):
                 row_dict = {
                     'Project ID': project_id,
-                    'Serial': self.create_serial_number(step, steps)
+                    'Serial': self.create_serial_number(project_id, step, steps)
                 }
 
                 # Then, line all variable modifications on the same row.
-                # This allows one more parametric variables to be modified
+                # This allows one or more parametric variables to be modified
                 # simultaneously.
                 for parametric_variable, xs in sequences.items():
                     row_dict[parametric_variable] = xs[step]
@@ -148,7 +148,8 @@ class XlsxReader:
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
         """
-        Consider the dataframe we made in step. Call it parametric_value_list:
+        Consider the dataframe we made in create_parametric_value_list.
+        Call it parametric_value_list:
 
         Project ID | serial | alpha_fizz_buzz | beta_foo_bar | gamma_spam_eggs
         -----------|--------|-----------------|--------------|----------------
@@ -191,8 +192,9 @@ class XlsxReader:
         join will mean that there are no additional flags that can introduce
         errors in the project list.
 
-        As before, NaN values are expected and signify that a project
-        requires no parametric modifications to the project data.
+        As before, NaN values are expected and signify that a particular
+        parametric variable does not need to be modified for the project
+        that is in the same row.
         """
         result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
         return result
@@ -359,14 +361,21 @@ class XlsxReader:
         master_input_dict = defaults.populate_input_dict(incomplete_input_dict=incomplete_input_dict)
         return master_input_dict
 
-    def create_serial_number(self, index, max_index):
+    def create_serial_number(self, project_id, index, max_index):
         """
         create_serial_number creates serial numbers left padded with
         zeros. By left padding the numbers, alphabetic sorts and numeric
-        sorts create the same sequence.
+        sorts create the same sequence. For example, in a sequence of
+        100 total elements, 5 would be represented as "005"
+
+        This left padded number is appended to the end of a string so
+        you have something like "project_001"
 
         Parameters
         ----------
+        project_id : str
+            Base name of the project.
+
         index : int
             The index of the project in the sequence of projects
 
@@ -376,7 +385,7 @@ class XlsxReader:
         Returns
         -------
         str
-            The project name with the serial number appended.
+            The left padded serial number as a string.
         """
         total_digit_count = 1
         index_digit_count = len(str(index))
@@ -401,4 +410,4 @@ class XlsxReader:
             total_digit_count = 9
 
         padding = '0' * (total_digit_count - index_digit_count)
-        return f'{padding}{index}'
+        return f'{project_id}_{padding}{index}'
