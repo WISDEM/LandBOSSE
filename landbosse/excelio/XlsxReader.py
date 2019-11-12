@@ -1,6 +1,9 @@
+import re
+
 import pandas as pd
 import numpy as np
 
+from .XlsxOperationException import XlsxOperationException
 from .WeatherWindowCSVReader import read_weather_window
 from ..model import DefaultMasterInputDict
 
@@ -118,7 +121,7 @@ class XlsxReader:
         # the sequences.
         for _, row in parametric_list.iterrows():
             project_id = row['Project ID']
-            key = f"{row['Row name']}/{row['Column name']}"
+            key = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
             value = np.linspace(float(row['Start value']), float(row['End value']), steps)
             sequences_dict[project_id][key] = value
 
@@ -199,7 +202,78 @@ class XlsxReader:
         result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
         return result
 
-    def create_master_input_dictionary(self, project_data_sheets, project_parameters):
+    def modify_project_data_dataframes(self, project_data_dataframes, project_parameters):
+        """
+        This method modifies project data dataframes according to the
+        parametric modifications in the project parameters. It does not
+        return a value because dataframes are modified in place.
+
+        Note: This method will modify the dataframes in place. This isn't
+        a problem if the dataframes are returned from
+        XlsxReader.read_all_sheets_from_xlsx.
+
+        If the dataframe name, column name or row name are not found, an
+        XlsxOperationException is raised.
+
+        Parameters
+        ----------
+        project_data_dataframes : dict
+            Keys in this dictionary are the names of the sheets where
+            the dataframes are parsed from. Values are the dataframes
+            to be modified.
+
+        project_parameters : pandas.Series
+            The enhanced project parameters as created by
+            create_parametric_value_list that have the values to
+            place into the dataframes.
+
+        Returns
+        -------
+        None
+            Dataframes are modified in place.
+
+        Raises
+        ------
+        XlsxOperationException
+            This exception is raised of a dataframe, row or column
+            is not found. The message is descriptive to help diagnose the
+            problem during operation.
+        """
+        # This is a regex to match a column name that specifies a change to make
+        # to a cell
+        cell_spec_re = re.compile('^.*/.*/.*$')
+
+        # Go through each project parameter
+        for index, value in project_parameters.iteritems():
+
+            # If the column specifies a cell to change in the dataframe
+            if cell_spec_re.match(index):
+                dataframe_name, row_name, column_name = index.split('/')
+
+                # Check if dataframe exists
+                if dataframe_name not in project_data_dataframes:
+                    raise XlsxOperationException(
+                        f'Datframe {dataframe_name} not found. Please check the project_data spreadsheet and project_list.')
+
+                df = project_data_dataframes[dataframe_name]
+                first_col = df.columns[0]
+
+                # Check if row exists
+                if df.loc[df[first_col] == row_name].empty:
+                    raise XlsxOperationException(
+                        f'Row {row_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
+
+                # Check if column exists
+                if df.loc[df[first_col] == row_name, column_name].empty:
+                    raise XlsxOperationException(
+                        f'Column {column_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
+
+                # If all the above check pass, check to make sure the value is not nan.
+                # If it is not nan, then a modification needs to be made.
+                if not np.isnan(value):
+                    df.loc[df[first_col] == row_name, column_name] = value
+
+    def create_master_input_dictionary(self, project_data_dataframes, project_parameters):
         """
         This method takes a dictionary of dataframes that are the project data
         and unites them with the project parameters as found in the project list
@@ -207,7 +281,7 @@ class XlsxReader:
 
         Parameters
         ----------
-        project_data_sheets : dict
+        project_data_dataframes : dict
             This is a dictionary for the project data .xlsx file. The keys
             are names of sheets and the values are the dataframe contents of
             the sheets.
@@ -251,25 +325,25 @@ class XlsxReader:
 
         erection_project_data_dict = dict()
         for worksheet in erection_input_worksheets:
-            erection_project_data_dict[worksheet] = project_data_sheets[worksheet]
+            erection_project_data_dict[worksheet] = project_data_dataframes[worksheet]
 
         # Add the erection project data to the incomplete_input_dict
         incomplete_input_dict['project_data'] = erection_project_data_dict
 
         # Get the first set of data
-        incomplete_input_dict['rsmeans'] = project_data_sheets['rsmeans']
-        incomplete_input_dict['site_facility_building_area_df'] = project_data_sheets['site_facility_building_area']
-        incomplete_input_dict['material_price'] = project_data_sheets['material_price']
+        incomplete_input_dict['rsmeans'] = project_data_dataframes['rsmeans']
+        incomplete_input_dict['site_facility_building_area_df'] = project_data_dataframes['site_facility_building_area']
+        incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
 
         # The weather window is stored on a sheet of the project_data, but
         # needs preprocessing after it is read. The preprocessing changes it
         # from wind toolkit format to a dataframe.
-        weather_window_input_df = project_data_sheets['weather_window']
+        weather_window_input_df = project_data_dataframes['weather_window']
         incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
 
         # Read development tab:
         # incomplete_input_dict['development_df'] = project_data.parse('development')
-        incomplete_input_dict['development_df'] = project_data_sheets['development']
+        incomplete_input_dict['development_df'] = project_data_dataframes['development']
 
         # FoundationCost needs to have all the component data split into separate
         # NumPy arrays.
@@ -277,7 +351,7 @@ class XlsxReader:
         for component in incomplete_input_dict['component_data'].keys():
             incomplete_input_dict[component] = np.array(incomplete_input_dict['component_data'][component])
 
-        incomplete_input_dict['cable_specs_pd'] = project_data_sheets['cable_specs']
+        incomplete_input_dict['cable_specs_pd'] = project_data_dataframes['cable_specs']
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']

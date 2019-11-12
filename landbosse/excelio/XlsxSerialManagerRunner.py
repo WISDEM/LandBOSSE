@@ -63,9 +63,9 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list, parametric_value_list)
 
         # Loop over every project
-        for _, project_series in project_list.iterrows():
-            project_id = project_series['Project ID']
-            project_data_basename = project_series['Project data file']
+        for _, project_parameters in enhanced_project_list.iterrows():
+            project_id = project_parameters['Project ID']
+            project_data_basename = project_parameters['Project data file']
 
             # Input path for the Xlsx
             project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
@@ -78,14 +78,18 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             # Read the project data sheets.
             project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
+            # Transform the dataframes so that they have the right values for
+            # the parametric variables.
+            xlsx_reader.modify_project_data_dataframes(project_data_sheets, project_parameters)
+
             # Create the master input dictionary.
-            master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_series)
+            master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
 
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()
             mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
             mc.execute_landbosse(project_name=project_id)
-            output_dict['project_series'] = project_series
+            output_dict['project_series'] = project_parameters
             runs_dict[project_id] = output_dict
 
         final_result = dict()
