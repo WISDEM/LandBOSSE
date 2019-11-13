@@ -6,6 +6,7 @@ import numpy as np
 from .XlsxOperationException import XlsxOperationException
 from .WeatherWindowCSVReader import read_weather_window
 from ..model import DefaultMasterInputDict
+from .GridSearchTree import GridSearchTree
 
 
 class XlsxReader:
@@ -150,9 +151,8 @@ class XlsxReader:
     #     return enhanced_project_df
 
     def create_parametric_value_list(self, parametric_list):
-        root = GridSearchTree.build_tree(parametric_list)
-        grid = GridSearchTree.dfs_search_tree(root)
-        flattened_grid = GridSearchTree.flatten_list_of_lists(grid)
+        grid_search_tree = GridSearchTree(parametric_list)
+        grid = grid_search_tree.build_grid_tree_and_return_grid()
         return None
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
@@ -491,65 +491,3 @@ class XlsxReader:
 
         padding = '0' * (total_digit_count - index_digit_count)
         return f'{project_id}_{padding}{index}'
-
-
-class GridSearchTreeNode:
-    def __init__(self):
-        self.cell_specification = None
-        self.children = []
-        self.value = None
-        self.project_id = None
-
-
-class GridSearchTree:
-
-    @classmethod
-    def build_tree(cls, parametric_list, depth=0, root=None):
-        row = parametric_list.iloc[depth]
-        cell_specification = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
-        start = row['Start']
-        end = row['End']
-        step = row['Step']
-        project_id = row['Project ID']
-
-        if root == None:
-            root = GridSearchTreeNode()
-
-        for value in np.arange(start, end, step):
-            child = GridSearchTreeNode()
-            child.value = value
-            child.cell_specification = cell_specification
-            child.project_id = project_id
-            root.children.append(child)
-            if len(parametric_list) > depth + 1:
-                cls.build_tree(parametric_list, depth + 1, child)
-
-        return root
-
-    @classmethod
-    def dfs_search_tree(cls, root, traversal=[], path=None):
-        path = [] if path is None else path[:]
-
-        if root.cell_specification is not None:
-            path.append({
-                'cell_specification': root.cell_specification,
-                'value': root.value,
-                'Project ID': root.project_id
-            })
-
-        if len(root.children) == 0:
-            traversal.append(path)
-
-        for child in root.children:
-            cls.dfs_search_tree(child, traversal, path)
-
-        return traversal
-
-    @classmethod
-    def flatten_list_of_lists(cls, value_to_flatten, flattened_list=[]):
-        if type(value_to_flatten) == list:
-            for element in value_to_flatten:
-                cls.flatten_list_of_lists(element, flattened_list)
-        else:
-            flattened_list.append(value_to_flatten)
-        return flattened_list
