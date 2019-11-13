@@ -152,6 +152,7 @@ class XlsxReader:
     def create_parametric_value_list(self, parametric_list):
         root = GridSearchTree.build_tree(parametric_list)
         grid = GridSearchTree.dfs_search_tree(root)
+        flattened_grid = GridSearchTree.flatten_list_of_lists(grid)
         return None
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
@@ -497,6 +498,7 @@ class GridSearchTreeNode:
         self.cell_specification = None
         self.children = []
         self.value = None
+        self.project_id = None
 
 
 class GridSearchTree:
@@ -508,6 +510,7 @@ class GridSearchTree:
         start = row['Start']
         end = row['End']
         step = row['Step']
+        project_id = row['Project ID']
 
         if root == None:
             root = GridSearchTreeNode()
@@ -516,6 +519,7 @@ class GridSearchTree:
             child = GridSearchTreeNode()
             child.value = value
             child.cell_specification = cell_specification
+            child.project_id = project_id
             root.children.append(child)
             if len(parametric_list) > depth + 1:
                 cls.build_tree(parametric_list, depth + 1, child)
@@ -527,7 +531,11 @@ class GridSearchTree:
         path = [] if path is None else path[:]
 
         if root.cell_specification is not None:
-            path.append(root.cell_specification)
+            path.append({
+                'cell_specification': root.cell_specification,
+                'value': root.value,
+                'Project ID': root.project_id
+            })
 
         if len(root.children) == 0:
             traversal.append(path)
@@ -536,3 +544,12 @@ class GridSearchTree:
             cls.dfs_search_tree(child, traversal, path)
 
         return traversal
+
+    @classmethod
+    def flatten_list_of_lists(cls, value_to_flatten, flattened_list=[]):
+        if type(value_to_flatten) == list:
+            for element in value_to_flatten:
+                cls.flatten_list_of_lists(element, flattened_list)
+        else:
+            flattened_list.append(value_to_flatten)
+        return flattened_list
