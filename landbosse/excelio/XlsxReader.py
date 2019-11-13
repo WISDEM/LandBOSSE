@@ -56,98 +56,103 @@ class XlsxReader:
     possible.
     """
 
-    def create_parametric_value_list(self, parametric_list, steps):
-        """
-        Assume that there are fixed number of steps in a parametric run.
-        Lets say, for this example, 3 steps.
+    # def create_parametric_value_list(self, parametric_list, steps):
+    #     """
+    #     Assume that there are fixed number of steps in a parametric run.
+    #     Lets say, for this example, 3 steps.
+    #
+    #     Also assume that we have the following data frame for the parametric
+    #     variables. This was in the "Parametric list" sheet of the project list
+    #     spreadsheet.
+    #
+    #     | Project ID | Dataframe name       | Row name | Column name | Start | End |
+    #     |------------|----------------------|----------|-------------|-------|-----|
+    #     | project1   | alpha                | fizz     | buzz        | 0     | 12  |
+    #     | project1   | beta                 | foo      | bar         | 0     | 9   |
+    #     | project2   | gamma                | spam     | eggs        | 21    | 27  |
+    #
+    #     Translate this data frame into a data frame of the following format:
+    #
+    #     | Project ID | serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+    #     |------------|--------|-----------------|--------------|---------------|
+    #     | project1   | 0      | 0               | 0            | NaN           |
+    #     | project1   | 1      | 6               | 3            | NaN           |
+    #     | project1   | 2      | 12              | 9            | NaN           |
+    #     | project2   | 0      | NaN             | NaN          | 21            |
+    #     | project2   | 1      | NaN             | NaN          | 24            |
+    #     | project2   | 2      | NaN             | NaN          | 27            |
+    #
+    #     Here NaN is used in its role as the Pandas equivalent to the SQL
+    #     NULL. It means that, for a particular project, no modification
+    #     to the dataframe/row/column is needed and that the value in that
+    #     dataframe cell should remain unchanged.
+    #
+    #     Also, note that the serial numbers are strings that should be left
+    #     padded with zeros. The left padding means that when the strings are
+    #     sorted alphabetically, they will end up in the same order as numeric
+    #     sorting.
+    #
+    #     Parameters
+    #     ----------
+    #     parametric_list : pandas.DataFrame
+    #         The first dataframe shown above.
+    #
+    #     steps : int
+    #         The number of steps between start and end values in each
+    #         sequence.
+    #
+    #     Returns
+    #     -------
+    #     pandas.DataFrame
+    #         The second dataframe shown above.
+    #     """
+    #     # A list of dictionaries to be transformed into a dataframe at the end
+    #     enhanced_project_list = []
+    #
+    #     # A dictionary of numpy arrays will contain all the values in our
+    #     # sequences
+    #     sequences_dict = dict()
+    #
+    #     # Add project IDs to the top level dictionary
+    #     for project_id in parametric_list['Project ID'].unique():
+    #         sequences_dict[project_id] = dict()
+    #
+    #     # Make NumPy arrays that hold the values at each step in all
+    #     # the sequences.
+    #     for _, row in parametric_list.iterrows():
+    #         project_id = row['Project ID']
+    #         key = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
+    #         value = np.linspace(float(row['Start value']), float(row['End value']), steps)
+    #         sequences_dict[project_id][key] = value
+    #
+    #     # Now, expand all sequences into their values.
+    #
+    #     # First, group them by Project ID
+    #     for project_id, sequences in sequences_dict.items():
+    #
+    #         # Next group them by steps and make a serial number
+    #         for step in range(steps):
+    #             row_dict = {
+    #                 'Project ID': project_id,
+    #                 'Serial': self.create_serial_number(project_id, step, steps)
+    #             }
+    #
+    #             # Then, line all variable modifications on the same row.
+    #             # This allows one or more parametric variables to be modified
+    #             # simultaneously.
+    #             for parametric_variable, xs in sequences.items():
+    #                 row_dict[parametric_variable] = xs[step]
+    #             enhanced_project_list.append(row_dict)
+    #
+    #     # Make a dataframe out of the list of dictionaries
+    #     enhanced_project_df = pd.DataFrame(enhanced_project_list)
+    #
+    #     return enhanced_project_df
 
-        Also assume that we have the following data frame for the parametric
-        variables. This was in the "Parametric list" sheet of the project list
-        spreadsheet.
-
-        | Project ID | Dataframe name       | Row name | Column name | Start | End |
-        |------------|----------------------|----------|-------------|-------|-----|
-        | project1   | alpha                | fizz     | buzz        | 0     | 12  |
-        | project1   | beta                 | foo      | bar         | 0     | 9   |
-        | project2   | gamma                | spam     | eggs        | 21    | 27  |
-
-        Translate this data frame into a data frame of the following format:
-
-        | Project ID | serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
-        |------------|--------|-----------------|--------------|---------------|
-        | project1   | 0      | 0               | 0            | NaN           |
-        | project1   | 1      | 6               | 3            | NaN           |
-        | project1   | 2      | 12              | 9            | NaN           |
-        | project2   | 0      | NaN             | NaN          | 21            |
-        | project2   | 1      | NaN             | NaN          | 24            |
-        | project2   | 2      | NaN             | NaN          | 27            |
-
-        Here NaN is used in its role as the Pandas equivalent to the SQL
-        NULL. It means that, for a particular project, no modification
-        to the dataframe/row/column is needed and that the value in that
-        dataframe cell should remain unchanged.
-
-        Also, note that the serial numbers are strings that should be left
-        padded with zeros. The left padding means that when the strings are
-        sorted alphabetically, they will end up in the same order as numeric
-        sorting.
-
-        Parameters
-        ----------
-        parametric_list : pandas.DataFrame
-            The first dataframe shown above.
-
-        steps : int
-            The number of steps between start and end values in each
-            sequence.
-
-        Returns
-        -------
-        pandas.DataFrame
-            The second dataframe shown above.
-        """
-        # A list of dictionaries to be transformed into a dataframe at the end
-        enhanced_project_list = []
-
-        # A dictionary of numpy arrays will contain all the values in our
-        # sequences
-        sequences_dict = dict()
-
-        # Add project IDs to the top level dictionary
-        for project_id in parametric_list['Project ID'].unique():
-            sequences_dict[project_id] = dict()
-
-        # Make NumPy arrays that hold the values at each step in all
-        # the sequences.
-        for _, row in parametric_list.iterrows():
-            project_id = row['Project ID']
-            key = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
-            value = np.linspace(float(row['Start value']), float(row['End value']), steps)
-            sequences_dict[project_id][key] = value
-
-        # Now, expand all sequences into their values.
-
-        # First, group them by Project ID
-        for project_id, sequences in sequences_dict.items():
-
-            # Next group them by steps and make a serial number
-            for step in range(steps):
-                row_dict = {
-                    'Project ID': project_id,
-                    'Serial': self.create_serial_number(project_id, step, steps)
-                }
-
-                # Then, line all variable modifications on the same row.
-                # This allows one or more parametric variables to be modified
-                # simultaneously.
-                for parametric_variable, xs in sequences.items():
-                    row_dict[parametric_variable] = xs[step]
-                enhanced_project_list.append(row_dict)
-
-        # Make a dataframe out of the list of dictionaries
-        enhanced_project_df = pd.DataFrame(enhanced_project_list)
-
-        return enhanced_project_df
+    def create_parametric_value_list(self, parametric_list):
+        root = GridSearchTree.build_tree(parametric_list)
+        grid = GridSearchTree.dfs_search_tree(root)
+        return None
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
         """
@@ -485,3 +490,49 @@ class XlsxReader:
 
         padding = '0' * (total_digit_count - index_digit_count)
         return f'{project_id}_{padding}{index}'
+
+
+class GridSearchTreeNode:
+    def __init__(self):
+        self.cell_specification = None
+        self.children = []
+        self.value = None
+
+
+class GridSearchTree:
+
+    @classmethod
+    def build_tree(cls, parametric_list, depth=0, root=None):
+        row = parametric_list.iloc[depth]
+        cell_specification = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
+        start = row['Start']
+        end = row['End']
+        step = row['Step']
+
+        if root == None:
+            root = GridSearchTreeNode()
+
+        for value in np.arange(start, end, step):
+            child = GridSearchTreeNode()
+            child.value = value
+            child.cell_specification = cell_specification
+            root.children.append(child)
+            if len(parametric_list) > depth + 1:
+                cls.build_tree(parametric_list, depth + 1, child)
+
+        return root
+
+    @classmethod
+    def dfs_search_tree(cls, root, traversal=[], path=None):
+        path = [] if path is None else path[:]
+
+        if root.cell_specification is not None:
+            path.append(root.cell_specification)
+
+        if len(root.children) == 0:
+            traversal.append(path)
+
+        for child in root.children:
+            cls.dfs_search_tree(child, traversal, path)
+
+        return traversal
