@@ -6,7 +6,6 @@ class GridSearchTreeNode:
         self.cell_specification = None
         self.children = []
         self.value = None
-        self.project_id = None
 
 
 class GridSearchTree:
@@ -24,16 +23,15 @@ class GridSearchTree:
         start = row['Start']
         end = row['End']
         step = row['Step']
-        project_id = row['Project ID']
 
         if root == None:
             root = GridSearchTreeNode()
 
-        for value in np.arange(start, end, step):
+        # Putting the stop at end + step ensures the end value is in the sequence
+        for value in np.arange(start, end + step, step):
             child = GridSearchTreeNode()
             child.value = value
             child.cell_specification = cell_specification
-            child.project_id = project_id
             root.children.append(child)
             if len(self.parametric_list) > depth + 1:
                 self.build_tree(depth + 1, child)
@@ -47,7 +45,6 @@ class GridSearchTree:
             path.append({
                 'cell_specification': root.cell_specification,
                 'value': root.value,
-                'Project ID': root.project_id
             })
 
         if len(root.children) == 0:

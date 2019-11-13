@@ -66,11 +66,11 @@ class XlsxReader:
     #     variables. This was in the "Parametric list" sheet of the project list
     #     spreadsheet.
     #
-    #     | Project ID | Dataframe name       | Row name | Column name | Start | End |
-    #     |------------|----------------------|----------|-------------|-------|-----|
-    #     | project1   | alpha                | fizz     | buzz        | 0     | 12  |
-    #     | project1   | beta                 | foo      | bar         | 0     | 9   |
-    #     | project2   | gamma                | spam     | eggs        | 21    | 27  |
+    #     | Project ID | Dataframe name       | Row name | Column name | Start | End | Steps
+    #     |------------|----------------------|----------|-------------|-------|-----|------
+    #     | project1   | alpha                | fizz     | buzz        | 0     | 12  | 3
+    #     | project1   | beta                 | foo      | bar         | 0     | 9   | 3
+    #     | project2   | gamma                | spam     | eggs        | 21    | 27  | 3
     #
     #     Translate this data frame into a data frame of the following format:
     #
@@ -78,7 +78,7 @@ class XlsxReader:
     #     |------------|--------|-----------------|--------------|---------------|
     #     | project1   | 0      | 0               | 0            | NaN           |
     #     | project1   | 1      | 6               | 3            | NaN           |
-    #     | project1   | 2      | 12              | 9            | NaN           |
+    #     | project1   | 2      | 9               | 6            | NaN           |
     #     | project2   | 0      | NaN             | NaN          | 21            |
     #     | project2   | 1      | NaN             | NaN          | 24            |
     #     | project2   | 2      | NaN             | NaN          | 27            |
@@ -151,8 +151,65 @@ class XlsxReader:
     #     return enhanced_project_df
 
     def create_parametric_value_list(self, parametric_list):
+        """
+        Assume that there are fixed number of steps in a parametric run.
+        Lets say, for this example, 3 steps.
+
+        Also assume that we have the following data frame for the parametric
+        variables. This was in the "Parametric list" sheet of the project list
+        spreadsheet.
+
+        | Project ID | Dataframe name       | Row name | Column name | Start | End | Steps
+        |------------|----------------------|----------|-------------|-------|-----|------
+        | project1   | alpha                | fizz     | buzz        | 0     | 12  | 3
+        | project1   | beta                 | foo      | bar         | 0     | 9   | 3
+        | project2   | gamma                | spam     | eggs        | 21    | 27  | 3
+
+        Translate this data frame into a data frame of the following format:
+
+        | Project ID | serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        |------------|--------|-----------------|--------------|---------------|
+        | project1   | 0      | 0               | 0            | NaN           |
+        | project1   | 1      | 6               | 3            | NaN           |
+        | project1   | 2      | 9               | 6            | NaN           |
+        | project2   | 0      | NaN             | NaN          | 21            |
+        | project2   | 1      | NaN             | NaN          | 24            |
+        | project2   | 2      | NaN             | NaN          | 27            |
+
+        Here NaN is used in its role as the Pandas equivalent to the SQL
+        NULL. It means that, for a particular project, no modification
+        to the dataframe/row/column is needed and that the value in that
+        dataframe cell should remain unchanged.
+
+        Also, note that the serial numbers are strings that should be left
+        padded with zeros. The left padding means that when the strings are
+        sorted alphabetically, they will end up in the same order as numeric
+        sorting.
+
+        Parameters
+        ----------
+        parametric_list : pandas.DataFrame
+            The first dataframe shown above.
+
+        steps : int
+            The number of steps between start and end values in each
+            sequence.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The second dataframe shown above.
+        """
         grid_search_tree = GridSearchTree(parametric_list)
         grid = grid_search_tree.build_grid_tree_and_return_grid()
+
+        parametic_value_rows = []
+        for grid_point in grid:
+            parametric_value_row = dict()
+            for axis in grid_point:
+                parametric_value_row[axis['cell_specification']] = axis['value']
+            parametic_value_rows.append(parametric_value_row)
+
         return None
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
