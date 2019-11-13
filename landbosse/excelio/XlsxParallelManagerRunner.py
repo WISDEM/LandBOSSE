@@ -8,6 +8,7 @@ from .XlsxFileOperations import XlsxFileOperations
 from .XlsxReader import XlsxReader
 from .XlsxManagerRunner import XlsxManagerRunner
 from .XlsxDataframeCache import XlsxDataframeCache
+from .XlsxGenerator import XlsxGenerator
 
 
 class XlsxParallelManagerRunner(XlsxManagerRunner):
@@ -44,25 +45,47 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         # projects = pd.read_excel(projects_xlsx, 'Sheet1')
-        projects, _ = self.read_project_and_parametric_list_from_xlsx()
+        project_list, parametric_list = self.read_project_and_parametric_list_from_xlsx()
 
         # Prepare the file operations
         file_ops = XlsxFileOperations()
 
+        # Instantiate an XlsxReader to handle the parametrics
+        xlsx_reader = XlsxReader()
+
+        # Join in the parametric variable modifications
+        parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
+        enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
+                                                                                     parametric_value_list)
         # Prep all task for the executor
         all_tasks = []
-        for _, project_series in projects.iterrows():
-            project_data_basename = project_series['Project data file']
+        for _, project_parameters in enhanced_project_list.iterrows():
+
+            # If project_parameters['Serial'] is null, that means there are no
+            # parametric modifications to the project data dataframes. Hence,
+            # just the plain Project ID without a serial number should be used.
+            if pd.isnull(project_parameters['Serial']):
+                project_id = project_parameters['Project ID']
+            else:
+                project_id = project_parameters['Serial']
+
+            project_data_basename = project_parameters['Project data file']
             task = dict()
 
-            # PARAMETRICS: This is where to put post processing of the dataframes
-            # into the mix
             task['project_data_sheets'] = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
-            task['project_data_xlsx'] = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
+            # Transform the dataframes so that they have the right values for
+            # the parametric variables.
+            xlsx_reader.modify_project_data_dataframes(task['project_data_sheets'], project_parameters)
+
+            # Write all project_data sheets
+            parametric_project_data_path = \
+                os.path.join(file_ops.project_data_output_path(), f'{project_id}_project_data.xlsx')
+            XlsxGenerator.write_project_data(task['project_data_sheets'], parametric_project_data_path)
+
             task['project_data_basename'] = project_data_basename
-            task['project_id'] = project_series['Project ID']
-            task['project_series'] = project_series
+            task['project_id'] = project_id
+            task['project_series'] = project_parameters
             all_tasks.append(task)
 
         # Execute every project
@@ -77,6 +100,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
         final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
+        final_result['enhanced_project_list'] = enhanced_project_list
 
         # Return the runs for all the scenarios.
         return final_result

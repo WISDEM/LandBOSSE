@@ -55,7 +55,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Get the output dictionary ready
         runs_dict = OrderedDict()
 
-        # Instantiate and XlsxReader
+        # Instantiate and XlsxReader to handle the parametrics
         xlsx_reader = XlsxReader()
 
         # Join in the parametric variable modifications
