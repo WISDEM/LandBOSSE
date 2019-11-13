@@ -320,7 +320,7 @@ class XlsxReader:
         for index, value in project_parameters.iteritems():
 
             # If the column specifies a cell to change in the dataframe
-            if cell_spec_re.match(index):
+            if cell_spec_re.match(index) and not pd.isnull(value):
                 dataframe_name, row_name, column_name = index.split('/')
 
                 # Check if dataframe exists
