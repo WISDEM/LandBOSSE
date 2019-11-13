@@ -14,7 +14,7 @@ class GridSearchTree:
 
     def build_grid_tree_and_return_grid(self):
         root = self.build_tree()
-        grid = self.dfs_search_tree(root)
+        grid = self.dfs_search_tree(root, traversal=[])
         return grid
 
     def build_tree(self, depth=0, root=None):
@@ -38,7 +38,7 @@ class GridSearchTree:
 
         return root
 
-    def dfs_search_tree(self, root, traversal=[], path=None):
+    def dfs_search_tree(self, root, traversal, path=None):
         path = [] if path is None else path[:]
 
         if root.cell_specification is not None:

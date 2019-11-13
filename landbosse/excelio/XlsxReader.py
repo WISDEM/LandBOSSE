@@ -167,7 +167,7 @@ class XlsxReader:
 
         Translate this data frame into a data frame of the following format:
 
-        | Project ID | serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        | Project ID | Serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
         |------------|--------|-----------------|--------------|---------------|
         | project1   | 0      | 0               | 0            | NaN           |
         | project1   | 1      | 6               | 3            | NaN           |
@@ -191,26 +191,36 @@ class XlsxReader:
         parametric_list : pandas.DataFrame
             The first dataframe shown above.
 
-        steps : int
-            The number of steps between start and end values in each
-            sequence.
-
         Returns
         -------
         pandas.DataFrame
             The second dataframe shown above.
         """
-        grid_search_tree = GridSearchTree(parametric_list)
-        grid = grid_search_tree.build_grid_tree_and_return_grid()
+        all_parametric_value_rows = []
 
-        parametic_value_rows = []
-        for grid_point in grid:
-            parametric_value_row = dict()
-            for axis in grid_point:
-                parametric_value_row[axis['cell_specification']] = axis['value']
-            parametic_value_rows.append(parametric_value_row)
+        group_by_project = parametric_list.groupby('Project ID')
+        df_dict = {name: pd.DataFrame(group) for name, group in group_by_project}
+        for name, group in df_dict.items():
+            grid_search_tree = GridSearchTree(group)
+            grid = grid_search_tree.build_grid_tree_and_return_grid()
+            parametric_value_rows = []
+            for grid_point in grid:
+                parametric_value_row = dict()
+                for axis in grid_point:
+                    parametric_value_row[axis['cell_specification']] = axis['value']
+                parametric_value_rows.append(parametric_value_row)
+            for parametric_value_row in parametric_value_rows:
+                parametric_value_row['Project ID'] = name
+            all_parametric_value_rows.extend(parametric_value_rows)
 
-        return None
+        for index, parametric_value_row in enumerate(all_parametric_value_rows):
+            project_id = parametric_value_row['Project ID']
+            serial = self.create_serial_number(project_id, index, len(all_parametric_value_rows))
+            parametric_value_row['Serial'] = serial
+
+        result = pd.DataFrame(all_parametric_value_rows)
+
+        return result
 
     def outer_join_projects_to_parametric_values(self, project_list, parametric_value_list):
         """
