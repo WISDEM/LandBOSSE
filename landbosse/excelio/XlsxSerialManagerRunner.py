@@ -46,7 +46,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             on each row.
         """
         # Load the project list
-        project_list, parametric_list = self.read_project_and_parametric_list_from_xlsx()
+        enhanced_project_list = self.read_project_and_parametric_list_from_xlsx()
         print('>>> Project and parametric lists loaded')
 
         # For file operations
@@ -55,12 +55,8 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Get the output dictionary ready
         runs_dict = OrderedDict()
 
-        # Instantiate and XlsxReader to handle the parametrics
+        # Instantiate and XlsxReader to assemble master input dictionary
         xlsx_reader = XlsxReader()
-
-        # Join in the parametric variable modifications
-        parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
-        enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list, parametric_value_list)
 
         # Loop over every project
         for _, project_parameters in enhanced_project_list.iterrows():

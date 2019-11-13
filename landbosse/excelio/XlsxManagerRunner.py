@@ -2,6 +2,7 @@ import pandas as pd
 
 from .XlsxDataframeCache import XlsxDataframeCache
 from .XlsxFileOperations import XlsxFileOperations
+from .XlsxReader import XlsxReader
 
 
 class XlsxManagerRunner:
@@ -139,8 +140,9 @@ class XlsxManagerRunner:
 
         Returns
         -------
-        pandas.DataFrame, pandas.DataFrame
-            The project list and the parametric list, respectively.
+        pandas.DataFrame
+            The enhanced project list that has support for all parametric
+            adjustments for each step.
 
         Raises
         ------
@@ -164,7 +166,7 @@ class XlsxManagerRunner:
                 'End'
             ])
 
-        # If the parametric and project lists exist
+        # If the parametric and project lists exist, read them
         elif 'Parametric list' in sheets.keys() and 'Project list' in sheets.keys():
             project_list = sheets['Project list']
             parametric_list = sheets['Parametric list']
@@ -173,4 +175,12 @@ class XlsxManagerRunner:
         else:
             raise KeyError("Project list needs to have a single sheet or sheets named 'Project list' and 'Parametric list'.")
 
-        return project_list, parametric_list
+        # Instantiate and XlsxReader to assemble master input dictionary
+        xlsx_reader = XlsxReader()
+
+        # Join in the parametric variable modifications
+        parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list, steps=3)
+        enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
+                                                                                 parametric_value_list)
+
+        return enhanced_project_list
