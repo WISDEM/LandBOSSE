@@ -106,8 +106,9 @@ class XlsxReader:
         all_parametric_value_rows = []
 
         group_by_project = parametric_list.groupby('Project ID')
-        df_dict = {name: pd.DataFrame(group) for name, group in group_by_project}
-        for name, group in df_dict.items():
+        # df_dict = {name: pd.DataFrame(group) for name, group in group_by_project}
+        # for name, group in df_dict.items():
+        for name, group in group_by_project:
             grid_search_tree = GridSearchTree(group)
             grid = grid_search_tree.build_grid_tree_and_return_grid()
             parametric_value_rows = []
