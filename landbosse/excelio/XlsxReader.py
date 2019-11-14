@@ -59,32 +59,33 @@ class XlsxReader:
 
     def create_parametric_value_list(self, parametric_list):
         """
-        Assume that there are fixed number of steps in a parametric run.
-        Lets say, for this example, 3 steps.
+        Assuming we have a "Parametric list" sheet/dataframe like the following
 
-        Also assume that we have the following data frame for the parametric
-        variables. This was in the "Parametric list" sheet of the project list
-        spreadsheet.
-
-        | Project ID | Dataframe name       | Row name | Column name | Start | End | Steps
+        | Project ID | Dataframe name       | Row name | Column name | Start | End | Step
         |------------|----------------------|----------|-------------|-------|-----|------
-        | project1   | alpha                | fizz     | buzz        | 0     | 12  | 3
-        | project1   | beta                 | foo      | bar         | 0     | 9   | 3
+        | project1   | alpha                | fizz     | buzz        | 0     | 12  | 6
+        | project1   | beta                 | foo      | bar         | 0     | 12  | 6
         | project2   | gamma                | spam     | eggs        | 21    | 27  | 3
 
         Translate this data frame into a data frame of the following format:
 
-        | Project ID | Serial | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
-        |------------|--------|-----------------|--------------|---------------|
-        | project1   | 0      | 0               | 0            | NaN           |
-        | project1   | 1      | 6               | 3            | NaN           |
-        | project1   | 2      | 9               | 6            | NaN           |
-        | project2   | 0      | NaN             | NaN          | 21            |
-        | project2   | 1      | NaN             | NaN          | 24            |
-        | project2   | 2      | NaN             | NaN          | 27            |
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        |------------|-------------|-----------------|--------------|----------------|
+        | project1   | project1_00 | 0               | 0            | NaN            |
+        | project1   | project1_01 | 0               | 6            | NaN            |
+        | project1   | project1_02 | 0               | 12           | NaN            |
+        | project1   | project1_03 | 6               | 0            | NaN            |
+        | project1   | project1_04 | 6               | 6            | NaN            |
+        | project1   | project1_05 | 6               | 12           | NaN            |
+        | project1   | project1_06 | 12              | 0            | NaN            |
+        | project1   | project1_07 | 12              | 6            | NaN            |
+        | project1   | project1_08 | 12              | 12           | NaN            |
+        | project2   | project2_09 | NaN             | NaN          | 21             |
+        | project2   | project2_10 | NaN             | NaN          | 24             |
+        | project2   | project2_11 | NaN             | NaN          | 27             |
 
-        Here NaN is used in its role as the Pandas equivalent to the SQL
-        NULL. It means that, for a particular project, no modification
+        Here NaN is not an error. It is the normal way Pandas handles
+        empty cells It means that, for a particular project,
         to the dataframe/row/column is needed and that the value in that
         dataframe cell should remain unchanged.
 
@@ -105,26 +106,48 @@ class XlsxReader:
         """
         all_parametric_value_rows = []
 
+        # Group all the projects by their ID and iterate over each group
         group_by_project = parametric_list.groupby('Project ID')
-        # df_dict = {name: pd.DataFrame(group) for name, group in group_by_project}
-        # for name, group in df_dict.items():
         for name, group in group_by_project:
+
+            # For each group/project ID, build a new grid search tree
             grid_search_tree = GridSearchTree(group)
             grid = grid_search_tree.build_grid_tree_and_return_grid()
+
+            # After the tree is built, make new rows that have individual
+            # parametric values.
+            #
+            # A grid_point is set of cell specifications and their values.
+            # given our example above, a grid point would be a list of
+            # dictionaries about dataframe cells to modify.
+            #
+            # Grid point 0: alpha/fizz/buzz = 0, beta/foo/bar = 0
+            # Grid point 1: alpha/fizz/buzz = 0, beta/foo/bar = 6
+            # etc
             parametric_value_rows = []
             for grid_point in grid:
                 parametric_value_row = dict()
                 for axis in grid_point:
                     parametric_value_row[axis['cell_specification']] = axis['value']
                 parametric_value_rows.append(parametric_value_row)
+
+            # Assign the project ID to each row. Because of the grouping,
+            # tha name is the same as the project ID.
             for parametric_value_row in parametric_value_rows:
                 parametric_value_row['Project ID'] = name
+
+            # Add all these new rows into the master list before
+            # iterating again.
             all_parametric_value_rows.extend(parametric_value_rows)
 
+        # Create project names with serial numbers for each row
         for index, parametric_value_row in enumerate(all_parametric_value_rows):
             project_id = parametric_value_row['Project ID']
             serial = self.create_serial_number(project_id, index, len(all_parametric_value_rows))
             parametric_value_row['Serial'] = serial
+
+        # Make a dataframe out of the list of dictionaries. This will
+        # add NaN where appropriate
 
         result = pd.DataFrame(all_parametric_value_rows)
 
@@ -135,14 +158,20 @@ class XlsxReader:
         Consider the dataframe we made in create_parametric_value_list.
         Call it parametric_value_list:
 
-        Project ID | serial | alpha_fizz_buzz | beta_foo_bar | gamma_spam_eggs
-        -----------|--------|-----------------|--------------|----------------
-        project1   | 0      | 0               | 0            | NaN
-        project1   | 1      | 6               | 3            | NaN
-        project1   | 2      | 12              | 9            | NaN
-        project2   | 0      | NaN             | NaN          | 21
-        project2   | 1      | NaN             | NaN          | 24
-        project 2  | 2      | NaN             | NaN          | 27
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        |------------|-------------|-----------------|--------------|----------------|
+        | project1   | project1_00 | 0               | 0            | NaN            |
+        | project1   | project1_01 | 0               | 6            | NaN            |
+        | project1   | project1_02 | 0               | 12           | NaN            |
+        | project1   | project1_03 | 6               | 0            | NaN            |
+        | project1   | project1_04 | 6               | 6            | NaN            |
+        | project1   | project1_05 | 6               | 12           | NaN            |
+        | project1   | project1_06 | 12              | 0            | NaN            |
+        | project1   | project1_07 | 12              | 6            | NaN            |
+        | project1   | project1_08 | 12              | 12           | NaN            |
+        | project2   | project2_09 | NaN             | NaN          | 21             |
+        | project2   | project2_10 | NaN             | NaN          | 24             |
+        | project2   | project2_11 | NaN             | NaN          | 27             |
 
         Now consider that we have the following project list data frame called
         project_list:
@@ -166,6 +195,22 @@ class XlsxReader:
         project2   | 2      | NaN             | NaN          | 27              | project1_data     | ...
         project3   | NaN    | NaN             | NaN          | NaN             | project3_data     | ...
 
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs  Project data file | ...
+        |------------|-------------|-----------------|--------------|----------------|-------------------| ...
+        | project1   | project1_00 | 0               | 0            | NaN            | project1_data     | ...
+        | project1   | project1_01 | 0               | 6            | NaN            | project1_data     | ...
+        | project1   | project1_02 | 0               | 12           | NaN            | project1_data     | ...
+        | project1   | project1_03 | 6               | 0            | NaN            | project1_data     | ...
+        | project1   | project1_04 | 6               | 6            | NaN            | project1_data     | ...
+        | project1   | project1_05 | 6               | 12           | NaN            | project1_data     | ...
+        | project1   | project1_06 | 12              | 0            | NaN            | project1_data     | ...
+        | project1   | project1_07 | 12              | 6            | NaN            | project1_data     | ...
+        | project1   | project1_08 | 12              | 12           | NaN            | project1_data     | ...
+        | project2   | project2_09 | NaN             | NaN          | 21             | project2_data     | ...
+        | project2   | project2_10 | NaN             | NaN          | 24             | project2_data     | ...
+        | project2   | project2_11 | NaN             | NaN          | 27             | project2_data     | ...
+        | project3   | NaN         | NaN             | NaN          | NaN            | project3_data     | ...
+
         This data frame is in place to run with a modified project manager
         runner. The modification to the runner will run modifications to the
         project data dataframes before running them in a project. The columns
@@ -179,6 +224,9 @@ class XlsxReader:
         As before, NaN values are expected and signify that a particular
         parametric variable does not need to be modified for the project
         that is in the same row.
+
+        Also, NaN in the Serial column means that a serial number will be
+        added later because the project did not have any parametric modifications
         """
         result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
         return result
