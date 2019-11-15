@@ -65,11 +65,11 @@ class XlsxReader:
         |------------|----------------------|----------|-------------|-------|-----|------
         | project1   | alpha                | fizz     | buzz        | 0     | 12  | 6
         | project1   | beta                 | foo      | bar         | 0     | 12  | 6
-        | project2   | gamma                | spam     | eggs        | 21    | 27  | 3
+        | project2   | gamma                | dogs     | cats        | 21    | 27  | 3
 
         Translate this data frame into a data frame of the following format:
 
-        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/dogs/cats
         |------------|-------------|-----------------|--------------|----------------|
         | project1   | project1_00 | 0               | 0            | NaN            |
         | project1   | project1_01 | 0               | 6            | NaN            |
@@ -158,7 +158,7 @@ class XlsxReader:
         Consider the dataframe we made in create_parametric_value_list.
         Call it parametric_value_list:
 
-        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/dogs/cats
         |------------|-------------|-----------------|--------------|----------------|
         | project1   | project1_00 | 0               | 0            | NaN            |
         | project1   | project1_01 | 0               | 6            | NaN            |
@@ -187,7 +187,7 @@ class XlsxReader:
         projects that do not have parametrics attached to them find
         their way to the list of projects to be executed.
 
-        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/spam/eggs  Project data file | ...
+        | Project ID | Serial      | alpha/fizz/buzz | beta/foo/bar | gamma/dogs/cats  Project data file | ...
         |------------|-------------|-----------------|--------------|----------------|-------------------| ...
         | project1   | project1_00 | 0               | 0            | NaN            | project1_data     | ...
         | project1   | project1_01 | 0               | 6            | NaN            | project1_data     | ...
