@@ -153,18 +153,11 @@ class XlsxManagerRunner:
         path_to_project_list = self.file_ops.landbosse_input_dir()
         sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list', path_to_project_list)
 
-        # If there is one sheet
+        # If there is one sheet, make an empty dataframe as a placeholder.
         if len(sheets.values()) == 1:
             first_sheet = list(sheets.values())[0]
             project_list = first_sheet
-            parametric_list = pd.DataFrame(columns=[
-                'Project ID',
-                'Dataframe sheet name',
-                'Row name',
-                'Col name',
-                'Start',
-                'End'
-            ])
+            parametric_list = pd.DataFrame()
 
         # If the parametric and project lists exist, read them
         elif 'Parametric list' in sheets.keys() and 'Project list' in sheets.keys():

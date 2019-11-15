@@ -104,6 +104,17 @@ class XlsxReader:
         pandas.DataFrame
             The second dataframe shown above.
         """
+
+        # If the parametric_list is empty, this probably means the sheet
+        # that had the parametric values is empty.
+        if parametric_list.empty:
+            return pd.DataFrame([
+                {
+                    'Project ID': None,
+                    'Serial': None
+                }
+            ])
+
         all_parametric_value_rows = []
 
         # Group all the projects by their ID and iterate over each group
