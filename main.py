@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # debugger which can slow down when it is being used to debug multiple
     # processes.
 
-    run_parallel = True
+    run_parallel = False
     manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
 
     # The file_ops object handles file names for input and output data.
