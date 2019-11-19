@@ -27,8 +27,8 @@ if __name__ == '__main__':
     lcoe = aep_tcc.merge(bos_sum, on=['Rating [kW]', 'Rotor Diam [m]'])
 
     # Create columns for FCR and Opex USD/kW
-    lcoe['FCR'] = 0.1
-    lcoe['Opex [USD/kW]'] = 51.0
+    lcoe['FCR'] = 0.079
+    lcoe['Opex [USD/kW]'] = 52.0
 
     # Now calculate LCOE and save the intermediate columns
     lcoe['Total Opex [USD]'] = lcoe['Opex [USD/kW]'] * lcoe['Rating [kW]'] * lcoe['Number of turbines']
