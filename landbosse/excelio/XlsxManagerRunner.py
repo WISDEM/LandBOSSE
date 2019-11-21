@@ -173,7 +173,7 @@ class XlsxManagerRunner:
 
         # Join in the parametric variable modifications
         parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list)
-        enhanced_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
+        extended_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
                                                                                  parametric_value_list)
 
-        return enhanced_project_list
+        return extended_project_list

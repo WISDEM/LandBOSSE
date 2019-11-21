@@ -35,10 +35,10 @@ if __name__ == '__main__':
     # final_result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
 
-    # Write the enhanced_project_list, which has all the parametric values.
-    enhanced_project_list_path = os.path.join(file_ops.landbosse_output_dir(), 'enhanced_project-list.xlsx')
-    enhanced_project_list = final_result['enhanced_project_list']
-    enhanced_project_list.to_excel(enhanced_project_list_path, index=False)
+    # Write the extended_project_list, which has all the parametric values.
+    extended_project_list_path = os.path.join(file_ops.landbosse_output_dir(), 'extended_project-list.xlsx')
+    extended_project_list = final_result['extended_project_list']
+    extended_project_list.to_excel(extended_project_list_path, index=False)
 
     # Switch to either validation or non validation producing code.
     input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()

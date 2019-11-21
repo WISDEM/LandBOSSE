@@ -44,7 +44,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             of costs for the spreadsheets.
         """
         # Load the project list
-        enhanced_project_list = self.read_project_and_parametric_list_from_xlsx()
+        extended_project_list = self.read_project_and_parametric_list_from_xlsx()
 
         # Prepare the file operations
         file_ops = XlsxFileOperations()
@@ -55,7 +55,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
         # Prep all task for the executor
         all_tasks = []
-        for _, project_parameters in enhanced_project_list.iterrows():
+        for _, project_parameters in extended_project_list.iterrows():
 
             # If project_parameters['Serial'] is null, that means there are no
             # parametric modifications to the project data dataframes. Hence,
@@ -96,7 +96,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
         final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
-        final_result['enhanced_project_list'] = enhanced_project_list
+        final_result['extended_project_list'] = extended_project_list
 
         # Return the runs for all the scenarios.
         return final_result
