@@ -57,13 +57,14 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         all_tasks = []
         for _, project_parameters in extended_project_list.iterrows():
 
-            # If project_parameters['Serial'] is null, that means there are no
+            # If project_parameters['Project ID with serial'] is null, that means there are no
             # parametric modifications to the project data dataframes. Hence,
             # just the plain Project ID without a serial number should be used.
-            if pd.isnull(project_parameters['Serial']):
-                project_id = project_parameters['Project ID']
+            if pd.isnull(project_parameters['Project ID with serial']):
+                project_id_without_serial = project_parameters['Project ID']
+                project_id_with_serial = f'{project_id_without_serial}_0'
             else:
-                project_id = project_parameters['Serial']
+                project_id_with_serial = project_parameters['Project ID with serial']
 
             project_data_basename = project_parameters['Project data file']
             task = dict()
@@ -76,11 +77,11 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
             # Write all project_data sheets
             parametric_project_data_path = \
-                os.path.join(file_ops.project_data_output_path(), f'{project_id}_project_data.xlsx')
+                os.path.join(file_ops.project_data_output_path(), f'{project_id_with_serial}_project_data.xlsx')
             XlsxGenerator.write_project_data(task['project_data_sheets'], parametric_project_data_path)
 
             task['project_data_basename'] = project_data_basename
-            task['project_id'] = project_id
+            task['project_id'] = project_id_with_serial
             task['project_series'] = project_parameters
             all_tasks.append(task)
 

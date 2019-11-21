@@ -61,13 +61,14 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         # Loop over every project
         for _, project_parameters in extended_project_list.iterrows():
 
-            # If project_parameters['Serial'] is null, that means there are no
+            # If project_parameters['Project ID with serial'] is null, that means there are no
             # parametric modifications to the project data dataframes. Hence,
             # just the plain Project ID without a serial number should be used.
-            if pd.isnull(project_parameters['Serial']):
-                project_id = project_parameters['Project ID']
+            if pd.isnull(project_parameters['Project ID with serial']):
+                project_id_without_serial = project_parameters['Project ID']
+                project_id_with_serial = f'{project_id_without_serial}_0'
             else:
-                project_id = project_parameters['Serial']
+                project_id_with_serial = project_parameters['Project ID with serial']
 
             project_data_basename = project_parameters['Project data file']
 
@@ -75,8 +76,8 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
-            print(f'<><><><><><><><><><><><><><><><><><> {project_id} <><><><><><><><><><><><><><><><><><>')
-            print('>>> project_id: {}'.format(project_id))
+            print(f'<><><><><><><><><><><><><><><><><><> {project_id_with_serial} <><><><><><><><><><><><><><><><><><>')
+            print('>>> project_id: {}'.format(project_id_with_serial))
             print('>>> Project data: {}'.format(project_data_xlsx))
 
             # Read the project data sheets.
@@ -88,7 +89,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
             # Write all project_data sheets
             parametric_project_data_path = \
-                os.path.join(file_ops.project_data_output_path(), f'{project_id}_project_data.xlsx')
+                os.path.join(file_ops.project_data_output_path(), f'{project_id_with_serial}_project_data.xlsx')
             XlsxGenerator.write_project_data(project_data_sheets, parametric_project_data_path)
 
             # Create the master input dictionary.
@@ -97,9 +98,9 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             # Now run the manager and accumulate its result into the runs_dict
             output_dict = dict()
             mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
-            mc.execute_landbosse(project_name=project_id)
+            mc.execute_landbosse(project_name=project_id_with_serial)
             output_dict['project_series'] = project_parameters
-            runs_dict[project_id] = output_dict
+            runs_dict[project_id_with_serial] = output_dict
 
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
