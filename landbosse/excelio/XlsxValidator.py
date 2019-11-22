@@ -38,7 +38,7 @@ class XlsxValidator:
         actual_df.drop(['raw_cost', 'raw_cost_total_or_per_turbine'], axis=1, inplace=True)
         expected_df = pd.read_excel(expected_xlsx, 'costs_by_module_type_operation')
         expected_df.rename(columns={
-            'Project ID': 'project_id',
+            'Project ID with serial': 'project_id_with_serial',
             'Number of turbines': 'num_turbines',
             'Turbine rating MW': 'turbine_rating_MW',
             'Module': 'module',
@@ -50,13 +50,13 @@ class XlsxValidator:
         }, inplace=True)
 
         cost_per_project_actual = actual_df[
-            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
+            ['cost_per_project', 'project_id_with_serial', 'module', 'operation_id', 'type_of_cost']]
         cost_per_project_expected = expected_df[
-            ['cost_per_project', 'project_id', 'module', 'operation_id', 'type_of_cost']]
+            ['cost_per_project', 'project_id_with_serial', 'module', 'operation_id', 'type_of_cost']]
 
         comparison = cost_per_project_actual.merge(
             cost_per_project_expected,
-            on=['project_id', 'module', 'operation_id', 'type_of_cost'])
+            on=['project_id_with_serial', 'module', 'operation_id', 'type_of_cost'])
 
         comparison.rename(columns={'cost_per_project_x': 'cost_per_project_actual',
                                     'cost_per_project_y': 'cost_per_project_expected'}, inplace=True)
@@ -66,7 +66,7 @@ class XlsxValidator:
         # Regardless of the outcome, write the end result of the comparison
         # to the validation output file.
         columns_for_comparison_output = [
-            'project_id',
+            'project_id_with_serial',
             'module',
             'operation_id',
             'type_of_cost',
