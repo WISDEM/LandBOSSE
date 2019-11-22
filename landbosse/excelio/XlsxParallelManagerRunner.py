@@ -81,7 +81,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             XlsxGenerator.write_project_data(task['project_data_sheets'], parametric_project_data_path)
 
             task['project_data_basename'] = project_data_basename
-            task['project_id'] = project_id_with_serial
+            task['project_id_with_serial'] = project_id_with_serial
             task['project_series'] = project_parameters
             all_tasks.append(task)
 
@@ -148,11 +148,11 @@ def run_single_project(task_dict):
     """
     project_data_basename = task_dict['project_data_basename']
     project_series = task_dict['project_series']
-    project_id = task_dict['project_id']
+    project_id_with_serial = task_dict['project_id_with_serial']
     project_data_sheets = task_dict['project_data_sheets']
 
     # Log each project. Use print because it works better for multiple processes.
-    print(f'START {project_id}, project data in {project_data_basename}')
+    print(f'START {project_id_with_serial}, project data in {project_data_basename}')
 
     # Read the Excel
     xlsx_reader = XlsxReader()
@@ -162,8 +162,8 @@ def run_single_project(task_dict):
     output_dict = dict()
     output_dict['project_series'] = project_series
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
-    mc.execute_landbosse(project_name=project_id)
+    mc.execute_landbosse(project_name=project_id_with_serial)
 
-    print(f'END {project_id}')
+    print(f'END {project_id_with_serial}')
 
-    return project_id, output_dict
+    return project_id_with_serial, output_dict
