@@ -441,7 +441,7 @@ class ManagementCost:
         for key in management_cost_keys:
             value = self.output_dict[key]
             row = {
-                'project': self.project_name,
+                'project_id_with_serial': self.project_name,
                 'module': type(self).__name__,
                 'type': 'variable',
                 'variable_df_key_col_name': key,

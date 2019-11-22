@@ -189,12 +189,12 @@ class XlsxGenerator:
         worksheet.set_column(5, 5, 66)
         worksheet.set_column(0, 2, 17)
 
-        for idx, col_name in enumerate(['Project ID', 'Module', 'Variable or DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
+        for idx, col_name in enumerate(['Project ID with serial', 'Module', 'Variable or DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
             worksheet.write(0, idx, col_name, self.header_format)
 
         # Go through each row and create Excel rows from each of those rows.
         for row_idx, row in enumerate(rows):
-            worksheet.write(row_idx + 1, 0, row['project'])
+            worksheet.write(row_idx + 1, 0, row['project_id_with_serial'])
             worksheet.write(row_idx + 1, 1, row['module'])
             worksheet.write(row_idx + 1, 2, row['type'])
             worksheet.write(row_idx + 1, 3, row['variable_df_key_col_name'])
