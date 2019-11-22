@@ -500,7 +500,7 @@ class ManagementCost:
         for _dict in result:
             _dict['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
             _dict['num_turbines'] = self.input_dict['num_turbines']
-            _dict['project_id'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['operation_id'] = 'Management'
             _dict['module'] = module
             _dict['raw_cost_total_or_per_turbine'] = 'total'

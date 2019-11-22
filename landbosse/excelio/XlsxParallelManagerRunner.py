@@ -90,7 +90,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             executor_result = executor.map(run_single_project, all_tasks)
 
         # Get the output dictionary ready
-        runs_dict = {project_id: result for project_id, result in executor_result}
+        runs_dict = {project_id_with_serial: result for project_id_with_serial, result in executor_result}
 
         # Assemble the dictionary with content for the details, details with inputs,
         #  cost_by_module_type_operation and cost_by_module_type_operation_with_input tabs

@@ -138,7 +138,7 @@ class XlsxGenerator:
             sheet.
         """
         worksheet = self.workbook.add_worksheet('costs_by_module_type_operation')
-        for idx, col_name in enumerate(['Project ID',
+        for idx, col_name in enumerate(['Project ID with serial',
                                         'Number of turbines',
                                         'Turbine rating MW',
                                         'Module',
@@ -151,7 +151,7 @@ class XlsxGenerator:
                                         'USD/kW per project']):
             worksheet.write(0, idx, col_name, self.header_format)
         for row_idx, row in enumerate(rows):
-            worksheet.write(row_idx + 1, 0, row['project_id'])
+            worksheet.write(row_idx + 1, 0, row['project_id_with_serial'])
             worksheet.write(row_idx + 1, 1, row['num_turbines'])
             worksheet.write(row_idx + 1, 2, row['turbine_rating_MW'])
             worksheet.write(row_idx + 1, 3, row['module'])
