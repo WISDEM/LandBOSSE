@@ -61,8 +61,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             # parametric modifications to the project data dataframes. Hence,
             # just the plain Project ID without a serial number should be used.
             if pd.isnull(project_parameters['Project ID with serial']):
-                project_id_without_serial = project_parameters['Project ID']
-                project_id_with_serial = f'{project_id_without_serial}_0'
+                project_id_with_serial = project_parameters['Project ID']
             else:
                 project_id_with_serial = project_parameters['Project ID with serial']
 
