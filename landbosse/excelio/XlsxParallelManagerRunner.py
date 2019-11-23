@@ -44,6 +44,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             of costs for the spreadsheets.
         """
         # Load the project list
+        print('Calculating parametric values')
         extended_project_list = self.read_project_and_parametric_list_from_xlsx()
 
         # Prepare the file operations
@@ -55,6 +56,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
         # Prep all task for the executor
         all_tasks = []
+        print(f'Found {len(extended_project_list)} projects for execution')
         for _, project_parameters in extended_project_list.iterrows():
 
             # If project_parameters['Project ID with serial'] is null, that means there are no
@@ -64,6 +66,8 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
                 project_id_with_serial = project_parameters['Project ID']
             else:
                 project_id_with_serial = project_parameters['Project ID with serial']
+
+            print(f'Preparing {project_id_with_serial}')
 
             project_data_basename = project_parameters['Project data file']
             task = dict()
@@ -151,7 +155,7 @@ def run_single_project(task_dict):
     project_data_sheets = task_dict['project_data_sheets']
 
     # Log each project. Use print because it works better for multiple processes.
-    print(f'START {project_id_with_serial}, project data in {project_data_basename}')
+    print(f'Start {project_id_with_serial}, project data in {project_data_basename}')
 
     # Read the Excel
     xlsx_reader = XlsxReader()
@@ -163,6 +167,6 @@ def run_single_project(task_dict):
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_landbosse(project_name=project_id_with_serial)
 
-    print(f'END {project_id_with_serial}')
+    print(f'End {project_id_with_serial}')
 
     return project_id_with_serial, output_dict
