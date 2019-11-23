@@ -141,7 +141,7 @@ class XlsxFileOperations:
         else:
             return output_path
 
-    def project_data_output_path(self):
+    def parametric_project_data_output_path(self):
         """
         Returns th path to the project output data folder.
 
@@ -155,27 +155,49 @@ class XlsxFileOperations:
         str
             Path to project data output folder.
         """
-        path = os.path.join(self.landbosse_output_dir(), 'parametric_project_data')
+        path = os.path.join(self.landbosse_output_dir(), 'calculated_parametric_inputs', 'parametric_project_data')
 
-        if os.path.exists(path) and os.path.isdir(path):
-            return path
-        elif os.path.exists(path) and not os.path.isdir(path):
+        if os.path.exists(path) and not os.path.isdir(path):
             raise XlsxOperationException(f'Attempt to write project data to {path} failed. File exists and is not a directory.')
-        else:
-            os.mkdir(path)
-            return path
+
+        os.makedirs(path, exist_ok=True)
+        return path
+
+    def extended_project_list_path(self):
+        """
+        This returns the path to which the extended project list, which has all
+        the parametric values, should be copied.
+
+        If the folder does not exist yet, this method creates it.
+
+        Returns
+        -------
+        str
+            The absolute path to the destiantion of the extended project
+            list.
+        """
+        path = os.path.join(self.landbosse_output_dir(), 'calculated_parametric_inputs')
+
+        if os.path.exists(path) and not os.path.isdir(path):
+            raise XlsxOperationException(f'Attempt to write project data to {path} failed. File exists and is not a directory.')
+
+        os.makedirs(path, exist_ok=True)
+        return path
 
     def copy_input_data(self):
         """
-        This copies all input data including:
-
-        - project_list.xlsx
-        - everything under project_data/
+        This copies all input data to the outputs folder. The input data it copies
+        are all the data BEFORE they have been modified for parametric runs.
         """
+        dst_inputs_copy_path = os.path.join(self.landbosse_output_dir(), 'inputs')
+        os.makedirs(dst_inputs_copy_path, exist_ok=True)
+
         src_project_list_xlsx = os.path.join(self.landbosse_input_dir(), 'project_list.xlsx')
-        dst_project_list_xlsx = os.path.join(self.landbosse_output_dir(), 'project_list.xlsx')
+        dst_project_list_xlsx = os.path.join(dst_inputs_copy_path, 'project_list.xlsx')
+
         src_project_data_dir = os.path.join(self.landbosse_input_dir(), 'project_data')
-        dst_project_data_dir = os.path.join(self.landbosse_output_dir(), 'project_data')
+        dst_project_data_dir = os.path.join(dst_inputs_copy_path, 'project_data')
+
         copy2(src_project_list_xlsx, dst_project_list_xlsx)
         copytree(src_project_data_dir, dst_project_data_dir)
 
