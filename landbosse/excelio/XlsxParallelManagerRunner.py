@@ -76,7 +76,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
             # Write all project_data sheets
             parametric_project_data_path = \
-                os.path.join(file_ops.project_data_output_path(), f'{project_id_with_serial}_project_data.xlsx')
+                os.path.join(file_ops.parametric_project_data_output_path(), f'{project_id_with_serial}_project_data.xlsx')
             XlsxGenerator.write_project_data(task['project_data_sheets'], parametric_project_data_path)
 
             task['project_data_basename'] = project_data_basename
