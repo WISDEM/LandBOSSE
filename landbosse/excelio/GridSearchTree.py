@@ -84,8 +84,8 @@ class GridSearchTree:
         """
         row = self.parametric_list.iloc[depth]
         cell_specification = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
-        start = row['Start']
-        end = row['End']
+        start = row['Min']
+        end = row['Max']
         step = row['Step']
 
         if root == None:
