@@ -36,7 +36,7 @@ if __name__ == '__main__':
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
 
     # Write the extended_project_list, which has all the parametric values.
-    extended_project_list_path = os.path.join(file_ops.landbosse_output_dir(), 'extended_project_list.xlsx')
+    extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.xlsx')
     extended_project_list = final_result['extended_project_list']
     extended_project_list.to_excel(extended_project_list_path, index=False)
 
