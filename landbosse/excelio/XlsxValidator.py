@@ -76,6 +76,14 @@ class XlsxValidator:
         ]
         comparison.to_excel(validation_output_xlsx, index=False, columns=columns_for_comparison_output)
 
+        # If the comparison dataframe is empty, that means there are no common
+        # projects in the expected data that match the actual data.
+        if len(comparison) < 1:
+            print('=' * 80)
+            print('Validation error: There are no common projects between actual and expected data.')
+            print('=' * 80)
+            return False
+
         # Find all rows where the difference is unequal to 0. These are rows
         # that failed validation. Note that, after the join, the rows may be
         # in a different order than the originals.
