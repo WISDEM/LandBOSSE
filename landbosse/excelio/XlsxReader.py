@@ -279,31 +279,48 @@ class XlsxReader:
         for index, value in project_parameters.iteritems():
 
             # If the column specifies a cell to change in the dataframe
+            # or project list, inspect it to ensure it points somewhere
+            # valid and change the project list or the dataframe
+
             if cell_spec_re.match(index) and not pd.isnull(value):
                 dataframe_name, row_name, column_name = index.split('/')
 
-                # Check if dataframe exists
-                if dataframe_name not in project_data_dataframes:
-                    raise XlsxOperationException(
-                        f'Datframe {dataframe_name} not found. Please check the project_data spreadsheet and project_list.')
+                # First, branch on whether this a project list parameter
+                # or a dataframe parameter. First, if it is a project list
+                # parameter.
+                if dataframe_name == 'project list':
+                    if column_name not in project_parameters:
+                        raise XlsxOperationException(
+                            f'Column {column_name} not found in project parameters'
+                        )
+                    if not pd.isnull(value):
+                        project_parameters[column_name] = value
 
-                df = project_data_dataframes[dataframe_name]
-                first_col = df.columns[0]
+                # Second, if it is a dataframe parameter
+                else:
+                    # Check if dataframe exists
+                    if dataframe_name not in project_data_dataframes:
+                        raise XlsxOperationException(
+                            f'Datframe {dataframe_name} not found. Please check the project_data spreadsheet and project_list.')
 
-                # Check if row exists
-                if df.loc[df[first_col] == row_name].empty:
-                    raise XlsxOperationException(
-                        f'Row {row_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
+                    df = project_data_dataframes[dataframe_name]
+                    first_col = df.columns[0]
 
-                # Check if column exists
-                if df.loc[df[first_col] == row_name, column_name].empty:
-                    raise XlsxOperationException(
-                        f'Column {column_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
+                    # Check if row exists
+                    if df.loc[df[first_col] == row_name].empty:
+                        raise XlsxOperationException(
+                            f'Row {row_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
 
-                # If all the above check pass, check to make sure the value is not nan.
-                # If it is not nan, then a modification needs to be made.
-                if not np.isnan(value):
-                    df.loc[df[first_col] == row_name, column_name] = value
+                    # Check if column exists
+                    if df.loc[df[first_col] == row_name, column_name].empty:
+                        raise XlsxOperationException(
+                            f'Column {column_name} not found in dataframe {dataframe_name}. Please check the project_data spreadsheet and project_list.')
+
+                    # If all the above check pass, check to make sure the value is not nan.
+                    # If it is not nan, then a modification needs to be made, either to the
+                    # dataframe or the project list.
+                    if not pd.isnull(value):
+                        df.loc[df[first_col] == row_name, column_name] = value
 
     def create_master_input_dictionary(self, project_data_dataframes, project_parameters):
         """
