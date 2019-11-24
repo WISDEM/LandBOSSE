@@ -65,7 +65,7 @@ class DevelopmentCost(CostModule):
             })
 
         for _dict in result:
-            _dict['project'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
         self.output_dict['development_cost_csv'] = result

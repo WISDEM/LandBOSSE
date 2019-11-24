@@ -46,6 +46,30 @@ class XlsxGenerator:
         self.output_xlsx_path = os.path.join(file_ops.landbosse_output_dir(), f'{output_xlsx}.xlsx')
         self.file_ops = file_ops
 
+    @classmethod
+    def write_project_data(cls, project_data_dataframes, project_data_output_xlsx_path):
+        """
+        This writes a dictionary full of dataframes to an Excel spreadsheet.
+
+        There is no special formatting done to the output Excel sheets.
+
+        This is a class method so an instance of this class does not need
+        to be created to write project data. This enables this method to
+        be nicely accessed from XlsxManagerRunner subclasses.
+
+        Parameters
+        ----------
+        project_data_dataframes : dict
+            The dataframes to write to the output sheets. The key names will
+            be used as the sheet names.
+
+        project_data_output_xlsx_path : str
+            The absolute pathname to write the .xlsx file to.
+        """
+        with pd.ExcelWriter(project_data_output_xlsx_path, mode='w') as writer:
+            for name, df in project_data_dataframes.items():
+                df.to_excel(writer, sheet_name=name)
+
     def __enter__(self):
         """
         Opens the workbook for writing and sets the formatting.
@@ -114,7 +138,7 @@ class XlsxGenerator:
             sheet.
         """
         worksheet = self.workbook.add_worksheet('costs_by_module_type_operation')
-        for idx, col_name in enumerate(['Project ID',
+        for idx, col_name in enumerate(['Project ID with serial',
                                         'Number of turbines',
                                         'Turbine rating MW',
                                         'Module',
@@ -127,7 +151,7 @@ class XlsxGenerator:
                                         'USD/kW per project']):
             worksheet.write(0, idx, col_name, self.header_format)
         for row_idx, row in enumerate(rows):
-            worksheet.write(row_idx + 1, 0, row['project_id'])
+            worksheet.write(row_idx + 1, 0, row['project_id_with_serial'])
             worksheet.write(row_idx + 1, 1, row['num_turbines'])
             worksheet.write(row_idx + 1, 2, row['turbine_rating_MW'])
             worksheet.write(row_idx + 1, 3, row['module'])
@@ -165,12 +189,12 @@ class XlsxGenerator:
         worksheet.set_column(5, 5, 66)
         worksheet.set_column(0, 2, 17)
 
-        for idx, col_name in enumerate(['Project ID', 'Module', 'Variable or DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
+        for idx, col_name in enumerate(['Project ID with serial', 'Module', 'Variable or DataFrame', 'name', 'unit', 'Numeric value', 'Non-numeric value']):
             worksheet.write(0, idx, col_name, self.header_format)
 
         # Go through each row and create Excel rows from each of those rows.
         for row_idx, row in enumerate(rows):
-            worksheet.write(row_idx + 1, 0, row['project'])
+            worksheet.write(row_idx + 1, 0, row['project_id_with_serial'])
             worksheet.write(row_idx + 1, 1, row['module'])
             worksheet.write(row_idx + 1, 2, row['type'])
             worksheet.write(row_idx + 1, 3, row['variable_df_key_col_name'])
@@ -188,8 +212,7 @@ class XlsxGenerator:
             # type detection.
 
             if 'last_number' in row:
-                # worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
-                worksheet.write(row_idx + 1, 5, row['last_number'])
+                worksheet.write(row_idx + 1, 5, row['last_number'], self.scientific_format)
 
             # Certain data are pairs of numeric and non-numeric values. If a key of
             # "non_numeric_value" exists, put that in column 6.

@@ -790,6 +790,12 @@ class ArraySystem(CostModule):
         result.append({
             'unit': '',
             'type': 'variable',
+            'variable_df_key_col_name': 'Total number of strings full + leftover + partial',
+            'value': float(self.output_dict['num_full_strings'] + self.output_dict['num_leftover_turb'] + self.output_dict['num_partial_strings'])
+        })
+        result.append({
+            'unit': '',
+            'type': 'variable',
             'variable_df_key_col_name': 'Trench Length to Substation (km)',
             'value': float(self.output_dict['trench_len_to_substation_km'])
         })
@@ -862,7 +868,7 @@ class ArraySystem(CostModule):
 
 
         for _dict in result:
-            _dict['project'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
         self.output_dict['collection_cost_csv'] = result
