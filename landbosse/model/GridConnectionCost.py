@@ -108,7 +108,7 @@ class GridConnectionCost(CostModule):
             })
 
         for _dict in result:
-            _dict['project'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
         self.output_dict['trans_dist_cost_csv'] = result
@@ -138,7 +138,7 @@ class GridConnectionCost(CostModule):
             result.append(_dict)
 
         for _dict in result:
-            _dict['project_id'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
             _dict['total_or_turbine'] = 'total'
 

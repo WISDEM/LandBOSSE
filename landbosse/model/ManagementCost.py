@@ -441,7 +441,7 @@ class ManagementCost:
         for key in management_cost_keys:
             value = self.output_dict[key]
             row = {
-                'project': self.project_name,
+                'project_id_with_serial': self.project_name,
                 'module': type(self).__name__,
                 'type': 'variable',
                 'variable_df_key_col_name': key,
@@ -500,7 +500,7 @@ class ManagementCost:
         for _dict in result:
             _dict['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
             _dict['num_turbines'] = self.input_dict['num_turbines']
-            _dict['project_id'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['operation_id'] = 'Management'
             _dict['module'] = module
             _dict['raw_cost_total_or_per_turbine'] = 'total'

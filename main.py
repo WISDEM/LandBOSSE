@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from landbosse.excelio import XlsxSerialManagerRunner
 from landbosse.excelio import XlsxParallelManagerRunner
@@ -9,6 +10,9 @@ from landbosse.excelio import XlsxValidator
 from landbosse.excelio import XlsxFileOperations
 
 if __name__ == '__main__':
+    # Print start timestamp
+    print(f'>>>>>>>> Begin run {datetime.now()} <<<<<<<<<<')
+
     # If run_parallel is True, an XlsxParallelManagerRunner will calculate the
     # projects in parallel. This takes advantage of multicore architecture
     # available on most hardware.
@@ -30,6 +34,11 @@ if __name__ == '__main__':
 
     # final_result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
+
+    # Write the extended_project_list, which has all the parametric values.
+    extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.xlsx')
+    extended_project_list = final_result['extended_project_list']
+    extended_project_list.to_excel(extended_project_list_path, index=False)
 
     # Switch to either validation or non validation producing code.
     input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
@@ -62,3 +71,6 @@ if __name__ == '__main__':
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
         xlsx.tab_details(rows=final_result['details_list'])
     file_ops.copy_input_data()
+
+    # Print end timestamp
+    print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
