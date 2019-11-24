@@ -772,7 +772,7 @@ class FoundationCost(CostModule):
             })
 
         for _dict in result:
-            _dict['project'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
         self.output_dict['foundation_cost_csv'] = result
@@ -792,7 +792,7 @@ class FoundationCost(CostModule):
             result.append(_dict)
 
         for _dict in result:
-            _dict['project_id'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
             _dict['total_or_turbine'] = 'total'
 

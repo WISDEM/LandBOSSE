@@ -1,5 +1,8 @@
 import pandas as pd
-from collections import OrderedDict
+
+from .XlsxDataframeCache import XlsxDataframeCache
+from .XlsxFileOperations import XlsxFileOperations
+from .XlsxReader import XlsxReader
 
 
 class XlsxManagerRunner:
@@ -10,6 +13,13 @@ class XlsxManagerRunner:
     This class is meant to be subclassed depending on whether a serial
     or parallel manager runner is needed.
     """
+
+    def __init__(self):
+        """
+        The constructor simply creates an XlsxFileOperations instance
+        to live throughout the lifetime of the instance
+        """
+        self.file_ops = XlsxFileOperations()
 
     def run_from_project_list_xlsx(self, projects_xlsx, log):
         """
@@ -107,3 +117,63 @@ class XlsxManagerRunner:
                 if key.endswith('_csv'):
                     runs_for_csv.extend(value)
         return runs_for_csv
+
+    def read_project_and_parametric_list_from_xlsx(self):
+        """
+        This method reads both the project and parametric list from the
+        project_list xlsx. It returns them as a tuple.
+
+        To ensure backward compatibility with project list spreadsheets
+        that contain only one sheet, the following actions take place
+
+        1. Project list spreadsheet contains one sheet: The only sheet
+        that is present is read as the project list, and a dataframe for
+        parametrics is returned that has all the columns but no rows so
+        it can be used in joins. It doe snot matter what the sheet name
+        is.
+
+        2. Project list spreadsheet contains two sheets: The sheet named
+        "Project list" is assumed to be the project list and the sheet
+        named "Parametric list" is assumed to be the specifications for
+        the parametric variables. If one or both of those tab names are
+        missing, an exception is raised
+
+        Returns
+        -------
+        pandas.DataFrame
+            The enhanced project list that has support for all parametric
+            adjustments for each step.
+
+        Raises
+        ------
+        KeyError
+            When the spreadsheet contains multiple sheets and one or
+            both of "Project list" or "Parametric list" are undefined.
+        """
+        path_to_project_list = self.file_ops.landbosse_input_dir()
+        sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list', path_to_project_list)
+
+        # If there is one sheet, make an empty dataframe as a placeholder.
+        if len(sheets.values()) == 1:
+            first_sheet = list(sheets.values())[0]
+            project_list = first_sheet
+            parametric_list = pd.DataFrame()
+
+        # If the parametric and project lists exist, read them
+        elif 'Parametric list' in sheets.keys() and 'Project list' in sheets.keys():
+            project_list = sheets['Project list']
+            parametric_list = sheets['Parametric list']
+
+        # Otherwise, raise an exception
+        else:
+            raise KeyError("Project list needs to have a single sheet or sheets named 'Project list' and 'Parametric list'.")
+
+        # Instantiate and XlsxReader to assemble master input dictionary
+        xlsx_reader = XlsxReader()
+
+        # Join in the parametric variable modifications
+        parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list)
+        extended_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
+                                                                                 parametric_value_list)
+
+        return extended_project_list

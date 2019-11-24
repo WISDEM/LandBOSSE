@@ -65,7 +65,7 @@ class CostModule:
             _dict['turbine_rating_MW'] = turbine_rating_MW
             _dict['num_turbines'] = num_turbines
             _dict['rotor_diameter_m'] = rotor_diameter_m
-            _dict['project_id'] = project_id
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
             if total_or_turbine:  # If raw_cost is the total cost

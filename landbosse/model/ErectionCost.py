@@ -277,7 +277,7 @@ class ErectionCost(CostModule):
 
         module = type(self).__name__
         for _dict in result:
-            _dict['project'] = self.project_name
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
         self.output_dict['erection_cost_csv'] = result
 
@@ -362,6 +362,8 @@ class ErectionCost(CostModule):
         turbine_spacing = float(
             turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m)
         possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * num_turbines
+
+        # CRANE BREAKDOWNS: This is where you could add time for breakdown.
 
         # calculate erection time
         possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[

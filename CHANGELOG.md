@@ -34,3 +34,7 @@
 ## 2.1.5 (November 8, 2019)
 
 - Added outputs for erection crew cost, wind multiplier and mobilization of each process of the erection to the details output sheet.
+
+## 2.2.0 (November 24, 2019)
+
+- Support for parametric variable grid search added.
