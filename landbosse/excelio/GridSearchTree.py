@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 """
 This module contains the logic to handle a tree to compute
@@ -84,9 +85,15 @@ class GridSearchTree:
         """
         row = self.parametric_list.iloc[depth]
         cell_specification = f"{row['Dataframe name']}/{row['Row name']}/{row['Column name']}"
-        start = row['Min']
-        end = row['Max']
-        step = row['Step']
+
+        # First, make an iterable of the range we are going to be using.
+        if 'Value list' in row and not pd.isnull(row['Value list']):
+            values = [float(value) for value in row['Value list'].split(',')]
+        else:
+            start = row['Min']
+            end = row['Max']
+            step = row['Step']
+            values = np.arange(start, end + step, step)
 
         if root == None:
             root = GridSearchTreeNode()
@@ -95,7 +102,7 @@ class GridSearchTree:
         #
         # Append children for each value in the parametric step sequence.
 
-        for value in np.arange(start, end + step, step):
+        for value in values:
             child = GridSearchTreeNode()
             child.value = value
             child.cell_specification = cell_specification
