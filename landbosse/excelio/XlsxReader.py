@@ -517,21 +517,14 @@ class XlsxReader:
 
         rsmeans = project_data_dict['rsmeans']
 
+        # This function maps new labor rates in rsmeans. Used with an apply()
+        # call, it will create a new Series that can be mapped back onto the
+        # original dataframe.
+        #
+        # If the column "Type of cost" is "Labor" then return the current cost
+        # times the labor multiplier. If "Type of cost" isn't "Labor" then
+        # just return the current cost.
         def map_labor_rates(row):
-            """
-            This function maps new labor rates in rsmeans. Used with an apply()
-            call, it will create a new Series that can be mapped back onto the
-            original dataframe.
-
-            If the column "Type of cost" is "Labor" then return the current cost
-            times the labor multiplier. If "Type of cost" isn't "Labor" then
-            just return the current cost.
-
-            Parameters
-            ----------
-            row
-                The row of the dataframe being mapped.
-            """
             if row['Type of cost'] == 'Labor':
                 return row['Rate USD per unit'] * labor_cost_multiplier
             else:
