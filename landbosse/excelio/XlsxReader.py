@@ -515,6 +515,32 @@ class XlsxReader:
         crew_price_new_hourly_rates = crew_price['Hourly rate USD per hour'] * labor_cost_multiplier
         crew_price['Hourly rate USD per hour'] = crew_price_new_hourly_rates
 
+        rsmeans = project_data_dict['rsmeans']
+
+        def map_labor_rates(row):
+            """
+            This function maps new labor rates in rsmeans. Used with an apply()
+            call, it will create a new Series that can be mapped back onto the
+            original dataframe.
+
+            If the column "Type of cost" is "Labor" then return the current cost
+            times the labor multiplier. If "Type of cost" isn't "Labor" then
+            just return the current cost.
+
+            Parameters
+            ----------
+            row
+                The row of the dataframe being mapped.
+            """
+            if row['Type of cost'] == 'Labor':
+                return row['Rate USD per unit'] * labor_cost_multiplier
+            else:
+                return row['Rate USD per unit']
+
+        rsmeans_new_labor_rates = rsmeans.apply(map_labor_rates, axis=1)
+        rsmeans.drop(columns=['Rate USD per unit'], inplace=True)
+        rsmeans['Rate USD per unit'] = rsmeans_new_labor_rates
+
     def create_serial_number(self, project_id, index, max_index):
         """
         create_serial_number creates serial numbers left padded with
