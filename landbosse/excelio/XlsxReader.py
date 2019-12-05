@@ -362,6 +362,10 @@ class XlsxReader:
         # The erection module takes in a bunch of keys and values under the
         # 'project_data' key in the incomplete_input_dict
 
+        # Apply the labor multipliers
+        labor_cost_multiplier = project_parameters['Labor cost multiplier']
+        self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
+
         erection_input_worksheets = [
             'crane_specs',
             'equip',
@@ -483,6 +487,33 @@ class XlsxReader:
         defaults = DefaultMasterInputDict()
         master_input_dict = defaults.populate_input_dict(incomplete_input_dict=incomplete_input_dict)
         return master_input_dict
+
+    def apply_labor_multiplier_to_project_data_dict(self, project_data_dict, labor_cost_multiplier):
+        """
+        Applies the labor multiplier to the dataframes that contain the labor
+        costs in the project_data_dict. The dataframes are values in the
+        dictionary. The keys are "crew_price" and "rsmeans".
+
+        For the crew_price dataframe, the labor_cost_multiplier is broadcast
+        down the "Hourly rate USD per hour" column.
+
+        For the rsmeans dataframe, rows that have "Labor" for the "Type of cost"
+        column are found and, for those rows, the values in the "Rate USD per unit"
+        column is miltiplied by the multiplier
+
+        The dataframes are modified in place.
+
+        Parameters
+        ----------
+        project_data_dict : dict
+            The dictionary that has the dataframes as values.
+
+        labor_cost_multiplier : float
+            The scalar labor cost multiplier.
+        """
+        crew_price = project_data_dict['crew_price']
+        crew_price_new_hourly_rates = crew_price['Hourly rate USD per hour'] * labor_cost_multiplier
+        crew_price['Hourly rate USD per hour'] = crew_price_new_hourly_rates
 
     def create_serial_number(self, project_id, index, max_index):
         """
