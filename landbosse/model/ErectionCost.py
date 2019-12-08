@@ -1,9 +1,8 @@
-import sys
 import pandas as pd
 import numpy as np
-from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
+from math import ceil
 
 from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
@@ -371,7 +370,11 @@ class ErectionCost(CostModule):
 
         # CRANE BREAKDOWNS: This is where you could add time for breakdown.
 
-        # store setup time
+        # Modify the breakdown time column to reflect all the crane breakdowns
+        # the entire project
+        crane_breakdown_fraction = self.input_dict['crane_breakdown_fraction']
+        num_turbines_needing_breakdowns = ceil(num_turbines * crane_breakdown_fraction)
+
         possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * num_turbines
 
         # check that crane can lift all components within a group (base vs top)
