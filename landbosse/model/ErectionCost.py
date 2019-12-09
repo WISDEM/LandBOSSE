@@ -375,8 +375,7 @@ class ErectionCost(CostModule):
         breakdown_time_all_turbines_hrs = possible_cranes['Breakdown time hr'] * num_turbines_needing_breakdowns
 
         # Combine the breakdown time with the setup time to get total setup + breakdown
-        # time and store it is setup time.
-        # possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * num_turbines
+        # time and store it as setup time.
         setup_time_all_turbines_hrs = possible_cranes['Setup time hr'] * num_turbines
         possible_cranes['Setup time hr'] = setup_time_all_turbines_hrs + breakdown_time_all_turbines_hrs
 
