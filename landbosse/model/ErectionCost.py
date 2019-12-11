@@ -271,7 +271,7 @@ class ErectionCost(CostModule):
                 'unit': '',
                 'type': 'dataframe',
                 'variable_df_key_col_name': 'management_crews_cost: {}'.format(' <-> '.join(row.index)),
-                'value': ' <-> '.join(list(str(x) for x in row)[1:])
+                'value': ' - '.join(list(str(x) for x in row)[1:])
             })
 
         module = type(self).__name__
