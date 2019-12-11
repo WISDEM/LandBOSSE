@@ -495,7 +495,7 @@ class XlsxReader:
         dictionary. The keys are "crew_price" and "rsmeans".
 
         For the crew_price dataframe, the labor_cost_multiplier is broadcast
-        down the "Hourly rate USD per hour" column.
+        down the "Hourly rate USD per hour" and the "Per diem USD per day" columns.
 
         For the rsmeans dataframe, rows that have "Labor" for the "Type of cost"
         column are found and, for those rows, the values in the "Rate USD per unit"
@@ -513,7 +513,9 @@ class XlsxReader:
         """
         crew_price = project_data_dict['crew_price']
         crew_price_new_hourly_rates = crew_price['Hourly rate USD per hour'] * labor_cost_multiplier
+        crew_price_new_per_diem_rates = crew_price['Per diem USD per day'] * labor_cost_multiplier
         crew_price['Hourly rate USD per hour'] = crew_price_new_hourly_rates
+        crew_price['Per diem USD per day'] = crew_price_new_per_diem_rates
 
         rsmeans = project_data_dict['rsmeans']
 
