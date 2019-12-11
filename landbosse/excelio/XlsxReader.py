@@ -499,7 +499,7 @@ class XlsxReader:
 
         For the rsmeans dataframe, rows that have "Labor" for the "Type of cost"
         column are found and, for those rows, the values in the "Rate USD per unit"
-        column is miltiplied by the multiplier
+        column is multiplied by the multiplier
 
         The dataframes are modified in place.
 
