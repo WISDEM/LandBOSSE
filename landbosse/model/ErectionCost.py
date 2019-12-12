@@ -572,7 +572,6 @@ class ErectionCost(CostModule):
             hoist_speed = min(crane['Hoist speed m per min'])
             travel_speed = min(crane['Speed of travel km per hr'])
             setup_time = max(crane['Setup time hr'])
-            breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
             polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
             df = pd.DataFrame([[equipment_name,
@@ -582,13 +581,12 @@ class ErectionCost(CostModule):
                                 crane_capacity_tonne,
                                 wind_speed,
                                 setup_time,
-                                breakdown_time,
                                 hoist_speed,
                                 travel_speed,
                                 crew_type,
                                 polygon]],
                               columns=['Equipment name', 'Equipment ID', 'Crane name', 'Boom system', 'Crane capacity tonne',
-                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr',
+                                       'Max wind speed m per s', 'Setup time hr',
                                        'Hoist speed m per min', 'Speed of travel km per hr',
                                        'Crew type ID', 'Crane poly'])
             crane_poly = crane_poly.append(df, sort=True)
