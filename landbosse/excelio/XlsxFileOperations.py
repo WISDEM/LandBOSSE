@@ -209,33 +209,3 @@ class XlsxFileOperations:
 
         if os.path.isfile(src_expected_validation_data):
             copy2(src_expected_validation_data, dst_expected_validation_data)
-
-    def timestamp_filename(self, directory, basename, extension):
-        """
-        This function creates a timestamped filename. It uses a filename in the
-        format of:
-
-        basename-timestamp.extension
-
-        And joins it to the directory specified by directory. It uses os.path.join()
-        so it's OS independent.
-
-        Parameters
-        ----------
-        directory : str
-            The directory for this filename
-
-        basename : str
-            The filename without the timestamp or extension
-
-        extension : str
-            The last part of the filname, without the "."
-
-        Returns
-        -------
-        str
-            The path for the host operating system.
-        """
-        filename = '{}-{}.{}'.format(basename, self.timestamp, extension)
-        result = os.path.join(directory, filename)
-        return result
