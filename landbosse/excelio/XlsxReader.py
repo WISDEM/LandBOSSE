@@ -408,6 +408,7 @@ class XlsxReader:
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
+        incomplete_input_dict['crane_breakdown_fraction'] = project_parameters['Crane breakdown fraction']
         incomplete_input_dict['num_turbines'] = project_parameters['Number of turbines']
         incomplete_input_dict['construct_duration'] = project_parameters['Total project construction time (months)']
         incomplete_input_dict['hub_height_meters'] = project_parameters['Hub height m']
