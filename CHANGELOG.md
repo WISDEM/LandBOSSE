@@ -45,6 +45,8 @@
 
 + Support for labor rate multipliers added.
 
-## 2.2.2 (December 12, 2019)
+## 2.2.2 (December 13, 2019)
 
 + Added support for crane breakdowns
+
++ Fixed a roads issue.
