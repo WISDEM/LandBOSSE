@@ -45,7 +45,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         print('Calculating parametric values')
-        extended_project_list = self.read_project_and_parametric_list_from_xlsx()
+        extended_project_list_before_parameter_modifications = self.read_project_and_parametric_list_from_xlsx()
 
         # Prepare the file operations
         file_ops = XlsxFileOperations()
@@ -54,10 +54,18 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         # dictionaries
         xlsx_reader = XlsxReader()
 
+        # Get a list ready to hold the project parameters after they have been modified
+        # After all rows have been added to this list (each row is a series) then the
+        # whole list will be transformed into a dataframe.
+        #
+        # See notes at https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html
+        # for why this is more performant than appending to a dataframe.
+        extended_project_list_after_parameter_modifications = []
+
         # Prep all task for the executor
         all_tasks = []
-        print(f'Found {len(extended_project_list)} projects for execution')
-        for _, project_parameters in extended_project_list.iterrows():
+        print(f'Found {len(extended_project_list_before_parameter_modifications)} projects for execution')
+        for _, project_parameters in extended_project_list_before_parameter_modifications.iterrows():
 
             # If project_parameters['Project ID with serial'] is null, that means there are no
             # parametric modifications to the project data dataframes. Hence,
@@ -77,6 +85,9 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
             # Transform the dataframes so that they have the right values for
             # the parametric variables.
             xlsx_reader.modify_project_data_dataframes(task['project_data_sheets'], project_parameters)
+
+            # Append the modified project parameters
+            extended_project_list_after_parameter_modifications.append(project_parameters)
 
             # Write all project_data sheets
             parametric_project_data_path = \
@@ -100,7 +111,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
         final_result = dict()
         final_result['details_list'] = self.extract_details_lists(runs_dict)
         final_result['module_type_operation_list'] = self.extract_module_type_operation_lists(runs_dict)
-        final_result['extended_project_list'] = extended_project_list
+        final_result['extended_project_list'] = pd.DataFrame(extended_project_list_after_parameter_modifications)
 
         # Return the runs for all the scenarios.
         return final_result
