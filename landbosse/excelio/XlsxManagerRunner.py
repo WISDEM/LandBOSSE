@@ -14,12 +14,19 @@ class XlsxManagerRunner:
     or parallel manager runner is needed.
     """
 
-    def __init__(self):
+    def __init__(self, file_ops=None):
         """
         The constructor simply creates an XlsxFileOperations instance
         to live throughout the lifetime of the instance
+
+        Parameters
+        ----------
+        file_ops : XlsxFileOperations
+            The file operation instance used to create filenames. If this
+            is left at the default of None, a new instance of
+            XlsxFileOperations is created.
         """
-        self.file_ops = XlsxFileOperations()
+        self.file_ops = file_ops if file_ops is not None else XlsxFileOperations()
 
     def run_from_project_list_xlsx(self, projects_xlsx, log):
         """

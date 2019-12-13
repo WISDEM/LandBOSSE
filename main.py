@@ -13,6 +13,9 @@ if __name__ == '__main__':
     # Print start timestamp
     print(f'>>>>>>>> Begin run {datetime.now()} <<<<<<<<<<')
 
+    # The file_ops object handles file names for input and output data.
+    file_ops = XlsxFileOperations()
+
     # If run_parallel is True, an XlsxParallelManagerRunner will calculate the
     # projects in parallel. This takes advantage of multicore architecture
     # available on most hardware.
@@ -24,10 +27,7 @@ if __name__ == '__main__':
     # processes.
 
     run_parallel = True
-    manager_runner = XlsxParallelManagerRunner() if run_parallel else XlsxSerialManagerRunner()
-
-    # The file_ops object handles file names for input and output data.
-    file_ops = XlsxFileOperations()
+    manager_runner = XlsxParallelManagerRunner(file_ops) if run_parallel else XlsxSerialManagerRunner(file_ops)
 
     # project_xlsx is the absolute path of the project_list.xlsx
     projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
