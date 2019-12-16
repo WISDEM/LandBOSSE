@@ -89,7 +89,6 @@ class DevelopmentCost(CostModule):
 
         except Exception as error:
             traceback.print_exc()
-            print(f'Fail {self.project_name} DevelopmentCost')
             return 1, error  # module did not run successfully
 
 
