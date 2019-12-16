@@ -916,5 +916,5 @@ class ArraySystem(CostModule):
             return 0, 0  # module ran successfully
         except Exception as error:
             traceback.print_exc()
-            print(f'Fail {self.project_name} CollectionCost')
+            print(f"Fail {self.project_name} CollectionCost")
             return 1, error  # module did not run successfully
