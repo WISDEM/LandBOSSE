@@ -162,6 +162,7 @@ class ErectionCost(CostModule):
             return 0, 0 # Module ran successfully
         except Exception as error:
             traceback.print_exc()
+            print(f"Fail {self.project_name} ErectionCost")
             return 1, error # Module did not run successfully
 
     def outputs_for_detailed_tab(self):
