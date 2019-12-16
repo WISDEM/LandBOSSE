@@ -856,5 +856,4 @@ class FoundationCost(CostModule):
             return 0, 0   # module ran successfully
         except Exception as error:
             traceback.print_exc()
-            print(f'Fail {self.project_name} FoundationCost')
             return 1, error    # module did not run successfully
