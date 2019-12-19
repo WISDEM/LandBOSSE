@@ -349,8 +349,7 @@ class ArraySystem(CostModule):
 
 
 
-    @staticmethod
-    def calc_num_turb_partial_strings(num_leftover_turb, num_turb_per_cable):
+    def calc_num_turb_partial_strings(self, num_leftover_turb, num_turb_per_cable):
         """
         If a partial string exists, calculate the percentage of turbines on
         each cable relative to a full string
@@ -364,12 +363,14 @@ class ArraySystem(CostModule):
 
         Returns
         -------
-        self.output_dict['perc_partial_string'] : np.array
+        np.array
             Array of percent of turbines per cable type on partial string
             relative to full string
         """
 
         num_remaining = num_leftover_turb
+        num_turbines = self.input_dict['num_turbines']
+        turbine_rating_MW = self.input_dict['turbine_rating_MW']
         turb_per_partial_string = []
 
         # Loop through each cable type in the string. Determine how many
@@ -379,7 +380,8 @@ class ArraySystem(CostModule):
                 turb_per_partial_string.append(min(num_remaining, max_turb))
             else:
                 # Note: This will create a nan in the division below, but it is
-                # detected and fixed if that happens
+                # detected and fixed if that happens.
+                print(f'Warning {self.project_name} has {num_turbines} turbines at {turbine_rating_MW} each. While calculating partial strings, found num_remaing to be {num_remaining}. This will cause divsion by 0 which will be corrected.')
                 turb_per_partial_string.append(0)
             num_remaining -= max_turb
 
