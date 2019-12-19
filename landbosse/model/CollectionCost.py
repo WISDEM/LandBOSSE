@@ -364,8 +364,8 @@ class ArraySystem(CostModule):
 
         Returns
         -------
-        self.output_dict['perc_partial_string'] : list
-            List of percent of turbines per cable type on partial string
+        self.output_dict['perc_partial_string'] : np.array
+            Array of percent of turbines per cable type on partial string
             relative to full string
         """
 
@@ -378,12 +378,19 @@ class ArraySystem(CostModule):
             if num_remaining > 0:
                 turb_per_partial_string.append(min(num_remaining, max_turb))
             else:
+                # Note: This will create a nan in the division below, but it is
+                # detected and fixed if that happens
                 turb_per_partial_string.append(0)
             num_remaining -= max_turb
 
         # Calculate the percentage of full string turbines on a partial string
         perc_partial_string = np.divide(turb_per_partial_string, num_turb_per_cable)
 
+        # If there are any division by zero errors, as created above, these will
+        # result in nans in the final NumPy array. Change these to 0 so they do
+        # not break the method's caller during additions.
+
+        perc_partial_string = np.nan_to_num(perc_partial_string)
         return perc_partial_string
 
 
@@ -546,7 +553,13 @@ class ArraySystem(CostModule):
 
         # Calculate total length of each cable type, and total cost that calculated length of cable:
         for idx, (name, cable) in enumerate(self.cables.items()):
-            total_cable_len = self.calc_total_cable_length(cable, self.input_dict['cable_specs'], self.output_dict['num_full_strings'], self.output_dict['num_partial_strings'], self.output_dict['trench_len_to_substation_km'], self.output_dict['perc_partial_string'][idx])
+            cable_specs = self.input_dict['cable_specs']
+            num_full_strings = self.output_dict['num_full_strings']
+            num_partial_strings = self.output_dict['num_partial_strings']
+            trench_len_to_substation_km = self.output_dict['trench_len_to_substation_km']
+            perc_partial_string = self.output_dict['perc_partial_string'][idx]
+            total_cable_len = self.calc_total_cable_length(cable, cable_specs, num_full_strings, num_partial_strings,
+                                                           trench_len_to_substation_km, perc_partial_string)
 
             self._cable_length_km[name] =  total_cable_len
             #self.__cable_cost_usd[name] = cable.__dict__['cost']
