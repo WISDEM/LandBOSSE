@@ -422,6 +422,8 @@ class ErectionCost(CostModule):
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
 
+        operation_time['Number of crews'] = np.ceil(operation_time['Operational construct days'] / operation_time['Time construct days'])
+
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
         erection_operation_time_dict['operation_time'] = operation_time
