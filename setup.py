@@ -19,13 +19,13 @@ setuptools.setup(
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
-        'pandas',
-        'numpy',
-        'sympy',
-        'scipy',
-        'shapely',
-        'xlsxwriter',
-        'xlrd'
+        'pandas==0.25.1',
+        'numpy==1.17.2',
+        'sympy==1.4',
+        'scipy==1.3.1',
+        'shapely==1.6.4.post2',
+        'xlsxwriter==1.2.1',
+        'xlrd==1.2.0'
     ],
     command_options={
             'build_sphinx': {
