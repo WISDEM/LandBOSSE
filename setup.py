@@ -1,7 +1,7 @@
 import setuptools
 
 name = 'landbosse'
-version = '2.1.5'
+version = '1.0.1'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -11,7 +11,8 @@ setuptools.setup(
     name=name,
     version=version,
     author='NREL',
-    author_email='alicia.key@nrel.gov',
+    author_email='Parangat.Bhaskar@nrel.gov',
+    python_requires='>=3.7',
     description='LandBOSSE',
     long_description=long_description,
     long_description_content_type='text/markdown',
