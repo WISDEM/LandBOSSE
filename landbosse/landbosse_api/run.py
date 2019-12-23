@@ -1,76 +1,86 @@
 import os
+import pandas as pd
+from logging import log
 from datetime import datetime
 
+from landbosse.excelio import XlsxReader
+from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.excelio import XlsxSerialManagerRunner
-from landbosse.excelio import XlsxParallelManagerRunner
+from landbosse.excelio import XlsxFileOperations
 from landbosse.excelio import XlsxGenerator
-from landbosse.excelio import XlsxValidator
+from landbosse.model import Manager
 
 
 def run_landbosse():
-    # LandBOSSE, small utility functions
-    from landbosse.excelio import XlsxFileOperations
-    # Print start timestamp
-    print(f'>>>>>>>> Begin run {datetime.now()} <<<<<<<<<<')
+    input_output_path = os.path.dirname(__file__)
+    os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
+    os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
+
+    input_path_from_env = os.environ.get('LANDBOSSE_INPUT_DIR', 'input')
+    extended_project_list_before_parameter_modifications = read_data()
+    projects_xlsx = os.path.join(input_output_path,'project_list.xlsx')
 
     # The file_ops object handles file names for input and output data.
     file_ops = XlsxFileOperations()
 
-    # If run_parallel is True, an XlsxParallelManagerRunner will calculate the
-    # projects in parallel. This takes advantage of multicore architecture
-    # available on most hardware.
-    #
-    # If run_parallel is False, XlsxSerialManagerRunner will calculate projects
-    # serially. This is much slower so running in parallel is preferred
-    # unless there is a good reason to run serially. One such reason is using a
-    # debugger which can slow down when it is being used to debug multiple
-    # processes.
+    xlsx_reader = XlsxReader()
 
-    run_parallel = True
-    manager_runner = XlsxParallelManagerRunner(file_ops) if run_parallel else XlsxSerialManagerRunner(file_ops)
-
-    # project_xlsx is the absolute path of the project_list.xlsx
-    projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
-
-    # final_result aggregates all the results from all the projects.
-    final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
-
-    # Write the extended_project_list, which has all the parametric values.
-    extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.xlsx')
-    extended_project_list = final_result['extended_project_list']
-    extended_project_list.to_excel(extended_project_list_path, index=False)
-
-    # Switch to either validation or non validation producing code.
-    input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
-
-    # Run validation or not depending on whether validation was enabled.
-    if validation_enabled:
-        print('Running validation.')
-
-        # Creates file path for output file from prior LandBOSSE run that will be used to check latest run
-        # Generated based on input_path from command line when --validate option is specified
-        # (validation output file must be in inputs folder and must be called 'landbosse-output-validation.xlsx')
-        expected_validation_data_path = os.path.join(input_path, 'landbosse-expected-validation-data.xlsx')
-        validation_result_path = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-validation-result.xlsx')
-
-        validator = XlsxValidator()
-        validation_was_successful = validator.compare_expected_to_actual(
-            expected_xlsx=expected_validation_data_path,
-            actual_module_type_operation_list=final_result['module_type_operation_list'],
-            validation_output_xlsx=validation_result_path
-        )
-        if validation_was_successful:
-            print('Validation passed.')
+    for _, project_parameters in extended_project_list_before_parameter_modifications.iterrows():
+        # If project_parameters['Project ID with serial'] is null, that means there are no
+        # parametric modifications to the project data dataframes. Hence,
+        # just the plain Project ID without a serial number should be used.
+        if pd.isnull(project_parameters['Project ID with serial']):
+            project_id_with_serial = project_parameters['Project ID']
         else:
-            print('Validation failed. See mismatched data above.')
+            project_id_with_serial = project_parameters['Project ID with serial']
+            # Read the project data sheets.
 
-    # XlsxGenerator has a context manager that writes each individual
-    # worksheet to the output .xlsx. Also, copy file input structure.
-    print('Writing final output folder')
-    with XlsxGenerator('landbosse-output', file_ops) as xlsx:
-        xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-        xlsx.tab_details(rows=final_result['details_list'])
-    file_ops.copy_input_data()
+        project_data_basename = project_parameters['Project data file']
+        project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
+        master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
 
-    # Print end timestamp
-    print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
+    output_dict = dict()
+    project_id_with_serial = 'SAM_Run'
+    mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
+    mc.execute_landbosse(project_id_with_serial)
+    print(output_dict)
+    return output_dict
+
+
+
+
+
+
+def read_data():
+    path_to_project_list = os.path.dirname( __file__ )
+    sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list', path_to_project_list)
+
+    # If there is one sheet, make an empty dataframe as a placeholder.
+    if len(sheets.values()) == 1:
+        first_sheet = list(sheets.values())[0]
+        project_list = first_sheet
+        parametric_list = pd.DataFrame()
+
+    # If the parametric and project lists exist, read them
+    elif 'Parametric list' in sheets.keys() and 'Project list' in sheets.keys():
+        project_list = sheets['Project list']
+        parametric_list = sheets['Parametric list']
+
+    # Otherwise, raise an exception
+    else:
+        raise KeyError(
+            "Project list needs to have a single sheet or sheets named 'Project list' and 'Parametric list'.")
+
+    # Instantiate and XlsxReader to assemble master input dictionary
+    xlsx_reader = XlsxReader()
+
+    # Join in the parametric variable modifications
+    parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list)
+    extended_project_list = xlsx_reader.outer_join_projects_to_parametric_values(project_list,
+                                                                                 parametric_value_list)
+
+    return extended_project_list
+
+
+run_landbosse()
+
