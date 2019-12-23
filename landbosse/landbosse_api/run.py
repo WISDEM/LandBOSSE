@@ -5,9 +5,6 @@ from datetime import datetime
 
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
-from landbosse.excelio import XlsxSerialManagerRunner
-from landbosse.excelio import XlsxFileOperations
-from landbosse.excelio import XlsxGenerator
 from landbosse.model import Manager
 
 
@@ -16,13 +13,7 @@ def run_landbosse():
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
-    input_path_from_env = os.environ.get('LANDBOSSE_INPUT_DIR', 'input')
     extended_project_list_before_parameter_modifications = read_data()
-    projects_xlsx = os.path.join(input_output_path,'project_list.xlsx')
-
-    # The file_ops object handles file names for input and output data.
-    file_ops = XlsxFileOperations()
-
     xlsx_reader = XlsxReader()
 
     for _, project_parameters in extended_project_list_before_parameter_modifications.iterrows():
