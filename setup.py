@@ -1,7 +1,7 @@
 import setuptools
 
 name = 'landbosse'
-version = '1.0.11'
+version = '1.0.12'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -27,7 +27,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     # packages=setuptools.find_packages(),
-    packages=['landbosse'],
+    packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'],
     test_suite='nose.collector',
     tests_require=['nose'],
     command_options={
