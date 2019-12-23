@@ -1,0 +1,15 @@
+﻿Equipment name,Crane capacity tonne,Equipment price USD per hour,Cost USD per breakdown,Fuel consumption gal per day
+Mobile crane,75,99,,99
+Mobile crane,200,99,,99
+Crawler crane,275,99,99,99
+Crawler crane,250,99,99,99
+Crawler crane,400,99,99,99
+Crawler crane,500,99,99,99
+Crawler crane,600,99,99,99
+Crawler crane,750,99,99,99
+Crawler crane,1000,99,99,99
+Crawler crane,1350,99,99,99
+Truck crane,50,99,,
+RT,100,99,,
+Offload crane,75,99,,99
+Offload crane,200,99,,99

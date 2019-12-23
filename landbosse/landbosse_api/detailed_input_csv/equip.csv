@@ -1,0 +1,28 @@
+﻿Equipment ID,Operation,Equipment name,Crane capacity tonne,Number of equipment
+E1,Base,Crawler crane,500,1
+E1,Base,Truck crane,50,1
+E1,Top,Crawler crane,500,1
+E1,Top,Truck crane,50,2
+E2,Top,Crawler crane,600,1
+E2,Top,Truck crane,50,2
+E2,Top,RT,100,2
+E3,Top,Crawler crane,750,1
+E3,Top,RT,100,2
+E4,Top,Crawler crane,1000,1
+E4,Top,RT,100,2
+ST1,Top,Mobile crane,200,1
+ST1,Top,RT,100,2
+OL1,Offload,Offload crane,75,2
+OL2,Offload,Offload crane,200,2
+B1,Base,Crawler crane,275,1
+B1,Base,Truck crane,50,1
+E2,Base,Crawler crane,600,1
+E2,Base,Truck crane,50,2
+E2,Base,RT,100,2
+E3,Base,Crawler crane,750,1
+E3,Base,RT,100,2
+E4,Base,Crawler crane,1000,1
+E4,Base,RT,100,2
+ST1,Base,Mobile crane,200,1
+ST1,Base,RT,100,2
+OL2,Base,Offload crane,200,2
