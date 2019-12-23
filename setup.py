@@ -1,7 +1,7 @@
 import setuptools
 
 name = 'landbosse'
-version = '1.0.10'
+version = '1.0.11'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
