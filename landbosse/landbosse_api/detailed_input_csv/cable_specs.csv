@@ -1,6 +1,0 @@
-﻿Array Cable,Conductor Size (mm2),Current Capacity (A),Rated Voltage (V),AC Resistance (Ohms/km),Inductance (mH/km),Capacitance (nF/km),Cost (USD/LF)
-AWG 1/0,120,300,36,0.253,0.398,0.179,99
-AWG 4/0,240,440,36,0.125,0.359,0.223,99
-MCM 500,500,640,36,0.061,0.317,0.293,99
-MCM1000,800,830,36,0.037,0.291,0.375,99
-MCM1250,1000,935,36,0.029,0.284,0.411,99
