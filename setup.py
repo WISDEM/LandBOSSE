@@ -1,7 +1,7 @@
 import setuptools
 
 name = 'landbosse'
-version = '1.0.12'
+version = '1.1.1'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -12,6 +12,7 @@ setuptools.setup(
     version=version,
     author='NREL',
     author_email='Parangat.Bhaskar@nrel.gov',
+    include_package_data=True,
     install_requires=[
         'pandas==0.25.1',
         'numpy==1.17.2',
