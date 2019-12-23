@@ -73,5 +73,5 @@ def read_data():
     return extended_project_list
 
 
-run_landbosse()
+
 
