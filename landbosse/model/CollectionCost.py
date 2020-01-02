@@ -117,7 +117,6 @@ class Cable:
         self.cable_power = (np.sqrt(3) * self.rated_voltage * self.current_capacity * self.power_factor / 1000)
 
 
-
 class Array(Cable):
     """Array cable base class"""
 
@@ -619,7 +618,6 @@ class ArraySystem(CostModule):
         trenching_labor_daily_output = trenching_labor['Daily output'].values[0]  # Units:  LF/day  -> where LF = Linear Foot
         trenching_labor_num_workers = trenching_labor['Number of workers'].sum()
 
-
         # Storing data with equipment related inputs:
         trenching_equipment = cable_trenching[cable_trenching.values == 'Equipment']
         trenching_cable_equipment_usd_per_hr = trenching_equipment['Rate USD per unit'].sum()
@@ -628,19 +626,18 @@ class ArraySystem(CostModule):
         construction_time_output_data['trenching_labor_daily_output'] = trenching_labor_daily_output
         construction_time_output_data['trenching_equipment_daily_output'] = trenching_equipment_daily_output
 
-
         operation_data['Number of days taken by single crew'] = ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output)
         operation_data['Number of crews'] = np.ceil((operation_data['Number of days taken by single crew'] / 30) / collection_construction_time)
         operation_data['Cost USD without weather delays'] = ((trench_length_km / self._km_to_LF) / trenching_labor_daily_output) * (operation_data['Rate USD per unit'] * construction_time_input_data['operational_hrs_per_day'])
         alpha = operation_data[operation_data['Type of cost'] == 'Collection']
         operation_data_id_days_crews_workers = alpha[['Operation ID', 'Number of days taken by single crew', 'Number of crews', 'Number of workers']]
 
-
         alpha = operation_data[operation_data['Type of cost'] == 'Labor']
         operation_data_id_days_crews_workers = alpha[['Operation ID', 'Number of days taken by single crew', 'Number of crews', 'Number of workers']]
 
-        # if more than one crew needed to complete within construction duration then assume that all construction happens
-        # within that window and use that timeframe for weather delays; if not, use the number of days calculated
+        # if more than one crew needed to complete within construction duration then assume that all construction
+        # happens within that window and use that timeframe for weather delays;
+        # if not, use the number of days calculated
         operation_data['time_construct_bool'] = operation_data['Number of days taken by single crew'] > collection_construction_time * 30
         boolean_dictionary = {True: collection_construction_time * 30, False: np.NAN}
         operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
@@ -680,7 +677,6 @@ class ArraySystem(CostModule):
             raise ValueError('{}: Error: Wind delay greater than 100%'.format(type(self).__name__))
         calculate_costs_output_dict['wind_multiplier'] = 1 / (1 - wind_delay_fraction)
 
-
         #Calculating trenching cost:
         calculate_costs_output_dict['Days taken for trenching (equipment)'] = (calculate_costs_output_dict['trench_length_km'] / self._km_to_LF) / calculate_costs_output_dict['trenching_equipment_daily_output']
         calculate_costs_output_dict['Equipment cost of trenching per day {usd/day)'] = calculate_costs_output_dict['trenching_cable_equipment_usd_per_hr'] * calculate_costs_input_dict['operational_hrs_per_day']
@@ -703,7 +699,6 @@ class ArraySystem(CostModule):
         #Calculate cable cost:
         cable_cost_usd_per_LF_df = pd.DataFrame([['Materials',self._total_cable_cost, 'Collection']],
                                                columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
-
 
         # Combine all calculated cost items into the 'collection_cost' dataframe:
         collection_cost = pd.DataFrame([],columns = ['Type of cost', 'Cost USD', 'Phase of construction'])  # todo: I believe Phase of construction here is the same as Operation ID in other modules? we should change to be consistent
