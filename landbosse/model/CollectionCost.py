@@ -240,9 +240,7 @@ class Array(Cable):
 
         self.turb_section_length = (turbine_spacing_rotor_diameters * rotor_diameter_m) / 1000
 
-
         return self.turb_section_length
-
 
 
 class ArraySystem(CostModule):
@@ -287,7 +285,6 @@ class ArraySystem(CostModule):
         self._cable_length_km = dict()
 
 
-
     def calc_num_strings(self):
         """
         Calculate number of full and partial strings to support full plant
@@ -320,7 +317,7 @@ class ArraySystem(CostModule):
         """
 
         # Calculate total number of individual turbines in wind plant
-        self.output_dict['total_turb'] = np.ceil(self.input_dict['plant_capacity_MW'] / self.input_dict['turbine_rating_MW'])
+        self.output_dict['total_turb'] = self.input_dict['num_turbines']
 
         # Calculate the number of turbines on each cable type in a string
         self.output_dict['num_turb_per_cable'] = [cable.num_turb_per_cable for cable in self.cables.values()]
@@ -346,9 +343,6 @@ class ArraySystem(CostModule):
         return (self.output_dict['total_turb_per_string'], self.output_dict['num_full_strings'], self.output_dict['num_partial_strings'],
                 self.output_dict['perc_partial_string'], self.output_dict['num_turb_per_cable'])
 
-
-
-
     def calc_num_turb_partial_strings(self, num_leftover_turb, num_turb_per_cable):
         """
         If a partial string exists, calculate the percentage of turbines on
@@ -369,8 +363,6 @@ class ArraySystem(CostModule):
         """
 
         num_remaining = num_leftover_turb
-        num_turbines = self.input_dict['num_turbines']
-        turbine_rating_MW = self.input_dict['turbine_rating_MW']
         turb_per_partial_string = []
 
         # Loop through each cable type in the string. Determine how many
@@ -379,23 +371,22 @@ class ArraySystem(CostModule):
             if num_remaining > 0:
                 turb_per_partial_string.append(min(num_remaining, max_turb))
             else:
-                # Note: This will create a nan in the division below, but it is
-                # detected and fixed if that happens.
-                print(f'Warning {self.project_name} has {num_turbines} turbines at {turbine_rating_MW} each. While calculating partial strings, found num_remaing to be {num_remaining}. This will cause divsion by 0 which will be corrected.')
                 turb_per_partial_string.append(0)
             num_remaining -= max_turb
 
-        # Calculate the percentage of full string turbines on a partial string
         perc_partial_string = np.divide(turb_per_partial_string, num_turb_per_cable)
 
-        # If there are any division by zero errors, as created above, these will
-        # result in nans in the final NumPy array. Change these to 0 so they do
-        # not break the method's caller during additions.
+        # Check to make sure there aren't any zeros in num_turbines_per_cable, which is used as the denominator
+        # in the division above. If there is a zero, then print a warning and change NaN to 0 in perc_partial_string.
+        if num_turb_per_cable.__contains__(0):
+            print(
+                f'Warning {self.project_name} CollectionCost module generates number of turbines per string that '
+                f'includes a zero entry. Verify cable specs are correct.')
+            perc_partial_string = np.nan_to_num(perc_partial_string)
 
-        perc_partial_string = np.nan_to_num(perc_partial_string)
+        self.output_dict['turb_per_partial_string'] = turb_per_partial_string
+
         return perc_partial_string
-
-
 
     #TODO: change length_to_substation calculation as a user defined input?
     @staticmethod
@@ -450,9 +441,6 @@ class ArraySystem(CostModule):
 
         return len_to_substation  # todo: add to output csv
 
-
-
-
     @staticmethod
     def calc_total_cable_length(cable, cable_specs, num_full_strings, num_partial_strings, len_to_substation, perc_partial_string):
         """
@@ -488,10 +476,6 @@ class ArraySystem(CostModule):
             total_cable_len = (num_full_strings * cable.array_cable_len + num_partial_strings * (cable.array_cable_len * perc_partial_string))
 
         return total_cable_len  # todo: add to output csv
-
-
-
-
 
     def create_ArraySystem(self):
 
@@ -572,8 +556,6 @@ class ArraySystem(CostModule):
             cable.total_cost = (total_cable_len / self._km_to_LF)* cable.cost
             self._total_cable_cost+=cable.total_cost   #Keep running tally of total cable cost used in wind farm.
 
-
-
     def calculate_trench_properties(self, trench_properties_input, trench_properties_output):
         """
         Calculates the length of trench needed based on cable length and width of mulcher.
@@ -581,8 +563,6 @@ class ArraySystem(CostModule):
 
         # units of cubic meters
         trench_properties_output['trench_length_km'] = trench_properties_output['total_cable_len_km']  # todo: add to output csv
-
-
 
     def calculate_weather_delay(self, weather_delay_input_data, weather_delay_output_data):
         """Calculates wind delays for roads"""
@@ -627,11 +607,6 @@ class ArraySystem(CostModule):
         trench_length_km = construction_time_output_data['trench_length_km']
         operation_data = throughput_operations.where(throughput_operations['Module'] == 'Collection').dropna(thresh=4)
         # operation_data = pd.merge()
-
-
-        # operation data for entire wind farm:
-
-        per_diem = 144    #TODO:This needs to be read in from a csv/xl file.
 
         # from rsmeans data, only read in Collection related data and filter out the rest:
         cable_trenching = throughput_operations[throughput_operations.Module == 'Collection']
@@ -781,7 +756,7 @@ class ArraySystem(CostModule):
         result.append({
             'unit': '',
             'type': 'variable',
-            'variable_df_key_col_name': 'Total Turbine Per String',
+            'variable_df_key_col_name': 'Number of Turbines Per String in Full String',
             'value': float(self.output_dict['total_turb_per_string'])
         })
         result.append({
@@ -793,7 +768,7 @@ class ArraySystem(CostModule):
         result.append({
             'unit': '',
             'type': 'variable',
-            'variable_df_key_col_name': 'Number of Leftover Strings',
+            'variable_df_key_col_name': 'Number of Turbines in Partial String',
             'value': float(self.output_dict['num_leftover_turb'])
         })
         result.append({
@@ -805,8 +780,8 @@ class ArraySystem(CostModule):
         result.append({
             'unit': '',
             'type': 'variable',
-            'variable_df_key_col_name': 'Total number of strings full + leftover + partial',
-            'value': float(self.output_dict['num_full_strings'] + self.output_dict['num_leftover_turb'] + self.output_dict['num_partial_strings'])
+            'variable_df_key_col_name': 'Total number of strings full + partial',
+            'value': float(self.output_dict['num_full_strings'] + self.output_dict['num_partial_strings'])
         })
         result.append({
             'unit': '',
@@ -857,9 +832,25 @@ class ArraySystem(CostModule):
         result.append({
             'unit': '',
             'type': 'list',
-            'variable_df_key_col_name': 'Number of turbines per cable type in each string [' + cables + ']',
+            'variable_df_key_col_name': 'Number of turbines per cable type in full strings [' + cables + ']',
 
             'value': str(self.output_dict['num_turb_per_cable'])
+        })
+
+        result.append({
+            'unit': '',
+            'type': 'list',
+            'variable_df_key_col_name': 'Number of turbines per cable type in partial string [' + cables + ']',
+
+            'value': str(self.output_dict['turb_per_partial_string'])
+        })
+
+        result.append({
+            'unit': '',
+            'type': 'list',
+            'variable_df_key_col_name': 'Percent length of cable in partial string [' + cables + ']',
+
+            'value': str(self.output_dict['perc_partial_string'])
         })
 
         for row in self.output_dict['management_crew'].itertuples():
