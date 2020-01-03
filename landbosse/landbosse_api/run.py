@@ -34,7 +34,9 @@ def run_landbosse():
     project_id_with_serial = 'SAM_Run'
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_landbosse(project_id_with_serial)
-    print(output_dict)
+
+    # print(output_dict)
+
     return output_dict
 
 
