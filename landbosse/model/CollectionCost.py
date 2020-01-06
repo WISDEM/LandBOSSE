@@ -376,11 +376,12 @@ class ArraySystem(CostModule):
         perc_partial_string = np.divide(turb_per_partial_string, num_turb_per_cable)
 
         # Check to make sure there aren't any zeros in num_turbines_per_cable, which is used as the denominator
-        # in the division above. If there is a zero, then print a warning and change NaN to 0 in perc_partial_string.
+        # in the division above (this happens when not all of the cable types in the input sheet need to be used).
+        # If there is a zero, then print a warning and change NaN to 0 in perc_partial_string.
         if 0.0 in num_turb_per_cable:
             print(
                 f'Warning: {self.project_name} CollectionCost module generates number of turbines per string that '
-                f'includes a zero entry. Verify cable specs are correct.'
+                f'includes a zero entry. Please confirm that there not all cable types need to be used for the number of turbines that are being run.'
                 f' num_turbines={self.input_dict["num_turbines"]} rating_MW={self.input_dict["turbine_rating_MW"]}'
                 f' num_turb_per_cable: {num_turb_per_cable}')
             perc_partial_string = np.nan_to_num(perc_partial_string)
