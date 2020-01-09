@@ -455,9 +455,9 @@ class SitePreparationCost(CostModule):
 
         labor_data['Cost USD'] = ((labor_data['Quantity of material'] * labor_data['Rate USD per unit'] * calculate_cost_input_dict['overtime_multiplier']) + labor_per_diem) * calculate_cost_output_dict['wind_multiplier']
 
-        labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + (
-                    48.8 * calculate_cost_output_dict['road_length_m']) + calculate_cost_output_dict[
-                                           'managament_crew_cost_before_wind_delay']
+        labor_for_new_roads_cost_usd = labor_data['Cost USD'].sum() + calculate_cost_output_dict[
+            'managament_crew_cost_before_wind_delay']
+
         labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
         labor_costs = pd.DataFrame([['Labor', float(labor_for_new_and_old_roads_cost_usd), 'Roads']],
                                    columns=['Type of cost', 'Cost USD', 'Phase of construction'])
@@ -701,4 +701,5 @@ class SitePreparationCost(CostModule):
             return 0, 0  # module ran successfully
         except Exception as error:
             traceback.print_exc()
+            print(f"Fail {self.project_name} SitePreparationCost")
             return 1, error  # module did not run successfully

@@ -1,9 +1,8 @@
-import sys
 import pandas as pd
 import numpy as np
-from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
+from math import ceil
 
 from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
@@ -163,6 +162,7 @@ class ErectionCost(CostModule):
             return 0, 0 # Module ran successfully
         except Exception as error:
             traceback.print_exc()
+            print(f"Fail {self.project_name} ErectionCost")
             return 1, error # Module did not run successfully
 
     def outputs_for_detailed_tab(self):
@@ -272,7 +272,7 @@ class ErectionCost(CostModule):
                 'unit': '',
                 'type': 'dataframe',
                 'variable_df_key_col_name': 'management_crews_cost: {}'.format(' <-> '.join(row.index)),
-                'value': ' <-> '.join(list(str(x) for x in row)[1:])
+                'value': ' - '.join(list(str(x) for x in row)[1:])
             })
 
         module = type(self).__name__
@@ -363,16 +363,22 @@ class ErectionCost(CostModule):
             turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m)
         possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * num_turbines
 
-        # CRANE BREAKDOWNS: This is where you could add time for breakdown.
-
         # calculate erection time
         possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[
             'Hoist speed m per min'] * hr_per_min)
                                                 + (possible_cranes['Cycle time installation hrs'])
                                                 ) * num_turbines
 
-        # store setup time
-        possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * num_turbines
+        # Modify the breakdown time column to reflect all the crane breakdowns
+        # the entire project
+        crane_breakdown_fraction = self.input_dict['crane_breakdown_fraction']
+        num_turbines_needing_breakdowns = ceil(num_turbines * crane_breakdown_fraction)
+        breakdown_time_all_turbines_hrs = possible_cranes['Breakdown time hr'] * num_turbines_needing_breakdowns
+
+        # Combine the breakdown time with the setup time to get total setup + breakdown
+        # time and store it as setup time.
+        setup_time_all_turbines_hrs = possible_cranes['Setup time hr'] * num_turbines
+        possible_cranes['Setup time hr'] = setup_time_all_turbines_hrs + breakdown_time_all_turbines_hrs
 
         # check that crane can lift all components within a group (base vs top)
         crane_lift_entire_group_for_operation = crane_component.groupby(by=['Crane name', 'Boom system', 'Operation'])[
@@ -567,6 +573,7 @@ class ErectionCost(CostModule):
             hoist_speed = min(crane['Hoist speed m per min'])
             travel_speed = min(crane['Speed of travel km per hr'])
             setup_time = max(crane['Setup time hr'])
+            breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
             polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
             df = pd.DataFrame([[equipment_name,
@@ -576,12 +583,13 @@ class ErectionCost(CostModule):
                                 crane_capacity_tonne,
                                 wind_speed,
                                 setup_time,
+                                breakdown_time,
                                 hoist_speed,
                                 travel_speed,
                                 crew_type,
                                 polygon]],
                               columns=['Equipment name', 'Equipment ID', 'Crane name', 'Boom system', 'Crane capacity tonne',
-                                       'Max wind speed m per s', 'Setup time hr',
+                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr',
                                        'Hoist speed m per min', 'Speed of travel km per hr',
                                        'Crew type ID', 'Crane poly'])
             crane_poly = crane_poly.append(df, sort=True)

@@ -144,4 +144,5 @@ class SubstationCost(CostModule):
             return 0, 0
         except Exception as error:
             traceback.print_exc()
+            print(f"Fail {self.project_name} SubstationCost")
             return 1, error

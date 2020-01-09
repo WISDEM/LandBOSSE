@@ -362,6 +362,10 @@ class XlsxReader:
         # The erection module takes in a bunch of keys and values under the
         # 'project_data' key in the incomplete_input_dict
 
+        # Apply the labor multipliers
+        labor_cost_multiplier = project_parameters['Labor cost multiplier']
+        self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
+
         erection_input_worksheets = [
             'crane_specs',
             'equip',
@@ -404,6 +408,7 @@ class XlsxReader:
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
+        incomplete_input_dict['crane_breakdown_fraction'] = project_parameters['Crane breakdown fraction']
         incomplete_input_dict['num_turbines'] = project_parameters['Number of turbines']
         incomplete_input_dict['construct_duration'] = project_parameters['Total project construction time (months)']
         incomplete_input_dict['hub_height_meters'] = project_parameters['Hub height m']
@@ -483,6 +488,54 @@ class XlsxReader:
         defaults = DefaultMasterInputDict()
         master_input_dict = defaults.populate_input_dict(incomplete_input_dict=incomplete_input_dict)
         return master_input_dict
+
+    def apply_labor_multiplier_to_project_data_dict(self, project_data_dict, labor_cost_multiplier):
+        """
+        Applies the labor multiplier to the dataframes that contain the labor
+        costs in the project_data_dict. The dataframes are values in the
+        dictionary. The keys are "crew_price" and "rsmeans".
+
+        For the crew_price dataframe, the labor_cost_multiplier is broadcast
+        down the "Hourly rate USD per hour" and the "Per diem USD per day" columns.
+
+        For the rsmeans dataframe, rows that have "Labor" for the "Type of cost"
+        column are found and, for those rows, the values in the "Rate USD per unit"
+        column is multiplied by the multiplier
+
+        The dataframes are modified in place.
+
+        Parameters
+        ----------
+        project_data_dict : dict
+            The dictionary that has the dataframes as values.
+
+        labor_cost_multiplier : float
+            The scalar labor cost multiplier.
+        """
+        crew_price = project_data_dict['crew_price']
+        crew_price_new_hourly_rates = crew_price['Hourly rate USD per hour'] * labor_cost_multiplier
+        crew_price_new_per_diem_rates = crew_price['Per diem USD per day'] * labor_cost_multiplier
+        crew_price['Hourly rate USD per hour'] = crew_price_new_hourly_rates
+        crew_price['Per diem USD per day'] = crew_price_new_per_diem_rates
+
+        rsmeans = project_data_dict['rsmeans']
+
+        # This function maps new labor rates in rsmeans. Used with an apply()
+        # call, it will create a new Series that can be mapped back onto the
+        # original dataframe.
+        #
+        # If the column "Type of cost" is "Labor" then return the current cost
+        # times the labor multiplier. If "Type of cost" isn't "Labor" then
+        # just return the current cost.
+        def map_labor_rates(row):
+            if row['Type of cost'] == 'Labor':
+                return row['Rate USD per unit'] * labor_cost_multiplier
+            else:
+                return row['Rate USD per unit']
+
+        rsmeans_new_labor_rates = rsmeans.apply(map_labor_rates, axis=1)
+        rsmeans.drop(columns=['Rate USD per unit'], inplace=True)
+        rsmeans['Rate USD per unit'] = rsmeans_new_labor_rates
 
     def create_serial_number(self, project_id, index, max_index):
         """

@@ -38,3 +38,15 @@
 ## 2.2.0 (November 24, 2019)
 
 - Support for parametric variable grid search added.
+
+## 2.2.1 (December 12, 2019)
+
++ Support for discrete value lists for parameteric variables added.
+
++ Support for labor rate multipliers added.
+
+## 2.2.2 (December 13, 2019)
+
++ Added support for crane breakdowns
+
++ Fixed a roads issue.
