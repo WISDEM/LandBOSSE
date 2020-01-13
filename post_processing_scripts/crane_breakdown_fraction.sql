@@ -1,3 +1,5 @@
+-- Finds the delta between sts of projects of differing crane breakdown fractions.
+
 WITH left_CTE AS (
 SELECT
 	"Project ID with serial" AS left_id,
