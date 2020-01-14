@@ -556,7 +556,8 @@ class XlsxReader:
         project_parameters : pd.Series
             The project parameters to be modified.
         """
-        pass
+        project_parameters['Project size MW'] = \
+            project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
 
     def create_serial_number(self, project_id, index, max_index):
         """
