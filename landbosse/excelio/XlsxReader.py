@@ -2,6 +2,7 @@ import re
 
 import pandas as pd
 import numpy as np
+from math import ceil
 
 from .XlsxOperationException import XlsxOperationException
 from .WeatherWindowCSVReader import read_weather_window
@@ -556,8 +557,24 @@ class XlsxReader:
         project_parameters : pd.Series
             The project parameters to be modified.
         """
-        project_parameters['Project size MW'] = \
-            project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
+        project_size_MW = project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
+
+        distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
+        interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
+        new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
+        road_length_adder_m = 1e4 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
+        breakpoint_between_base_and_topping = 0.0 if project_size_MW <= 20 else 0.5
+        number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.052 * project_size_MW + 0.7917)
+        number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
+
+        project_parameters['Project size MW'] = project_size_MW
+        project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
+        project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
+        project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
+        project_parameters['Road length adder (m)'] = road_length_adder_m
+        project_parameters['Breakpoint between base and topping (percent)'] = breakpoint_between_base_and_topping
+        project_parameters['Number of access roads'] = number_of_access_roads
+        project_parameters['Number of highway permits'] = number_of_highway_permits
 
     def create_serial_number(self, project_id, index, max_index):
         """
