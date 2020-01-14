@@ -330,6 +330,14 @@ class ArraySystem(CostModule):
         self.output_dict['num_leftover_turb'] = self.output_dict['total_turb'] % self.output_dict['total_turb_per_string']
 
         # Calculate number of turbines on a remaining partial string
+
+        # Note: self.output_dict['turb_per_partial_string'] is only set if
+        # calc_num_turb_partial_strings()
+        # is called, which isn't always the case, as seen in the if...else construct below
+        #
+        # This means that self.output_dict['turb_per_partial_string'] cannot
+        # be used an output value for the details output.
+
         if self.output_dict['num_leftover_turb'] > 0:
             self.output_dict['num_partial_strings'] = 1
             self.output_dict['perc_partial_string'] = self.calc_num_turb_partial_strings(self.output_dict['num_leftover_turb'], self.output_dict['num_turb_per_cable'])
@@ -835,13 +843,17 @@ class ArraySystem(CostModule):
             'value': str(self.output_dict['num_turb_per_cable'])
         })
 
-        result.append({
-            'unit': '',
-            'type': 'list',
-            'variable_df_key_col_name': 'Number of turbines per cable type in partial string [' + cables + ']',
+        # self.output_dict['turb_per_partial_string'] is only available if
+        # self.output_dict['num_leftover_turb'] > 0 which is not always the
+        # case. Commenting this output out
 
-            'value': str(self.output_dict['turb_per_partial_string'])
-        })
+        # result.append({
+        #     'unit': '',
+        #     'type': 'list',
+        #     'variable_df_key_col_name': 'Number of turbines per cable type in partial string [' + cables + ']',
+        #
+        #     'value': str(self.output_dict['turb_per_partial_string'])
+        # })
 
         result.append({
             'unit': '',
