@@ -234,7 +234,7 @@ class XlsxReader:
         result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
         return result
 
-    def modify_project_data_dataframes(self, project_data_dataframes, project_parameters):
+    def modify_project_data_and_project_list(self, project_data_dataframes, project_parameters):
         """
         This method modifies project data dataframes according to the
         parametric modifications in the project parameters. It does not
@@ -247,6 +247,9 @@ class XlsxReader:
         If the dataframe name, column name or row name are not found, an
         XlsxOperationException is raised.
 
+        Also, it modifies (once again in plance) the project parameters
+        according to the parametrics.
+
         Parameters
         ----------
         project_data_dataframes : dict
@@ -257,7 +260,7 @@ class XlsxReader:
         project_parameters : pandas.Series
             The enhanced project parameters as created by
             create_parametric_value_list that have the values to
-            place into the dataframes.
+            placed into the dataframes.
 
         Returns
         -------
@@ -536,6 +539,24 @@ class XlsxReader:
         rsmeans_new_labor_rates = rsmeans.apply(map_labor_rates, axis=1)
         rsmeans.drop(columns=['Rate USD per unit'], inplace=True)
         rsmeans['Rate USD per unit'] = rsmeans_new_labor_rates
+
+    def apply_cost_and_scaling_modifications_to_project_parameters(self, project_parameters):
+        """
+        This applies the cost and scaling modification to project parameters
+        specified in the project list.
+
+        Note: It is meant to be called on the parameter list AFTER it has been
+        modified with the parametrics by modify_project_data_and_project_list()
+        above.
+
+        It modifies the parameters IN PLACE.
+
+        Parameters
+        ----------
+        project_parameters : pd.Series
+            The project parameters to be modified.
+        """
+        pass
 
     def create_serial_number(self, project_id, index, max_index):
         """

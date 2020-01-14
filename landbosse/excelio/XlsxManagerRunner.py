@@ -28,7 +28,7 @@ class XlsxManagerRunner:
         """
         self.file_ops = file_ops if file_ops is not None else XlsxFileOperations()
 
-    def run_from_project_list_xlsx(self, projects_xlsx, log):
+    def run_from_project_list_xlsx(self, projects_xlsx,  enable_cost_and_scaling_modifications=True):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
         the OrderedDict that holds the results of all the runs. See the return
@@ -40,16 +40,18 @@ class XlsxManagerRunner:
 
         Parameters
         ----------
-        log : logger
-            A logger from Pythons library loger.get_logger() for debug output
-            messages.
-
         projects_xlsx : str
             A path name (preferably created with os.path.join()) specific to the
             operating system that is the main input .xlsx file that controls
             running of all the projects. Crucially, this file contains names of
             other. It is recommended that all input file be kept in the same
             input directory. Each line of projects_xlsx becomes a project_series.
+            This is implemented by subclasses.
+
+        enable_cost_and_scaling_modifications : bool
+            If True, this method modifies each row of the project list AFTER it has been
+            modified by the parameters for to scale certain input values based
+            on what has been parametrically modified. This is implemented by subclasses.
 
         Returns
         -------

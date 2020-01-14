@@ -17,7 +17,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
     in a serial loop.
     """
 
-    def run_from_project_list_xlsx(self, projects_xlsx):
+    def run_from_project_list_xlsx(self, projects_xlsx, enable_cost_and_scaling_modifications=True):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
         the OrderedDict that holds the results of all the runs. See the return
@@ -33,6 +33,11 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             running of all the projects. Crucially, this file contains names of
             other. It is recommended that all input file be kept in the same
             input directory. Each line of projects_xlsx becomes a project_series.
+
+        enable_cost_and_scaling_modifications : bool
+            If True, this method modifies each row of the project list AFTER it has been
+            modified by the parameters for to scale certain input values based
+            on what has been parametrically modified.
 
         Returns
         -------
@@ -92,7 +97,11 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
 
             # Transform the dataframes so that they have the right values for
             # the parametric variables.
-            xlsx_reader.modify_project_data_dataframes(project_data_sheets, project_parameters)
+            xlsx_reader.modify_project_data_and_project_list(project_data_sheets, project_parameters)
+
+            # Apply cost and scaling modifications if needed.
+            if enable_cost_and_scaling_modifications:
+                xlsx_reader.apply_cost_and_scaling_modifications_to_project_parameters(project_parameters)
 
             # Append the modified project parameters
             extended_project_list_after_parameter_modifications.append(project_parameters)
