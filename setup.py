@@ -25,7 +25,9 @@ setuptools.setup(
         'scipy',
         'shapely',
         'xlsxwriter',
-        'xlrd'
+        'xlrd',
+        'pscyopg2-binary',
+        'sqlalchemy'
     ],
     command_options={
             'build_sphinx': {
