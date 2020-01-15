@@ -2,6 +2,7 @@ import re
 
 import pandas as pd
 import numpy as np
+from math import ceil
 
 from .XlsxOperationException import XlsxOperationException
 from .WeatherWindowCSVReader import read_weather_window
@@ -234,7 +235,7 @@ class XlsxReader:
         result = project_list.merge(right=parametric_value_list, how='left', on='Project ID')
         return result
 
-    def modify_project_data_dataframes(self, project_data_dataframes, project_parameters):
+    def modify_project_data_and_project_list(self, project_data_dataframes, project_parameters):
         """
         This method modifies project data dataframes according to the
         parametric modifications in the project parameters. It does not
@@ -247,6 +248,9 @@ class XlsxReader:
         If the dataframe name, column name or row name are not found, an
         XlsxOperationException is raised.
 
+        Also, it modifies (once again in plance) the project parameters
+        according to the parametrics.
+
         Parameters
         ----------
         project_data_dataframes : dict
@@ -257,7 +261,7 @@ class XlsxReader:
         project_parameters : pandas.Series
             The enhanced project parameters as created by
             create_parametric_value_list that have the values to
-            place into the dataframes.
+            placed into the dataframes.
 
         Returns
         -------
@@ -394,9 +398,10 @@ class XlsxReader:
         weather_window_input_df = project_data_dataframes['weather_window']
         incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
 
-        # Read development tab:
-        # incomplete_input_dict['development_df'] = project_data.parse('development')
-        incomplete_input_dict['development_df'] = project_data_dataframes['development']
+        # Read development tab, if it exists (it is optional since development costs can
+        # be placed in the project list):
+        if 'development' in project_data_dataframes:
+            incomplete_input_dict['development_df'] = project_data_dataframes['development']
 
         # FoundationCost needs to have all the component data split into separate
         # NumPy arrays.
@@ -405,6 +410,17 @@ class XlsxReader:
             incomplete_input_dict[component] = np.array(incomplete_input_dict['component_data'][component])
 
         incomplete_input_dict['cable_specs_pd'] = project_data_dataframes['cable_specs']
+
+        # For development cost, legacy input data will specify an itemized
+        # breakdown in the project data. Newer input data will specify the
+        # labor cost in the project list.
+        #
+        # In the DevelopmentCost module, this change will be detected by the
+        # absence of a development_labor_cost_usd key in the master input
+        # dictionary. In that case, the development cost will be pulled from
+        # the prject data.
+        if 'Development labor cost USD' in project_parameters:
+            incomplete_input_dict['development_labor_cost_usd'] = project_parameters['Development labor cost USD']
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
@@ -536,6 +552,58 @@ class XlsxReader:
         rsmeans_new_labor_rates = rsmeans.apply(map_labor_rates, axis=1)
         rsmeans.drop(columns=['Rate USD per unit'], inplace=True)
         rsmeans['Rate USD per unit'] = rsmeans_new_labor_rates
+
+    def apply_cost_and_scaling_modifications_to_project_parameters(self, project_parameters):
+        """
+        This applies the cost and scaling modification to project parameters
+        specified in the project list.
+
+        Note: It is meant to be called on the parameter list AFTER it has been
+        modified with the parametrics by modify_project_data_and_project_list()
+        above.
+
+        It modifies the parameters IN PLACE.
+
+        Parameters
+        ----------
+        project_parameters : pd.Series
+            The project parameters to be modified.
+        """
+        project_size_MW = project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
+        hub_height_m = project_parameters['Hub height m']
+        flag_use_user_homerun = project_parameters['Flag for user - defined home run trench length (0 = no; 1 = yes)']
+        nameplate = project_parameters['Turbing rating MW']
+
+        distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
+        interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
+        new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
+        road_length_adder_m = 1e3 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
+
+        # if greater than 20 MW, then breakpoint between base and topping at 35 meters
+        breakpoint_between_base_and_topping = 0.0 if project_size_MW <= 20 else (35 / hub_height_m)
+
+        number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.0052 * project_size_MW + 0.7917)
+        number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
+        if flag_use_user_homerun is 1:
+             user_input_homerun_km = 0.1776 * project_size_MW - 2.551
+
+        # 10 deliveries per week for 1.5 MW machines
+        rate_deliveries = ceil(15 / nameplate)
+
+        # $17,000 / MW for a development cost estimate
+        development_labor_cost_usd = project_size_MW * 17000
+
+        project_parameters['Rate of deliveries(turbines per week)'] = rate_deliveries
+        project_parameters['Combined Homerun Trench Length to Substation (km)'] = user_input_homerun_km
+        project_parameters['Development labor cost USD'] = development_labor_cost_usd
+        project_parameters['Project size MW'] = project_size_MW
+        project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
+        project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
+        project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
+        project_parameters['Road length adder (m)'] = road_length_adder_m
+        project_parameters['Breakpoint between base and topping (percent)'] = breakpoint_between_base_and_topping
+        project_parameters['Number of access roads'] = number_of_access_roads
+        project_parameters['Number of highway permits'] = number_of_highway_permits
 
     def create_serial_number(self, project_id, index, max_index):
         """
