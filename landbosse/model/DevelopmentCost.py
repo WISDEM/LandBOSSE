@@ -33,7 +33,7 @@ class DevelopmentCost(CostModule):
         """
         total_development_cost = pd.DataFrame([
             {'Type of cost': 'Equipment rental', 'Cost USD': 0, 'Phase of construction': 'Development'},
-            {'Type of cost': 'Labor', 'Cost USD': self.input_dict['development_cost_usd'], 'Phase of construction': 'Development'},
+            {'Type of cost': 'Labor', 'Cost USD': self.input_dict['development_labor_cost_usd'], 'Phase of construction': 'Development'},
             {'Type of cost': 'Materials', 'Cost USD': 0, 'Phase of construction': 'Development'},
             {'Type of cost': 'Mobilization', 'Cost USD': 0, 'Phase of construction': 'Development'},
             {'Type of cost': 'Other', 'Cost USD': 0, 'Phase of construction': 'Development'}

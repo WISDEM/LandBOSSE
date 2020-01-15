@@ -409,7 +409,7 @@ class XlsxReader:
         # Place development cost in the project list. However, in order to maintain
         # backward compatibility fill this with 0 if it is not specified
         if 'Development labor cost USD' in project_parameters:
-            incomplete_input_dict['development_cost_usd'] = project_parameters['Development labor cost USD']
+            incomplete_input_dict['development_labor_cost_usd'] = project_parameters['Development labor cost USD']
         else:
             incomplete_input_dict['development_labor_cost_usd'] = 0
 

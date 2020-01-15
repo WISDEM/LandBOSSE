@@ -17,7 +17,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
     in a serial loop.
     """
 
-    def run_from_project_list_xlsx(self, projects_xlsx, enable_cost_and_scaling_modifications=True):
+    def run_from_project_list_xlsx(self, projects_xlsx, enable_cost_and_scaling_modifications=False):
         """
         This function runs all the scenarios in the projects_xlsx file. It creates
         the OrderedDict that holds the results of all the runs. See the return
