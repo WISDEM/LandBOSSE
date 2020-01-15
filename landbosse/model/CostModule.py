@@ -50,6 +50,7 @@ class CostModule:
         module = 'CollectionCost' if (type(self).__name__ == 'ArraySystem') else type(self).__name__
         turbine_rating_MW = self.input_dict['turbine_rating_MW']
         num_turbines = self.input_dict['num_turbines']
+        rotor_diameter_m = self.input_dict['rotor_diameter_m']
         project_size_kw = num_turbines * turbine_rating_MW * 1000
 
         for _, row in input_df.iterrows():
@@ -63,7 +64,8 @@ class CostModule:
         for _dict in result:
             _dict['turbine_rating_MW'] = turbine_rating_MW
             _dict['num_turbines'] = num_turbines
-            _dict['project_id_with_serial'] = project_id
+            _dict['rotor_diameter_m'] = rotor_diameter_m
+            _dict['project_id_with_serial'] = self.project_name
             _dict['module'] = module
 
             if total_or_turbine:  # If raw_cost is the total cost
