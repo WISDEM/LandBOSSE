@@ -408,10 +408,10 @@ class XlsxReader:
 
         # Place development cost in the project list. However, in order to maintain
         # backward compatibility fill this with 0 if it is not specified
-        if 'Development cost USD' in project_parameters:
-            incomplete_input_dict['development_cost_usd'] = project_parameters['Development cost USD']
+        if 'Development labor cost USD' in project_parameters:
+            incomplete_input_dict['development_cost_usd'] = project_parameters['Development labor cost USD']
         else:
-            incomplete_input_dict['development_cost_usd'] = 0
+            incomplete_input_dict['development_labor_cost_usd'] = 0
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
@@ -571,9 +571,9 @@ class XlsxReader:
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
 
         # $17,000 / MW for a development cost estimate
-        development_cost_usd = project_size_MW * 17000
+        development_labor_cost_usd = project_size_MW * 17000
 
-        project_parameters['Development cost USD'] = development_cost_usd
+        project_parameters['Development labor cost USD'] = development_labor_cost_usd
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
