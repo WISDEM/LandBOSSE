@@ -565,7 +565,7 @@ class XlsxReader:
         distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
         new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
-        road_length_adder_m = 1e4 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
+        road_length_adder_m = 1e3 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
         breakpoint_between_base_and_topping = 0.0 if project_size_MW <= 20 else 0.5
         number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.052 * project_size_MW + 0.7917)
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
