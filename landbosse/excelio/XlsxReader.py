@@ -398,10 +398,6 @@ class XlsxReader:
         weather_window_input_df = project_data_dataframes['weather_window']
         incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
 
-        # Read development tab:
-        # incomplete_input_dict['development_df'] = project_data.parse('development')
-        incomplete_input_dict['development_df'] = project_data_dataframes['development']
-
         # FoundationCost needs to have all the component data split into separate
         # NumPy arrays.
         incomplete_input_dict['component_data'] = erection_project_data_dict['components']
@@ -409,6 +405,13 @@ class XlsxReader:
             incomplete_input_dict[component] = np.array(incomplete_input_dict['component_data'][component])
 
         incomplete_input_dict['cable_specs_pd'] = project_data_dataframes['cable_specs']
+
+        # Place development cost in the project list. However, in order to maintain
+        # backward compatibility fill this with 0 if it is not specified
+        if 'Development cost USD' in project_parameters:
+            incomplete_input_dict['development_cost_usd'] = project_parameters['Development cost USD']
+        else:
+            incomplete_input_dict['development_cost_usd'] = 0
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
@@ -567,6 +570,10 @@ class XlsxReader:
         number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.052 * project_size_MW + 0.7917)
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
 
+        # $17,000 / MW for a development cost estimate
+        development_cost_usd = project_size_MW * 17000
+
+        project_parameters['Development cost USD'] = development_cost_usd
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
