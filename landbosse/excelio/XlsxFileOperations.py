@@ -46,6 +46,13 @@ class XlsxFileOperations:
         because the results were reproduced. Otherwise, the validation failed
         because something broke in the model.
 
+        There is a fourth option this method looks for:
+
+        --scaling-study or -s
+
+        This enables auto scaling of input parameters as found in XlsxReader's
+        apply_cost_and_scaling_modifications_to_project_parameters() method.
+
         Parameters
         ----------
         This function takes no parameters.
@@ -73,6 +80,15 @@ class XlsxFileOperations:
         # This is for validation option detection
         validation_enabled =  '--validate' in sys.argv or '-v' in sys.argv
 
+        # This is for scaling study operation
+        enable_scaling_study = '--scaling-study' in sys.argv or '-s' in sys.argv
+
+        # If validation and scaling study are simultaneously enabled, raise
+        # an error
+
+        if validation_enabled and enable_scaling_study:
+            raise XlsxOperationException('--scaling-study and --validate cannot be enabled at the same time.')
+
         # Look for the input path on command line
         if '--input' in sys.argv and sys.argv.index('--input') + 1 < len(sys.argv):
             input_idx = sys.argv.index('--input') + 1
@@ -99,8 +115,8 @@ class XlsxFileOperations:
         input_path = input_path_from_arg if input_path_from_arg is not None else input_path_from_env
         output_path = output_path_from_arg if output_path_from_arg is not None else output_path_from_env
 
-        # Return the state of the command lin arguments.
-        return input_path, output_path, validation_enabled
+        # Return the state of the command line arguments.
+        return input_path, output_path, validation_enabled, enable_scaling_study
 
     def landbosse_input_dir(self):
         """
@@ -113,7 +129,12 @@ class XlsxFileOperations:
         str
             The input directory.
         """
-        input_path, _, _ = self.get_input_output_paths_from_argv_or_env()
+
+        # The last three elements of the returned tuple are not used here.
+        # See get_input_output_paths_from_argv_or_env() docstring for more
+        # details.
+
+        input_path, _, _, _ = self.get_input_output_paths_from_argv_or_env()
         return input_path
 
     def landbosse_output_dir(self):
@@ -130,7 +151,7 @@ class XlsxFileOperations:
         str
             The output directory.
         """
-        _, output_base_path, _ = self.get_input_output_paths_from_argv_or_env()
+        _, output_base_path, _, _ = self.get_input_output_paths_from_argv_or_env()
         output_path = os.path.join(output_base_path, f'landbosse-{self.timestamp}')
 
         if os.path.exists(output_path) and not os.path.isdir(output_path):
