@@ -398,6 +398,11 @@ class XlsxReader:
         weather_window_input_df = project_data_dataframes['weather_window']
         incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
 
+        # Read development tab, if it exists (it is optional since development costs can
+        # be placed in the project list):
+        if 'development' in project_data_dataframes:
+            incomplete_input_dict['development_df'] = project_data_dataframes['development']
+
         # FoundationCost needs to have all the component data split into separate
         # NumPy arrays.
         incomplete_input_dict['component_data'] = erection_project_data_dict['components']
@@ -406,12 +411,16 @@ class XlsxReader:
 
         incomplete_input_dict['cable_specs_pd'] = project_data_dataframes['cable_specs']
 
-        # Place development cost in the project list. However, in order to maintain
-        # backward compatibility fill this with 0 if it is not specified
+        # For development cost, legacy input data will specify an itemized
+        # breakdown in the project data. Newer input data will specify the
+        # labor cost in the project list.
+        #
+        # In the DevelopmentCost module, this change will be detected by the
+        # absence of a development_labor_cost_usd key in the master input
+        # dictionary. In that case, the development cost will be pulled from
+        # the prject data.
         if 'Development labor cost USD' in project_parameters:
             incomplete_input_dict['development_labor_cost_usd'] = project_parameters['Development labor cost USD']
-        else:
-            incomplete_input_dict['development_labor_cost_usd'] = 0
 
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
@@ -569,12 +578,17 @@ class XlsxReader:
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
         new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
         road_length_adder_m = 1e3 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
-        breakpoint_between_base_and_topping = 0.0 if project_size_MW <= 20 else (35 / hub_height_m)  # if greater than 20 MW, then breakpoint between base and topping at 35 meters
+
+        # if greater than 20 MW, then breakpoint between base and topping at 35 meters
+        breakpoint_between_base_and_topping = 0.0 if project_size_MW <= 20 else (35 / hub_height_m)
+
         number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.0052 * project_size_MW + 0.7917)
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
         if flag_use_user_homerun is 1:
              user_input_homerun_km = 0.1776 * project_size_MW - 2.551
-        rate_deliveries = ceil(15 / nameplate)  # 10 deliveries per week for 1.5 MW machines
+
+        # 10 deliveries per week for 1.5 MW machines
+        rate_deliveries = ceil(15 / nameplate)
 
         # $17,000 / MW for a development cost estimate
         development_labor_cost_usd = project_size_MW * 17000
