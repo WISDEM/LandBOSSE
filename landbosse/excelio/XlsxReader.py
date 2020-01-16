@@ -571,8 +571,8 @@ class XlsxReader:
         """
         project_size_MW = project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
         hub_height_m = project_parameters['Hub height m']
-        flag_use_user_homerun = project_parameters['Flag for user - defined home run trench length (0 = no; 1 = yes)']
-        nameplate = project_parameters['Turbing rating MW']
+        flag_use_user_homerun = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
+        nameplate = project_parameters['Turbine rating MW']
 
         distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
@@ -585,7 +585,7 @@ class XlsxReader:
         number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.0052 * project_size_MW + 0.7917)
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
         if flag_use_user_homerun is 1:
-             user_input_homerun_km = 0.1776 * project_size_MW - 2.551
+             project_parameters['Combined Homerun Trench Length to Substation (km)'] = 0.1776 * project_size_MW - 2.551
 
         # 10 deliveries per week for 1.5 MW machines
         rate_deliveries = ceil(15 / nameplate)
@@ -594,7 +594,6 @@ class XlsxReader:
         development_labor_cost_usd = project_size_MW * 17000
 
         project_parameters['Rate of deliveries(turbines per week)'] = rate_deliveries
-        project_parameters['Combined Homerun Trench Length to Substation (km)'] = user_input_homerun_km
         project_parameters['Development labor cost USD'] = development_labor_cost_usd
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
