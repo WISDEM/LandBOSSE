@@ -32,16 +32,19 @@ if __name__ == '__main__':
     # project_xlsx is the absolute path of the project_list.xlsx
     projects_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_list.xlsx')
 
+    # Should we enable the scaling study? Just look for the scaling study
+    # option. The first three elements of the returned tuple aren't necessary
+    # to determine if the scaling study is enabled.
+    # Switch to either validation or non validation producing code.
+    input_path, output_path, validation_enabled, enable_scaling_study = file_ops.get_input_output_paths_from_argv_or_env()
+
     # final_result aggregates all the results from all the projects.
-    final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx)
+    final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, enable_scaling_study)
 
     # Write the extended_project_list, which has all the parametric values.
     extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.xlsx')
     extended_project_list = final_result['extended_project_list']
     extended_project_list.to_excel(extended_project_list_path, index=False)
-
-    # Switch to either validation or non validation producing code.
-    input_path, output_path, validation_enabled = file_ops.get_input_output_paths_from_argv_or_env()
 
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:

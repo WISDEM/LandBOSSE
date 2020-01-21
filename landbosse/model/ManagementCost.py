@@ -500,6 +500,7 @@ class ManagementCost:
         for _dict in result:
             _dict['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
             _dict['num_turbines'] = self.input_dict['num_turbines']
+            _dict['rotor_diameter_m'] = self.input_dict['rotor_diameter_m']
             _dict['project_id_with_serial'] = self.project_name
             _dict['operation_id'] = 'Management'
             _dict['module'] = module
