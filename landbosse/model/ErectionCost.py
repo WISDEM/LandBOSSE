@@ -189,7 +189,8 @@ class ErectionCost(CostModule):
                 'unit': '',
                 'type': 'dataframe',
                 'variable_df_key_col_name': '_number_of_equip: Operation-Crane name-Boom system-Number of equipment',
-                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of equipment"]}'
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of equipment"]}',
+                'last_number': row["Number of equipment"]
             })
 
         for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
@@ -197,7 +198,8 @@ class ErectionCost(CostModule):
                 'unit': '',
                 'type': 'dataframe',
                 'variable_df_key_col_name': f'erection_selected_detailed_data: Operation-Crane name-Boom system-Number of crews',
-                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of crews"]}'
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of crews"]}',
+                'last_number': row["Number of crews"]
             })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
