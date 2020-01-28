@@ -142,7 +142,7 @@ class ErectionCost(CostModule):
 
         # These instance attributes are for diagnostics inside this class
         # only.
-        self._possible_crane_topbase = None
+        self._possible_crane_cost = None
         self._number_of_equip = None
 
     def run_module(self):
@@ -866,7 +866,7 @@ class ErectionCost(CostModule):
         ].sum().reset_index()
 
         # Store the possible cranes for the top and base for future diagnostics.
-        self._possible_crane_topbase = possible_crane_topbase.copy()
+        self._possible_crane_cost = possible_crane_cost.copy()
 
         # group crane spec data for mobilization
         mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])[
@@ -1137,7 +1137,7 @@ class ErectionCost(CostModule):
 
         # Now get the number of equipment diagnostic data ready. This is held on an instance
         # attribute because it isn't meant to be used outside of the class.
-        self._number_of_equip = selected_detailed_data.merge(self._possible_crane_topbase, on=['Crane name', 'Boom system', 'Operation'], how='inner')
+        self._number_of_equip = selected_detailed_data.merge(self._possible_crane_cost, on=['Crane name', 'Boom system', 'Operation'], how='inner')
         self._number_of_equip = self._number_of_equip[['Operation', 'Crane name', 'Boom system', 'Number of equipment']]
 
         # Management crews data
