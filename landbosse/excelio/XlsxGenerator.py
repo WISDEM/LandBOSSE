@@ -141,11 +141,10 @@ class XlsxGenerator:
         for idx, col_name in enumerate(['Project ID with serial',
                                         'Number of turbines',
                                         'Turbine rating MW',
+                                        'Rotor diameter m',
                                         'Module',
                                         'Operation ID',
                                         'Type of cost',
-                                        # 'Raw cost is total or per turbine',
-                                        # 'Raw cost',
                                         'Cost per turbine',
                                         'Cost per project',
                                         'USD/kW per project']):
@@ -154,17 +153,13 @@ class XlsxGenerator:
             worksheet.write(row_idx + 1, 0, row['project_id_with_serial'])
             worksheet.write(row_idx + 1, 1, row['num_turbines'])
             worksheet.write(row_idx + 1, 2, row['turbine_rating_MW'])
-            worksheet.write(row_idx + 1, 3, row['module'])
-            worksheet.write(row_idx + 1, 4, row['operation_id'])
-            worksheet.write(row_idx + 1, 5, row['type_of_cost'])
-
-            # If these lines are uncommented then column ordering will need to be changed
-            # worksheet.write(row_idx + 1, 6, row['raw_cost_total_or_per_turbine'])
-            # worksheet.write(row_idx + 1, 7, row['raw_cost'], self.accounting_format)
-
-            worksheet.write(row_idx + 1, 6, row['cost_per_turbine'], self.accounting_format)
-            worksheet.write(row_idx + 1, 7, row['cost_per_project'], self.accounting_format)
-            worksheet.write(row_idx + 1, 8, row['usd_per_kw_per_project'], self.accounting_format)
+            worksheet.write(row_idx + 1, 3, row['rotor_diameter_m'])
+            worksheet.write(row_idx + 1, 4, row['module'])
+            worksheet.write(row_idx + 1, 5, row['operation_id'])
+            worksheet.write(row_idx + 1, 6, row['type_of_cost'])
+            worksheet.write(row_idx + 1, 7, row['cost_per_turbine'], self.accounting_format)
+            worksheet.write(row_idx + 1, 8, row['cost_per_project'], self.accounting_format)
+            worksheet.write(row_idx + 1, 9, row['usd_per_kw_per_project'], self.accounting_format)
             worksheet.set_column(0, 5, 25)
             worksheet.set_column(6, 10, 17)
         worksheet.freeze_panes(1, 0)  # Freeze the first row.

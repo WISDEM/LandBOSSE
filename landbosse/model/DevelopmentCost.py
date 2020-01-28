@@ -22,18 +22,30 @@ class DevelopmentCost(CostModule):
     def calculate_costs(self):
         """
         Sets the total cost for development.
-        Right now these values are defined by the user. Methods could be modified to calculate internally at a later time.
 
-        self.input_dict['development_df'] used as input
+        If there is a key of 'development_labor_cost_usd' in the input
+        dictionary, then that is used as the development cost and a
+        dataframe is created that holds that labor cost.
+
+        If the key is not present in the dictionary, the development
+        cost is retrieved from the project data.
 
         Returns
         ------------------------------------
         total_development_cost : pd.DataFrame
             data frame with total development cost by type of cost (e.g., Labor)
         """
-
-        # get total development cost dataframe from development cost user input
-        total_development_cost = self.input_dict['development_df']
+        if 'development_labor_cost_usd' in self.input_dict:
+            total_development_cost = pd.DataFrame([
+                {'Type of cost': 'Equipment rental', 'Cost USD': 0, 'Phase of construction': 'Development'},
+                {'Type of cost': 'Labor', 'Cost USD': self.input_dict['development_labor_cost_usd'],
+                 'Phase of construction': 'Development'},
+                {'Type of cost': 'Materials', 'Cost USD': 0, 'Phase of construction': 'Development'},
+                {'Type of cost': 'Mobilization', 'Cost USD': 0, 'Phase of construction': 'Development'},
+                {'Type of cost': 'Other', 'Cost USD': 0, 'Phase of construction': 'Development'}
+            ])
+        else:
+            total_development_cost = self.input_dict['development_df']
 
         self.output_dict['total_development_cost'] = total_development_cost
 
@@ -54,12 +66,12 @@ class DevelopmentCost(CostModule):
 
         result = []
         module = type(self).__name__
-        for row in self.output_dict['total_development_cost'].itertuples():
-            dashed_row = '{} <--> {} <--> {}'.format(row[1], row[3], math.ceil(row[2]))
+        for _, row in self.output_dict['total_development_cost'].iterrows():
+            dashed_row = '{} - {} - {}'.format(row["Type of cost"], row["Phase of construction"], math.ceil(row["Cost USD"]))
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': 'Type of Cost <--> Phase of Construction <--> Cost in USD ',
+                'variable_df_key_col_name': 'Type of Cost - Phase of Construction - Cost in USD',
                 'value': dashed_row,
                 'last_number': row[2]
             })
