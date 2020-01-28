@@ -140,6 +140,10 @@ class ErectionCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
+        # This is for diagnostics crane selection data
+        self._possible_crane_topbase = None
+        self._topbase_diagnostics = None
+
     def run_module(self):
         """
         Runs the ErectionCost model and populates the IO dictionaries with
@@ -178,6 +182,14 @@ class ErectionCost(CostModule):
             A list of dicts, with each dict representing a row of the data.
         """
         result =[]
+
+        for _, row in self._topbase_diagnostics.iterrows():
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': f'_topbase_diagnostics: {"-".join(row.keys())}',
+                'value': '-'.join([str(v) for _, v in row.items()])
+            })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
             dashed_row = '{} - {}'.format(row[1], row[2])
@@ -271,7 +283,7 @@ class ErectionCost(CostModule):
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': 'management_crews_cost: {}'.format(' <-> '.join(row.index)),
+                'variable_df_key_col_name': 'management_crews_cost: {}'.format(' - '.join(row.index)),
                 'value': ' - '.join(list(str(x) for x in row)[1:])
             })
 
@@ -309,8 +321,10 @@ class ErectionCost(CostModule):
             Dataframe of possible_cranes (with geometry) and operational time for cranes
         """
         project_data = self.input_dict['project_data']
-        construct_duration = self.input_dict['construct_duration']
-        operational_construction_time = self.input_dict['operational_construction_time']
+        construct_duration = self.input_dict['construct_duration'] # Total project construction time (months)
+        operational_construction_time = self.input_dict['operational_construction_time'] # Hours, 10 or 24
+
+        # Why multiply by hardcoded 1/3?
         erection_construction_time = 1 / 3 * construct_duration
         breakpoint_between_base_and_topping_percent = self.input_dict['breakpoint_between_base_and_topping_percent']
         hub_height_m = self.input_dict['hub_height_meters']
@@ -421,6 +435,10 @@ class ErectionCost(CostModule):
                     raise Exception(
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
+        # "Operational construct days" are the number of days required to erect all turbines
+        # "Time construct days" are the number of days available to construct
+        operation_time['Number of crews'] = np.ceil(
+            operation_time['Operational construct days'] / operation_time['Time construct days'])
 
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
@@ -840,6 +858,9 @@ class ErectionCost(CostModule):
                                                                                      'Fuel cost USD'
         ].sum().reset_index()
 
+        # Store the possible cranes for the top and base for future diagnostics.
+        self._possible_crane_topbase = possible_crane_topbase.copy()
+
         # group crane spec data for mobilization
         mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])[
             'Mobilization cost USD'].max().reset_index()
@@ -861,7 +882,8 @@ class ErectionCost(CostModule):
         topbase_same_crane_cost['Operation'] = 'Base + Top'
 
         # calculate costs if top and base use separate cranes
-        separate_topbase = possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD',
+        separate_topbase = \
+            possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD',
                                                                                                    'Subtotal for hourly labor (non-management) USD',
                                                                                                    'Subtotal for per diem labor (non-management) USD',
                                                                                                    'Equipment rental cost USD',
@@ -1106,3 +1128,10 @@ class ErectionCost(CostModule):
         self.output_dict['management_crews_cost'] = management_crews_cost
         self.output_dict['management_crews_cost_grouped'] = management_crews_cost_grouped
         self.output_dict['erection_selected_detailed_data'] = selected_detailed_data
+
+        # Merge diagnostic data
+        self._topbase_diagnostics = pd.merge(
+            self._possible_crane_topbase, crane_choice, on=['Crane name', 'Operation', 'Boom system'], how='inner')
+
+        # The dataframe above has many columns! Just select the columns you need here
+        self._topbase_diagnostics = self._topbase_diagnostics[['Crane name', 'Operation', 'Boom system', 'Number of equipment', 'Number of crews']]
