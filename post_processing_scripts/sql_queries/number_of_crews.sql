@@ -3,8 +3,8 @@ SELECT
 	"Module",
 	"name",
 	"unit",
-	"Numeric value" AS "Number of crews",
-	"Non-numeric value" AS "Operation-Crane name-Boom system-Number of crews",
+	"Numeric value" AS "Operational construct days over time construct days",
+	"Non-numeric value" AS "Operation-Crane name-Boom system-Operational construct days over time construct days",
 	"Total project construction time (months)",
 	"Number of turbines",
 	"Turbine rating MW",
@@ -15,7 +15,7 @@ SELECT
 FROM 
 	details_with_extended_project_list
 WHERE
-	"name" = 'erection_selected_detailed_data: Operation-Crane name-Boom system-Number of crews'
+	"name" = 'erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days'
 ORDER BY 
 	"Project ID with serial",
 	"Module",
