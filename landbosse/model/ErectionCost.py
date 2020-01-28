@@ -140,10 +140,10 @@ class ErectionCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
-        # This is for diagnostics crane selection data
+        # These instance attributes are for diagnostics inside this class
+        # only.
         self._possible_crane_topbase = None
-        self._topbase_diagnostics = None
-        self._selected_detailed_time_data = None
+        self._number_of_equip = None
 
     def run_module(self):
         """
@@ -184,12 +184,20 @@ class ErectionCost(CostModule):
         """
         result =[]
 
+        for _, row in self._number_of_equip.iterrows():
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': '_number_of_equip: Operation-Crane name-Boom system-Number of equipment',
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of equipment"]}'
+            })
+
         for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation - Crane name - Boom system - Number of crews',
-                'value': f'{row["Operation"]} - {row["Crane name"]} - {row["Boom system"]} - {row["Number of crews"]}'
+                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation-Crane name-Boom system-Number of crews',
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of crews"]}'
             })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
@@ -1124,6 +1132,11 @@ class ErectionCost(CostModule):
         # Put some diagnostic data on selected_detailed_data
         selected_detailed_data['Number of crews'] = \
             np.ceil(selected_detailed_data['Operational construct days'] / selected_detailed_data['Time construct days'])
+
+        # Now get the number of equipment diagnostic data ready. This is held on an instance
+        # attribute because it isn't meant to be used outside of the class.
+        self._number_of_equip = selected_detailed_data.merge(self._possible_crane_topbase, on=['Crane name', 'Boom system', 'Operation'], how='inner')
+        self._number_of_equip = self._number_of_equip[['Operation', 'Crane name', 'Boom system', 'Number of equipment']]
 
         # Management crews data
         self.output_dict['management_crews_cost'] = management_crews_cost
