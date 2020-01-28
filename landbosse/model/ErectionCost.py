@@ -197,9 +197,9 @@ class ErectionCost(CostModule):
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation-Crane name-Boom system-Number of crews',
-                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of crews"]}',
-                'last_number': row["Number of crews"]
+                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days',
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Operational construct days over time construct days"]}',
+                'last_number': row["Operational construct days over time construct days"]
             })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
@@ -1131,8 +1131,15 @@ class ErectionCost(CostModule):
         self.output_dict['crane_cost_details'] = crane_cost_details
         self.output_dict['total_cost_summed_erection'] = total_cost_summed_erection
 
-        # Put some diagnostic data on selected_detailed_data
-        selected_detailed_data['Number of crews'] = \
+        # Put some diagnostic data on selected_detailed_data. This is the number of crews needed
+        # To complete the construction withing the construction duration.
+
+        # Since "number of crews" for offload and base / top is calculated on
+        # lines 549 and 430, respectively, "Number of crews" is being calculated
+        # through a proxy.The actual value should therefore be marked as
+        # something else.
+
+        selected_detailed_data['Operational construct days over time construct days'] = \
             np.ceil(selected_detailed_data['Operational construct days'] / selected_detailed_data['Time construct days'])
 
         # Now get the number of equipment diagnostic data ready. This is held on an instance
