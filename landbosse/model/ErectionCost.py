@@ -143,6 +143,7 @@ class ErectionCost(CostModule):
         # This is for diagnostics crane selection data
         self._possible_crane_topbase = None
         self._topbase_diagnostics = None
+        self._selected_detailed_time_data = None
 
     def run_module(self):
         """
@@ -183,12 +184,12 @@ class ErectionCost(CostModule):
         """
         result =[]
 
-        for _, row in self._topbase_diagnostics.iterrows():
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': f'_topbase_diagnostics: {"-".join(row.keys())}',
-                'value': '-'.join([str(v) for _, v in row.items()])
+                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation - Crane name - Boom system - Number of crews',
+                'value': f'{row["Operation"]} - {row["Crane name"]} - {row["Boom system"]} - {row["Number of crews"]}'
             })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
@@ -435,10 +436,6 @@ class ErectionCost(CostModule):
                     raise Exception(
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
-        # "Operational construct days" are the number of days required to erect all turbines
-        # "Time construct days" are the number of days available to construct
-        operation_time['Number of crews'] = np.ceil(
-            operation_time['Operational construct days'] / operation_time['Time construct days'])
 
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
@@ -1124,14 +1121,11 @@ class ErectionCost(CostModule):
         self.output_dict['crane_cost_details'] = crane_cost_details
         self.output_dict['total_cost_summed_erection'] = total_cost_summed_erection
 
+        # Put some diagnostic data on selected_detailed_data
+        selected_detailed_data['Number of crews'] = \
+            np.ceil(selected_detailed_data['Operational construct days'] / selected_detailed_data['Time construct days'])
+
         # Management crews data
         self.output_dict['management_crews_cost'] = management_crews_cost
         self.output_dict['management_crews_cost_grouped'] = management_crews_cost_grouped
         self.output_dict['erection_selected_detailed_data'] = selected_detailed_data
-
-        # Merge diagnostic data
-        self._topbase_diagnostics = pd.merge(
-            self._possible_crane_topbase, crane_choice, on=['Crane name', 'Operation', 'Boom system'], how='inner')
-
-        # The dataframe above has many columns! Just select the columns you need here
-        self._topbase_diagnostics = self._topbase_diagnostics[['Crane name', 'Operation', 'Boom system', 'Number of equipment', 'Number of crews']]
