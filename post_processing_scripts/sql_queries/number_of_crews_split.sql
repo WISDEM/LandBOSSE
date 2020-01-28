@@ -1,14 +1,13 @@
 SELECT
 	"Project ID with serial",
-	"Module",
-	"name",
-	"unit",
-	"Numeric value" AS "Op days over construct days",
-	"Non-numeric value" AS "Operation-Crane name-Boom system-Op days over construct days",
+	split_part("Non-numeric value", '-', 1) AS "Operation",
+	split_part("Non-numeric value", '-', 2) AS "Crane name",
+	split_part("Non-numeric value", '-', 3) AS "Boom system",
+	"Numeric value"::bigint AS "Op days over construct days",
 	"Total project construction time (months)",
 	"Number of turbines",
 	"Turbine rating MW",
-	"Turbine rating MW" * "Number of turbines" AS "Plant size MW",
+	round("Turbine rating MW" * "Number of turbines") AS "Plant size MW",
 	"Hub height m",
 	"Labor cost multiplier" AS "Labor cost",
 	"Crane breakdown fraction" AS "Crane break"
@@ -18,6 +17,5 @@ WHERE
 	"name" = 'erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days'
 ORDER BY 
 	"Project ID with serial",
-	"Module",
-	"name"
+	"Operation"
 LIMIT 100;
