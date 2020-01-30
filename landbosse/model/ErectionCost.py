@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
+from sympy import Point
+from sympy import Polygon
 from math import ceil
 
 from .CostModule import CostModule
@@ -575,7 +575,8 @@ class ErectionCost(CostModule):
             setup_time = max(crane['Setup time hr'])
             breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
-            polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+            p1, p2, p3, p4, p5 = map(Point, [(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+            polygon = Polygon(p1, p2, p3, p4, p5)
             df = pd.DataFrame([[equipment_name,
                                 equipment_id,
                                 crane_name,
