@@ -6,7 +6,7 @@ from datetime import datetime
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
-
+import traceback
 
 def run_landbosse():
     input_output_path = os.path.dirname(__file__)
@@ -32,12 +32,24 @@ def run_landbosse():
 
     output_dict = dict()
     project_id_with_serial = 'SAM_Run'
+
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
-    mc.execute_landbosse(project_id_with_serial)
+    results = mc.execute_landbosse(project_id_with_serial)
 
-    # print(output_dict)
+    error = dict()
+    if 'manager_error' in output_dict: # or 'error' in output_dict:
+        error = 
+    # if 'SitePreparationCost_specific_error' in output_dict:
+    #     error = error.update(output_dict['SitePreparationCost_specific_error'])
 
-    return output_dict
+
+    if results == 0:
+        return output_dict
+    else:
+        print(error)
+
+
+
 
 
 
@@ -76,4 +88,4 @@ def read_data():
 
 
 
-
+run_landbosse()

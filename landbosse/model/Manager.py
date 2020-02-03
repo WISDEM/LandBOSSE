@@ -74,23 +74,30 @@ class Manager:
                 project_name=project_name
             )
             erection_cost.run_module()
+
+
             self.output_dict['erection_cost'] = erection_cost_output_dict
 
-            total_costs = self.output_dict['total_collection_cost']
-            total_costs = total_costs.append(self.output_dict['total_road_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_transdist_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_substation_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_foundation_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_erection_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_development_cost'],sort=False)
+            try:
+                total_costs = self.output_dict['total_collection_cost']
+                total_costs = total_costs.append(self.output_dict['total_road_cost'], sort=False)
+                total_costs = total_costs.append(self.output_dict['total_transdist_cost'], sort=False)
+                total_costs = total_costs.append(self.output_dict['total_substation_cost'], sort=False)
+                total_costs = total_costs.append(self.output_dict['total_foundation_cost'], sort=False)
+                total_costs = total_costs.append(self.output_dict['total_erection_cost'], sort=False)
+                total_costs = total_costs.append(self.output_dict['total_development_cost'],sort=False)
 
-            self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
-            self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost'].sum(numeric_only=True)[0]
+                self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
+                self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost'].sum(numeric_only=True)[0]
 
-            management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
-            management_cost.run_module()
+                management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
+                management_cost.run_module()
+            except Exception as error:
+                self.output_dict['manager_error'] = error
 
             return 0
-        except Exception:
+
+        except Exception as error:
             traceback.print_exc()
+
             return 1  # module did not run successfully
