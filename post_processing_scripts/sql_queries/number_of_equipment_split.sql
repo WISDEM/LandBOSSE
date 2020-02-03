@@ -16,6 +16,7 @@ FROM
 WHERE
 	"name" = '_number_of_equip: Operation-Crane name-Boom system-Number of equipment'
 ORDER BY 
+	"Plant size MW",
 	"Project ID with serial",
 	"Operation"
 LIMIT 100;
