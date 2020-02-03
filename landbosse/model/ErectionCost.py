@@ -659,7 +659,7 @@ class ErectionCost(CostModule):
                     point = Point(component_only['Mass tonne'] / 2, (component_only['Section height m'] + component_only['Offload hook height m']))
                 else:
                     point = Point(component_only['Mass tonne'], (component_only['Lift height m'] + component_only['Offload hook height m']))
-                crane['Lift boolean {component}'.format(component=component)] = polygon.contains(point)
+                crane['Lift boolean {component}'.format(component=component)] = polygon.encloses_point(point)
 
             # Transform the "Lift boolean" indexes in the series to a list of booleans
             # that signify if the crane can lift a component.
