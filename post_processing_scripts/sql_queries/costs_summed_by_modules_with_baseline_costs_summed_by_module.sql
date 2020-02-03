@@ -33,13 +33,18 @@ SELECT
  	 c."Hub height m",
  	 c."Labor cost multiplier" AS "Labor rate",
  	 c."Crane breakdown fraction" AS "Crane break",
- 	 ROUND(c."Number of turbines"::numeric * c."Turbine rating MW"::numeric, -1) AS "Plant size MW"
+ 	 ROUND(c."Number of turbines"::numeric * c."Turbine rating MW"::numeric, -1) AS "Plant size MW",
+	 b."Turbine rating MW" AS "Baseline turbine rating MW",
+	 b."Hub height m" AS "Baseline hub height m",
+	 b."Labor rate" AS "Baseline labor rate",
+	 b."Crane break" AS "Baseline crane break",
+	 b."Plant size MW" AS "Baseline plant size MW"
 FROM
 	costs_with_extended_project_list c
 JOIN
 	baseline_costs_summed_by_module b
 	ON c."Module" = b."Module"
-GROUP BY 1, 5, 6, 7, 8, 9, 10, 11, 12, 13
+GROUP BY 1, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 ORDER BY
 	c."Project ID with serial",
 	c."Module"
