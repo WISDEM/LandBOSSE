@@ -9,7 +9,7 @@ SELECT
 	 "Hub height m",
 	 "Labor cost multiplier" AS "Labor rate",
 	 "Crane breakdown fraction" AS "Crane break",
-	 round("Number of turbines"::numeric * "Turbine rating MW"::numeric, -1) AS "Plant size MW"
+	 ROUND("Number of turbines"::numeric * "Turbine rating MW"::numeric, -1) AS "Plant size MW"
 FROM
 	costs_with_extended_project_list
 ORDER BY 1, 2, 3
