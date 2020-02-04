@@ -35,6 +35,9 @@ class DevelopmentCost(CostModule):
         total_development_cost : pd.DataFrame
             data frame with total development cost by type of cost (e.g., Labor)
         """
+        # TODO: Confirm with Annika whether this will need to be an accessible user input in SAMs UI
+        # I know there is talks about making it a multiplier
+
         if 'development_labor_cost_usd' in self.input_dict:
             total_development_cost = pd.DataFrame([
                 {'Type of cost': 'Equipment rental', 'Cost USD': 0, 'Phase of construction': 'Development'},
@@ -46,7 +49,7 @@ class DevelopmentCost(CostModule):
             ])
         else:
             total_development_cost = self.input_dict['development_df']
-
+        self.output_dict['summed_development_cost'] = total_development_cost['Cost USD'].sum()
         self.output_dict['total_development_cost'] = total_development_cost
 
         return total_development_cost

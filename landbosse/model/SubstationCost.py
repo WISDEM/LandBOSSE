@@ -79,6 +79,7 @@ class SubstationCost(CostModule):
                                                  columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         calculate_costs_output_dict['total_substation_cost'] = calculate_costs_output_dict['substation_cost_output_df']
+        calculate_costs_output_dict['summed_substation_cost'] = calculate_costs_output_dict['substation_cost_output_df']['Cost USD'].sum()
 
         return calculate_costs_output_dict['substation_cost_output_df']
 

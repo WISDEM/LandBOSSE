@@ -723,6 +723,7 @@ class ArraySystem(CostModule):
         collection_cost = collection_cost.append(mobilization_cost)
 
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
+        calculate_costs_output_dict['summed_collection_cost'] = collection_cost['Cost USD'].sum()   #for landbosse_api
 
         return collection_cost
 

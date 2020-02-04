@@ -38,21 +38,34 @@ def run_landbosse():
     mc.execute_landbosse(project_id_with_serial)
 
 
-    errors = dict()
-    cost_breakdown = dict()
-    if len(master_input_dict['error']) == 0:
-        cost_breakdown['total_project_cost'] = output_dict['project_value_usd']
-        return cost_breakdown
-    else:
+    results = {"total_project_cost": None,
+               "total_management_cost": None,
+               "total_development_cost": None,
+               "total_sitepreparation_cost": None,
+               "total_foundation_cost": None,
+               "total_erection_cost": None,
+               "total_gridconnection_cost": None,
+               "total_collection_cost": None,
+               "total_substation_cost": None,
+                "errors": []
+               }
+
+    if master_input_dict['error']:
         for key, value in master_input_dict['error'].items():
-            # errors.append(master_input_dict['error'][error])
-            msg = "Error: " + str(value) + " in " + key
-            errors[key] = msg
-        return errors
+            msg = "Error in " + key + ": " + str(value)
+            results['errors'].append(msg)
+    else:
+        results['total_project_cost'] = output_dict['project_value_usd']
+        results['total_management_cost'] = output_dict['total_management_cost']
+        results['total_development_cost'] = output_dict['summed_development_cost']
+        results['total_sitepreparation_cost'] = output_dict['summed_sitepreparation_cost']
+        results['total_foundation_cost'] = output_dict['summed_foundation_cost']
+        results['total_erection_cost'] = output_dict['total_cost_summed_erection']
+        results['total_gridconnection_cost'] = output_dict['trans_dist_usd']
+        results['total_collection_cost'] = output_dict['trans_dist_usd']
+        results['total_substation_cost'] = output_dict['summed_substation_cost']
 
-
-
-
+    return results
 
 
 

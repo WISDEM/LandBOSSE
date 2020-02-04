@@ -508,6 +508,7 @@ class SitePreparationCost(CostModule):
         # total_road_cost['Phase of construction'] = 'Roads'
 
         calculate_cost_output_dict['total_road_cost'] = total_road_cost
+        calculate_cost_output_dict['summed_sitepreparation_cost'] = total_road_cost['Cost USD'].sum() #floating point value for landbosse_api
         return total_road_cost
 
 

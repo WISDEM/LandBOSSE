@@ -649,6 +649,7 @@ class FoundationCost(CostModule):
 
         total_foundation_cost = foundation_cost
         calculate_costs_output_dict['total_foundation_cost'] = total_foundation_cost
+        calculate_costs_output_dict['summed_foundation_cost'] = total_foundation_cost['Cost USD'].sum()   #for landbosse_api
 
         self.output_dict['labor_equip_data'] = labor_equip_data
 
