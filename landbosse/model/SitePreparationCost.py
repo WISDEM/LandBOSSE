@@ -465,7 +465,7 @@ class SitePreparationCost(CostModule):
         # Create empty road cost (showing cost breakdown by type) dataframe:
         road_cost = pd.DataFrame(columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-        a
+
         #Filter out equipment costs from rsmeans tab:
         equipment_data = labor_equip_data[labor_equip_data['Type of cost'] == 'Equipment rental'].copy()
         equipment_data['Cost USD'] = (equipment_data['Quantity of material'] * equipment_data['Rate USD per unit']) * calculate_cost_output_dict['wind_multiplier']     #TODO: Annika can you confirm if this is correct.
@@ -702,6 +702,5 @@ class SitePreparationCost(CostModule):
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} SitePreparationCost")
-            self.output_dict['module_error_SitePreparationCost'] = 'SitePreparationCost: '
-            self.output_dict['SitePreparationCost_specific_error'] = error
+            self.input_dict['error']['SitePreparationCost'] = error
             return 1, error  # module did not run successfully

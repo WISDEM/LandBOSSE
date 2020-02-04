@@ -933,4 +933,5 @@ class ArraySystem(CostModule):
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} CollectionCost")
+            self.input_dict['error']['CollectionCost'] = error
             return 1, error  # module did not run successfully

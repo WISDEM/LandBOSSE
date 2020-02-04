@@ -544,4 +544,5 @@ class ManagementCost:
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} ManagementCost")
+            self.input_dict['error']['ManagementCost'] = error
             return 1, error  # module did not run successfully

@@ -163,6 +163,7 @@ class ErectionCost(CostModule):
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} ErectionCost")
+            self.input_dict['error']['ErectionCost'] = error
             return 1, error # Module did not run successfully
 
     def outputs_for_detailed_tab(self):

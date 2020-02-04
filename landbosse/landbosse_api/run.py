@@ -29,26 +29,26 @@ def run_landbosse():
         project_data_basename = project_parameters['Project data file']
         project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
         master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
+        master_input_dict['error'] = dict()
 
     output_dict = dict()
     project_id_with_serial = 'SAM_Run'
 
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
-    results = mc.execute_landbosse(project_id_with_serial)
-
-    error = dict()
-    if 'manager_error' in output_dict: # or 'error' in output_dict:
-        error = 
-    # if 'SitePreparationCost_specific_error' in output_dict:
-    #     error = error.update(output_dict['SitePreparationCost_specific_error'])
+    mc.execute_landbosse(project_id_with_serial)
 
 
-    if results == 0:
-        return output_dict
+    errors = dict()
+    cost_breakdown = dict()
+    if len(master_input_dict['error']) == 0:
+        cost_breakdown['total_project_cost'] = output_dict['project_value_usd']
+        return cost_breakdown
     else:
-        print(error)
-
-
+        for key, value in master_input_dict['error'].items():
+            # errors.append(master_input_dict['error'][error])
+            msg = "Error: " + str(value) + " in " + key
+            errors[key] = msg
+        return errors
 
 
 
@@ -88,4 +88,5 @@ def read_data():
 
 
 
-run_landbosse()
+foo = run_landbosse()
+print(foo)

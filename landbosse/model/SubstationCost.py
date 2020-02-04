@@ -145,4 +145,5 @@ class SubstationCost(CostModule):
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} SubstationCost")
+            self.input_dict['error']['SubstationCost'] = error
             return 1, error

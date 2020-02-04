@@ -88,16 +88,16 @@ class Manager:
                 total_costs = total_costs.append(self.output_dict['total_development_cost'],sort=False)
 
                 self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
+                self.output_dict['project_value_usd'] = self.input_dict['project_value_usd']
                 self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost'].sum(numeric_only=True)[0]
 
                 management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
                 management_cost.run_module()
             except Exception as error:
-                self.output_dict['manager_error'] = error
-
+                self.input_dict['error']['total_cost_error'] = error
             return 0
 
         except Exception as error:
             traceback.print_exc()
-
+            self.input_dict['error']['Manager'] = error
             return 1  # module did not run successfully

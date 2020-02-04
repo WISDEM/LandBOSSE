@@ -173,5 +173,6 @@ class GridConnectionCost(CostModule):
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} GridConnectionCost")
+            self.input_dict['error']['GridConnectionCost'] = error
             return 1, error # module did not run successfully
 

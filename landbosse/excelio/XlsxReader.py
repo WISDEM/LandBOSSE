@@ -361,6 +361,7 @@ class XlsxReader:
         # Incomplete project dict will hold the input dictionary
         # configurations.
         incomplete_input_dict = dict()
+        incomplete_input_dict['error'] = dict()
 
         # Read all project_data sheets.
         # The erection module takes in a bunch of keys and values under the
