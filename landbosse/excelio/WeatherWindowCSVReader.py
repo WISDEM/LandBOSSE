@@ -110,6 +110,9 @@ def read_weather_window(weather_data, local_timezone='America/Denver'):
     weather_data['Day'] = weather_data['Date'].dt.day
     weather_data['Hour'] = weather_data['Date'].dt.hour
 
+    # The original date columns are now redundant. Drop them.
+    weather_data.drop(columns=['Date', 'Date UTC'])
+
     # create time window for normal (8am to 6pm) versus long (24 hour) time window for operation
     weather_data['Time window'] = weather_data['Hour'].between(8, 18, inclusive=True)
     boolean_dictionary = {True: 'normal', False: 'long'}

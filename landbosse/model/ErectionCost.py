@@ -298,6 +298,13 @@ class ErectionCost(CostModule):
                 'value': ' - '.join(list(str(x) for x in row)[1:])
             })
 
+        result.append({
+            'unit': 'hours',
+            'type': 'variable',
+            'variable_df_key_col_name': 'number of hours in weather window',
+            'value': len(self.input_dict['weather_window'])
+        })
+
         module = type(self).__name__
         for _dict in result:
             _dict['project_id_with_serial'] = self.project_name
