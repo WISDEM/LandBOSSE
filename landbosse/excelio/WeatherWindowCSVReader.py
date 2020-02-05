@@ -102,7 +102,6 @@ def read_weather_window(weather_data, local_timezone='America/Denver'):
     weather_data['Date'] = weather_data['Date UTC'].dt.tz_convert(local_timezone)
 
     # Extract year, month, day, hour from the local date
-    weather_data['Year'] = weather_data['Date'].dt.year
     weather_data['Month'] = weather_data['Date'].dt.month
     weather_data['Day'] = weather_data['Date'].dt.day
     weather_data['Hour'] = weather_data['Date'].dt.hour
