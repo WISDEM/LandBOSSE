@@ -228,12 +228,12 @@ class ManagementCost:
         """
         # Calculate project management costs based on project size and
         # todo: add relationship to site-specific interface with public infrastructure
-        if self.input_dict['construct_duration'] < 28:
-            project_management_cost = (53.333 * self.input_dict['construct_duration'] ** 2 -
-                                       3442 * self.input_dict['construct_duration'] +
-                                       209542) * (self.input_dict['construct_duration'] + 2)
+        if self.output_dict['actual_construction_months'] < 28:
+            project_management_cost = (53.333 * self.output_dict['actual_construction_months'] ** 2 -
+                                       3442 * self.output_dict['actual_construction_months'] +
+                                       209542) * (self.output_dict['actual_construction_months'] + 2)
         else:
-            project_management_cost = (self.input_dict['construct_duration'] + 2) * 155000
+            project_management_cost = (self.output_dict['actual_construction_months'] + 2) * 155000
         return project_management_cost
 
     def markup_contingency(self):
@@ -373,7 +373,7 @@ class ManagementCost:
         construction_building_cost = building_area_sq_ft * 125 + 176125
 
         ps = self.input_dict['project_size_megawatts']
-        ct = self.input_dict['construct_duration']
+        ct = self.output_dict['actual_construction_months']
         nt = self.input_dict['num_turbines']
         if nt < 30:
             nr = 1

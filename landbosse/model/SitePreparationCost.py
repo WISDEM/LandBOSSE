@@ -475,13 +475,13 @@ class SitePreparationCost(CostModule):
         equipment_costs = pd.DataFrame([['Equipment rental', float(equip_for_new_and_old_roads_cost_usd), 'Roads']],
             columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-
-
+        calendar_construct_days = (operation_data['Time construct days'] + np.ceil(operation_data['Time construct days'] / 6))  # assumes working only 6 days per week
+        construction_months = calendar_construct_days / 30
         # add costs for other operations not included in process data (e.g., fencing, access roads)
         cost_new_roads_adder = (float(calculate_cost_input_dict['num_turbines']) * 17639 + float(
             calculate_cost_input_dict['num_turbines']) * float(
             calculate_cost_input_dict['rotor_diameter_m']) * 24.8 + float(
-            calculate_cost_input_dict['construct_duration']) * 55500 + float(
+            construction_months) * 55500 + float(
             calculate_cost_input_dict['num_access_roads']) * 3800)
         cost_adder = self.new_and_existing_total_road_cost(cost_new_roads_adder)
         additional_costs = pd.DataFrame([['Other', float(cost_adder), 'Roads']],
@@ -508,6 +508,7 @@ class SitePreparationCost(CostModule):
         # total_road_cost['Phase of construction'] = 'Roads'
 
         calculate_cost_output_dict['total_road_cost'] = total_road_cost
+        calculate_cost_output_dict['siteprep_construction_months'] = construction_months
         return total_road_cost
 
 
