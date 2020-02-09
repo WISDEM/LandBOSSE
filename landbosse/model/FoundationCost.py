@@ -247,6 +247,8 @@ class FoundationCost(CostModule):
 
         """
 
+        print(f'enter calculate_foundation_load {self.project_name}')
+
         # set exposure constants
         a = 9.5
         z_g = 274.32
@@ -375,6 +377,8 @@ class FoundationCost(CostModule):
         foundation_load_output_data['Radius_g_m']   =   r_gapping
         foundation_load_output_data['Radius_b_m']   =   r_bearing
         foundation_load_output_data['Radius_m']     =   r_choosen
+
+        print(f'exit calculate_foundation_load {self.project_name}')
 
         return foundation_load_output_data
 
