@@ -369,6 +369,8 @@ class FoundationCost(CostModule):
         else:
             r_bearing = 0
 
+        print(f"log calculate_foundation_load {self.project_name} r_bearing={r_bearing}")
+
         # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
         r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
 
