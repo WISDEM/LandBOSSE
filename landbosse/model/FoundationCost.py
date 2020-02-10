@@ -355,7 +355,10 @@ class FoundationCost(CostModule):
         r_test_bearing = max(r_test_gapping, r_gapping)
 
         # calculate foundation radius based on bearing pressure
-        r_b = Symbol('r_b', real=True, positive=True)
+
+        # r_b = Symbol('r_b', real=True, positive=True)
+        r_b = Symbol('r_b', real=True)
+
         foundation_vol = np.pi * r_test_bearing ** 2 * foundation_load_input_data['depth']
         v_1 = (foundation_vol * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
         e = m_tot / v_1
