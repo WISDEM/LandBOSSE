@@ -246,9 +246,6 @@ class FoundationCost(CostModule):
         Largest foundation radius based on all three foundation design criteria (moment, gapping, bearing [in m]) -> Radius_m
 
         """
-
-        print(f'enter calculate_foundation_load {self.project_name}')
-
         # set exposure constants
         a = 9.5
         z_g = 274.32
@@ -369,7 +366,8 @@ class FoundationCost(CostModule):
         else:
             r_bearing = 0
 
-        print(f"log calculate_foundation_load {self.project_name} r_bearing={r_bearing}")
+        if r_bearing < 0:
+            print(f"Warning {self.project_name} calculate_foundation_load r_bearing is negative, r_bearing={r_bearing}")
 
         # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
         r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
@@ -382,8 +380,6 @@ class FoundationCost(CostModule):
         foundation_load_output_data['Radius_g_m']   =   r_gapping
         foundation_load_output_data['Radius_b_m']   =   r_bearing
         foundation_load_output_data['Radius_m']     =   r_choosen
-
-        print(f'exit calculate_foundation_load {self.project_name}')
 
         return foundation_load_output_data
 
