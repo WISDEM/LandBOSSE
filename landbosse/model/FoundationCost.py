@@ -636,8 +636,15 @@ class FoundationCost(CostModule):
         foundation_cost = foundation_cost.append(material_costs)
 
         # calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
-        mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.1, 'Foundation']],
-                                columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+        # calculate mobilization cost as percentage (assumed 5%) of total foundation cost and add to foundation_cost for utility scale plant
+        # and as a function of turbine size for distributed wind:
+        if calculate_costs_input_dict['num_turbines'] > 10:
+            mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.05, 'Foundation']],
+                                    columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
+        else:
+            mob_cost = pd.DataFrame([['Mobilization', (foundation_cost['Cost USD'].sum() / calculate_costs_input_dict['num_turbines']) *
+                                      self.mobilization_cost(calculate_costs_input_dict['turbine_rating_MW']), 'Foundation']],
+                                    columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         foundation_cost = foundation_cost.append(mob_cost)
 
         # todo: we add a separate tab in the output file for costs (all costs will be the same format but it's a different format than other data)
