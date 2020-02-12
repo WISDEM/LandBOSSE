@@ -1,36 +1,41 @@
 import os
 import io
 
-import psycopg2
 from sqlalchemy import create_engine
 import pandas as pd
 
 
-landbosse_output_path = "landbosse-output.xlsx"
-landbosse_extended_project_list_path = os.path.join("calculated_parametric_inputs", "extended_project_list.xlsx")
+costs_path = "landbosse-costs.csv"
+details_path = "landbosse-details.csv"
+extended_project_list_path = os.path.join("calculated_parametric_inputs", "extended_project_list.csv")
 
 print("Reading costs...")
-landbosse_output_costs = pd.read_excel(landbosse_output_path, "costs_by_module_type_operation")
+costs = pd.read_csv(costs_path)
 
 print("Reading details...")
-landbosse_output_details = pd.read_excel(landbosse_output_path, "details")
+details = pd.read_csv(details_path)
 
 print("Reading extended project list...")
-extended_project_list = pd.read_excel(landbosse_extended_project_list_path)
+extended_project_list = pd.read_csv(extended_project_list_path)
+extended_project_list["Project ID with serial"] = extended_project_list["Project ID with serial"]
+
+# Projects that are not parametrically modified will have a null in "Project ID with serial"
+# In that case, those non-parametric projects will not be joined onto the extended project
+# list.
 
 print("Joining extended project list onto costs...")
-join_landbosse_output_costs = landbosse_output_costs.merge(right=extended_project_list, on="Project ID with serial")
+join_landbosse_output_costs = costs.merge(right=extended_project_list, on="Project ID with serial")
 
 print("Joining extended project list onto details...")
-join_landbosse_output_details = landbosse_output_details.merge(right=extended_project_list, on="Project ID with serial")
+join_landbosse_output_details = details.merge(right=extended_project_list, on="Project ID with serial")
 
-print("Writing .csv files...")
+print("Writing joined .csv files...")
 join_landbosse_output_costs.to_csv("extended_landbosse_costs.csv", index=False)
 join_landbosse_output_details.to_csv("extended_landbosse_details.csv", index=False)
 
-etl_into_database_enabled = True
-if etl_into_database_enabled:
-    print("ETL into database...")
+load_into_database_enabled = True
+if load_into_database_enabled:
+    print("Load into database...")
 
     # Get the security credentials and DB config from the environment
     # variables to maintain security.
@@ -51,7 +56,7 @@ if etl_into_database_enabled:
     # in memory buffer to insert all rows into each table in a single transaction
     # See https://stackoverflow.com/questions/23103962/how-to-write-dataframe-to-postgres-table
 
-    cost_table_name = "costs_with_extended_project_list"
+    cost_table_name = "landbosse_costs"
     join_landbosse_output_costs.head(0).to_sql(cost_table_name, engine, if_exists="replace", index=False)
     conn = engine.raw_connection()
     cur = conn.cursor()
@@ -66,7 +71,7 @@ if etl_into_database_enabled:
     cur.copy_from(output, cost_table_name, null="")
     conn.commit()
 
-    details_table_name = "details_with_extended_project_list"
+    details_table_name = "landbosse_details"
     join_landbosse_output_details.head(0).to_sql(details_table_name, engine, if_exists="replace", index=False)
     output = io.StringIO()
     join_landbosse_output_details.to_csv(output, sep="\t", header=False, index=False)
