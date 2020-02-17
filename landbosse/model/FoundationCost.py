@@ -245,8 +245,11 @@ class FoundationCost(CostModule):
 
         Largest foundation radius based on all three foundation design criteria (moment, gapping, bearing [in m]) -> Radius_m
 
+        Raises
+        ------
+        ValueError
+            Raises a value error if r_bearing is calculated to be a negative value.
         """
-
         # set exposure constants
         a = 9.5
         z_g = 274.32
@@ -353,16 +356,28 @@ class FoundationCost(CostModule):
         r_test_bearing = max(r_test_gapping, r_gapping)
 
         # calculate foundation radius based on bearing pressure
-        r_b = Symbol('r_b', real=True, positive=True)
+
+        # Restrict r_b to only real numbers. Positive solutions for r_b are
+        # selected below
+        r_b = Symbol('r_b', real=True)
+
         foundation_vol = np.pi * r_test_bearing ** 2 * foundation_load_input_data['depth']
         v_1 = (foundation_vol * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
         e = m_tot / v_1
         a_eff = v_1 / bearing_pressure
         r_bearing = solve(2 * (r_b ** 2 - e * (r_b ** 2 - e ** 2) ** 0.5) - a_eff, r_b)
+
+        # Select only positive solutions to r_b. This is selected by max(). If there are
+        # not positive solutions to r_b, that means something is wrong with the foundation
+        # parameters. In that case, generate a warning below.
+
         if len(r_bearing) > 0:
             r_bearing = max(r_bearing)
         else:
             r_bearing = 0
+
+        if r_bearing < 0:
+            raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_bearing is negative, r_bearing={r_bearing}')
 
         # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
         r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
