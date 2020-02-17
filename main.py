@@ -90,7 +90,7 @@ if __name__ == '__main__':
     details = csv_generator.create_details_dataframe(final_result['details_list'])
     costs_csv_filename = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-costs.csv')
     details_csv_filename = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-details.csv')
-    costs.to_csv(costs_csv_filename)
+    costs.to_csv(costs_csv_filename, index=False)
     details.to_csv(details_csv_filename, index=False)
 
     # Print end timestamp
