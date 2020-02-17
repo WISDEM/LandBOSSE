@@ -245,6 +245,10 @@ class FoundationCost(CostModule):
 
         Largest foundation radius based on all three foundation design criteria (moment, gapping, bearing [in m]) -> Radius_m
 
+        Raises
+        ------
+        ValueError
+            Raises a value error if r_bearing is calculated to be a negative value.
         """
         # set exposure constants
         a = 9.5
@@ -373,7 +377,7 @@ class FoundationCost(CostModule):
             r_bearing = 0
 
         if r_bearing < 0:
-            print(f'Warning {self.project_name} calculate_foundation_load r_bearing is negative, r_bearing={r_bearing}')
+            raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_bearing is negative, r_bearing={r_bearing}')
 
         # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
         r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
