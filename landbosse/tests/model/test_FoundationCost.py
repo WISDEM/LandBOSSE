@@ -34,7 +34,7 @@ class TestFoundtionCost(TestCase):
         self.input_dict['bearing_pressure_n_m2'] = 244200
         self.input_dict['critical_velocity_m_per_s'] = 52.5
         self.input_dict['gust_velocity_m_per_s'] = 60
-        self.input_dict['turbine_rating_MW'] = 1.5  # 1.5 MW Turbine
+        self.input_dict['turbine_rating_MW'] = 0.02  # 20 kW Turbine
         self.input_dict['rotor_diameter_m'] = 85    #Not used in foundation cost module, but reqd. by CostModule
 
         #Below are the inputs for calculate_foundation_load():
