@@ -5,6 +5,17 @@ from sqlalchemy import create_engine
 import pandas as pd
 
 
+def extract_id(row):
+    """
+    This is to populate "Project ID with serial" with the "Project ID" if
+    "Project ID with serial" is null. Otherwise, retain "Project ID with serial"
+    """
+    if pd.isnull(row["Project ID with serial"]):
+        return row["Project ID"]
+    else:
+        return row["Project ID with serial"]
+
+
 costs_path = "landbosse-costs.csv"
 details_path = "landbosse-details.csv"
 extended_project_list_path = os.path.join("calculated_parametric_inputs", "extended_project_list.csv")
@@ -17,7 +28,8 @@ details = pd.read_csv(details_path)
 
 print("Reading extended project list...")
 extended_project_list = pd.read_csv(extended_project_list_path)
-extended_project_list["Project ID with serial"] = extended_project_list["Project ID with serial"]
+# See comments of extract_id() function above.
+extended_project_list["Project ID with serial"] = costs.apply(extract_id, axis=1)
 
 # Projects that are not parametrically modified will have a null in "Project ID with serial"
 # In that case, those non-parametric projects will not be joined onto the extended project
