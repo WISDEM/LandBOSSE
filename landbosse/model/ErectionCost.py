@@ -1039,6 +1039,11 @@ class ErectionCost(CostModule):
         # Total management cost
         total_management_cost = management_crews['crew_level_total_costs'].sum()
 
+        # erection_construction_months is the duration of erection time in
+        # units of months.
+        days_per_month = 30
+        self.output_dict['erection_construction_months'] = duration_days / days_per_month
+
         return management_crews, management_crew_cost_grouped, total_management_cost
 
     def calculate_costs(self):
@@ -1079,6 +1084,7 @@ class ErectionCost(CostModule):
 
         join_wind_operation['Wind multiplier'] = 1 / (1 - join_wind_operation['Wind delay percent'])
 
+        # 'Total time per op with weather' units are hours
         join_wind_operation['Total time per op with weather'] = (join_wind_operation['Operation time all turbines hrs'] *
                                                                  join_wind_operation['Wind multiplier'])
 

@@ -915,8 +915,13 @@ class ArraySystem(CostModule):
             self.weather_input_dict[
                 'wind_height_of_interest_m'] = self.input_dict['critical_height_non_erection_wind_delays_m']
 
-            # compute and specify weather delay mission time for roads
+            # Compute the duration of the construction for electrical collection
             duration_construction = operation_data['Time construct days'].max(skipna=True)
+            days_per_month = 30
+            duration_construction_months = duration_construction / days_per_month
+            self.output_dict['collection_construction_months'] = duration_construction_months
+
+            # compute and specify weather delay mission time for roads
             operational_hrs_per_day = self.input_dict['hour_day'][self.input_dict['time_construct']]
             mission_time_hrs = duration_construction * operational_hrs_per_day
             self.weather_input_dict['mission_time_hours'] = int(mission_time_hrs)
