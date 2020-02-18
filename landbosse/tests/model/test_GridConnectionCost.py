@@ -11,6 +11,9 @@ class TestGridConnectionCost(TestCase):
         self.input_dict['distance_to_interconnect_mi'] = 5
         self.input_dict['interconnect_voltage_kV'] = 130
         self.input_dict['new_switchyard'] = True
+        self.input_dict['turbine_rating_MW'] = 1.5
+        self.input_dict['num_turbines'] = 1
+        self.input_dict['rotor_diameter_m'] = 75
         self.project_name = 'Project_1'
         self.output_dict = dict()
 
