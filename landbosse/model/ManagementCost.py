@@ -226,7 +226,6 @@ class ManagementCost:
         float
             Project management cost
         """
-        # Calculate project management costs based on project size and
         # todo: add relationship to site-specific interface with public infrastructure
         if self.output_dict['actual_construction_months'] < 28:
             project_management_cost = (53.333 * self.output_dict['actual_construction_months'] ** 2 -
