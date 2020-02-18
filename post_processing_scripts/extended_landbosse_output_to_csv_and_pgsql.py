@@ -11,6 +11,8 @@ landbosse_extended_project_list_path = os.path.join("calculated_parametric_input
 
 print("Reading costs...")
 landbosse_output_costs = pd.read_excel(landbosse_output_path, "costs_by_module_type_operation")
+# Drop redundant columns
+landbosse_output_costs.drop(columns=['Turbine rating MW', 'Number of turbines', 'Rotor diameter m'], inplace=True)
 
 print("Reading details...")
 landbosse_output_details = pd.read_excel(landbosse_output_path, "details")

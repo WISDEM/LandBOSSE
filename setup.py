@@ -26,7 +26,7 @@ setuptools.setup(
         'shapely',
         'xlsxwriter',
         'xlrd',
-        'pscyopg2-binary',
+        'psycopg2-binary',
         'sqlalchemy'
     ],
     command_options={
