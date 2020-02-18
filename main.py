@@ -75,13 +75,14 @@ if __name__ == '__main__':
     print('Writing final output folder')
 
     max_number_of_excel_rows = 1048576
-    if len(final_result['details_list']) <= max_number_of_excel_rows:
-        with XlsxGenerator('landbosse-output', file_ops) as xlsx:
-            xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-            xlsx.tab_details(rows=final_result['details_list'])
-        file_ops.copy_input_data()
-    else:
-        print("Details sheet has {len(final_result['details_list']} rows, which is over Excel's limit. Not writing to .xlsx")
+    if len(final_result['details_list']) > max_number_of_excel_rows:
+        print('WARNING: Details sheet in .xlsx has too many rows for Excel. Please use landbosse-details.csv instead.')
+        print('Writing .xlsx file for backwards compatability.')
+
+    with XlsxGenerator('landbosse-output', file_ops) as xlsx:
+        xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
+        xlsx.tab_details(rows=final_result['details_list'])
+    file_ops.copy_input_data()
 
     # Always write .csv versions of the output
     csv_generator = CsvGenerator(file_ops)
