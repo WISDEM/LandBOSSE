@@ -475,7 +475,9 @@ class SitePreparationCost(CostModule):
         equipment_costs = pd.DataFrame([['Equipment rental', float(equip_for_new_and_old_roads_cost_usd), 'Roads']],
             columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-        # Assume the following things to compute the cost adder
+        # add costs for other operations not included in process data (e.g., fencing, access roads)
+        #
+        # Assume the following things to compute the cost adder:
         #
         # The crews only work 6 days per week, so a number of days equal to the
         # number of weeks worked is added to convert working days to calendar
@@ -491,7 +493,6 @@ class SitePreparationCost(CostModule):
         calendar_construct_days = (max_time_construct_days + np.ceil(
             max_time_construct_days / 6))  # assumes working only 6 days per week
         siteprep_construction_months = calendar_construct_days / 30.0
-        # add costs for other operations not included in process data (e.g., fencing, access roads)
         cost_new_roads_adder = \
             num_turbines * 17639 + num_turbines * rotor_diameter_m * 24.8 + siteprep_construction_months * 55500 \
             + num_access_roads * 3800
