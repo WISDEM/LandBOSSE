@@ -1,2 +1,0 @@
-DELETE FROM costs_with_extended_project_list;
-DELETE FROM details_with_extended_project_list;

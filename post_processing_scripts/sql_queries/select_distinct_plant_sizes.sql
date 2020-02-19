@@ -1,1 +1,0 @@
-SELECT DISTINCT(ROUND("Number of turbines"::numeric * "Turbine rating MW"::numeric, -1)) FROM costs_with_extended_project_list ORDER BY 1;
