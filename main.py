@@ -81,7 +81,6 @@ if __name__ == '__main__':
 
     with XlsxGenerator('landbosse-output', file_ops) as xlsx:
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-        xlsx.tab_details(rows=final_result['details_list'])
     file_ops.copy_input_data()
 
     # Always write .csv versions of the output
