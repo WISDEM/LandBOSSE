@@ -1,10 +1,13 @@
 import os
 from datetime import datetime
 
+import pandas as pd
+
 from landbosse.excelio import XlsxSerialManagerRunner
 from landbosse.excelio import XlsxParallelManagerRunner
 from landbosse.excelio import XlsxGenerator
 from landbosse.excelio import XlsxValidator
+from landbosse.excelio import CsvGenerator
 
 # LandBOSSE, small utility functions
 from landbosse.excelio import XlsxFileOperations
@@ -42,9 +45,9 @@ if __name__ == '__main__':
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, enable_scaling_study)
 
     # Write the extended_project_list, which has all the parametric values.
-    extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.xlsx')
+    extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.csv')
     extended_project_list = final_result['extended_project_list']
-    extended_project_list.to_excel(extended_project_list_path, index=False)
+    extended_project_list.to_csv(extended_project_list_path)
 
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
@@ -70,10 +73,25 @@ if __name__ == '__main__':
     # XlsxGenerator has a context manager that writes each individual
     # worksheet to the output .xlsx. Also, copy file input structure.
     print('Writing final output folder')
+
+    max_number_of_excel_rows = 1048576
+    if len(final_result['details_list']) > max_number_of_excel_rows:
+        print('WARNING: Details sheet in .xlsx has too many rows for Excel. Please use landbosse-details.csv instead.')
+        print('Writing .xlsx file for backwards compatability.')
+
     with XlsxGenerator('landbosse-output', file_ops) as xlsx:
         xlsx.tab_costs_by_module_type_operation(rows=final_result['module_type_operation_list'])
-        xlsx.tab_details(rows=final_result['details_list'])
     file_ops.copy_input_data()
+
+    # Always write .csv versions of the output
+    csv_generator = CsvGenerator(file_ops)
+
+    costs = csv_generator.create_costs_dataframe(final_result['module_type_operation_list'])
+    details = csv_generator.create_details_dataframe(final_result['details_list'])
+    costs_csv_filename = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-costs.csv')
+    details_csv_filename = os.path.join(file_ops.landbosse_output_dir(), 'landbosse-details.csv')
+    costs.to_csv(costs_csv_filename, index=False)
+    details.to_csv(details_csv_filename, index=False)
 
     # Print end timestamp
     print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
