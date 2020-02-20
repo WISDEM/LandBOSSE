@@ -21,10 +21,6 @@ print("Reading extended project list...")
 extended_project_list = pd.read_excel(landbosse_extended_project_list_path)
 
 print("Joining extended project list onto costs...")
-# Drop the columns that will be duplicated in the extended project list
-landbosse_output_costs.drop("Turbine rating MW", axis=1, inplace=True)
-landbosse_output_costs.drop("Rotor diameter m", axis=1, inplace=True)
-landbosse_output_costs.drop("Number of turbines", axis=1, inplace=True)
 join_landbosse_output_costs = landbosse_output_costs.merge(right=extended_project_list, on="Project ID with serial")
 
 print("Joining extended project list onto details...")
