@@ -19,7 +19,7 @@ setuptools.setup(
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
-        'pandas',
+        'pandas==0.25.2',
         'numpy',
         'sympy',
         'scipy',
@@ -27,7 +27,8 @@ setuptools.setup(
         'xlsxwriter',
         'xlrd',
         'psycopg2-binary',
-        'sqlalchemy'
+        'sqlalchemy',
+        'pytest'
     ],
     command_options={
             'build_sphinx': {
