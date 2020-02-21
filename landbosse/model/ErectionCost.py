@@ -1,8 +1,9 @@
+import sys
 import pandas as pd
 import numpy as np
+from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-from math import ceil
 
 from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
@@ -124,8 +125,15 @@ class ErectionCost(CostModule):
     rsmeans
         (p.DataFrame) RSMeans data
     """
-    def __init__(self, input_dict, output_dict, project_name):
+    def __init__(self, input_dict, output_dict, project_name, log):
         """
+        There is a distributed mode in the code that is determined
+        by the self.in_distributed_mode flag. If it is True, calculations
+        should be performed for a distributed scale plant.
+
+        Distributed mode is triggered when the number of turbines is
+        less than 10.
+
         Parameters
         ----------
         input_dict : dict
@@ -135,10 +143,15 @@ class ErectionCost(CostModule):
         output_dict : dict
             The output dictionary with key value pairs as found on the
             output documentation.
+
+        log
+            Python logging service for logging.
         """
+        self.in_distributed_mode = input_dict['num_turbines'] <= 10
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
+        self.log = log
 
     def run_module(self):
         """
@@ -159,7 +172,7 @@ class ErectionCost(CostModule):
                 project_id=self.project_name,
                 total_or_turbine=True
             )
-            return 0, 0 # Module ran successfully
+            return 0, 0
         except Exception as error:
             traceback.print_exc()
             print(f"Fail {self.project_name} ErectionCost")
@@ -258,7 +271,7 @@ class ErectionCost(CostModule):
                 'variable_df_key_col_name': f'erection_selected_detailed_data: wind multiplier',
                 'value': value,
                 'non_numeric_value': operation
-            })
+        })
 
         result.append({
             'unit': 'usd',
@@ -312,11 +325,21 @@ class ErectionCost(CostModule):
         construct_duration = self.input_dict['construct_duration']
         operational_construction_time = self.input_dict['operational_construction_time']
         erection_construction_time = 1 / 3 * construct_duration
-        breakpoint_between_base_and_topping_percent = self.input_dict['breakpoint_between_base_and_topping_percent']
         hub_height_m = self.input_dict['hub_height_meters']
         rotor_diameter_m = self.input_dict['rotor_diameter_m']
         num_turbines = float(self.input_dict['num_turbines'])
         turbine_spacing_rotor_diameters = self.input_dict['turbine_spacing_rotor_diameters']
+        components = project_data['components']
+        crane_specs = project_data['crane_specs']
+
+        # Distributed versus land-based switch. In distributed, we just use a topping crane.
+        # In that case, any component being lifted is going to be at the top, from the lowest
+        # tower section to the RNA. Hence, the breakpoint is 0.0 here for distributed operations.
+        # That makes every component a top lift.
+        if self.in_distributed_mode:
+            breakpoint_between_base_and_topping_percent = 0.0
+        else:
+            breakpoint_between_base_and_topping_percent = self.input_dict['breakpoint_between_base_and_topping_percent']
 
         # for components in component list determine if base or topping
         project_data['components']['Operation'] = project_data['components']['Lift height m'] > (
@@ -411,8 +434,6 @@ class ErectionCost(CostModule):
         operation_time['Time construct days'] = operation_time[
             ['time_construct_bool', 'Operational construct days']].min(axis=1)
 
-        # print(possible_cranes[['Crane name', 'Component', 'Operation time hr', 'Operation']])
-
         for operation, component_group in top_v_base:
             unique_component_crane = possible_cranes.loc[possible_cranes['Operation'] == operation][
                 'Component'].unique()
@@ -421,6 +442,7 @@ class ErectionCost(CostModule):
                     raise Exception(
                         'Error: Unable to find installation crane for {} operation and {} component'.format(operation,
                                                                                                             component))
+            # self.log.debug('Crane(s) found for all components for {} installation'.format(operation))
 
         erection_operation_time_dict = dict()
         erection_operation_time_dict['possible_cranes'] = possible_cranes
@@ -428,6 +450,91 @@ class ErectionCost(CostModule):
 
         self.output_dict['possible_cranes'] = possible_cranes
         self.output_dict['erection_operation_time'] = erection_operation_time_dict
+
+        return possible_cranes, operation_time
+
+    def calculate_distributed_offload_specs_and_time(self, operation_time):
+        """
+        Calculates specs for the offload support crane in distributed operation.
+
+        Parameters
+        ----------
+        operation_time : pd.DataFrame
+            The operation times for the various topping cranes that may use one
+            of the offload cranes for support.
+
+        Returns
+        -------
+        possible_cranes, operation_time
+            Possible cranes and operation time
+        """
+        project_data = self.input_dict['project_data']
+        crane_specs = project_data['crane_specs']
+        components = project_data['components']
+        time_construct = self.input_dict['time_construct']
+        hour_day = self.input_dict['hour_day']
+        operational_construction_time = self.input_dict['operational_construction_time']
+
+        topping_crane_operation_times = operation_time.where(operation_time['Operation'] == 'Top')
+        median_operation_time_all_turbines_hrs = topping_crane_operation_times['Operation time all turbines hrs'].median()
+        median_operational_construct_days = topping_crane_operation_times['Operational construct days'].median()
+        median_time_construct_days = topping_crane_operation_times['Time construct days'].median()
+
+        # Get offload cranes
+        offload_cranes = crane_specs.where(crane_specs['Equipment name'] == 'Offload crane')
+
+        # group crane data by boom system and crane name to get distinct cranes
+        crane_grouped = offload_cranes.groupby(
+            ['Equipment name', 'Equipment ID', 'Crane name', 'Boom system', 'Crane capacity tonne'])
+
+        crane_poly = self.calculate_crane_lift_polygons(crane_grouped=crane_grouped)
+        component_group = project_data['components']
+        component_max_speed = pd.DataFrame()
+        lift_max_wind_speed = self.calculate_component_lift_max_wind_speed(component_group=component_group,
+                                                                           crane_poly=crane_poly,
+                                                                           component_max_speed=component_max_speed,
+                                                                           operation='offload')
+        component_max_speed = lift_max_wind_speed['component_max_speed']
+        crane_poly = lift_max_wind_speed['crane_poly']
+
+        if len(crane_poly) != 0:
+            # join crane polygon to crane specs
+            crane_component = pd.merge(crane_poly, component_max_speed, on=['Crane name', 'Boom system'])
+
+            # select only cranes that could lift the component
+            possible_cranes = crane_component.where(crane_component['crane_bool'] == True).dropna(thresh=1).reset_index(
+                drop=True)
+
+            # Set all times to 0 because this is a support crane.
+            possible_cranes['Travel time hr'] = 0
+            possible_cranes['Setup time hr'] = 0
+
+            possible_cranes['Operation'] = 'Offload'
+        else:
+            raise Exception('Could not find any offload cranes to act as support cranes')
+
+        unique_components = components['Component'].unique()
+        unique_component_crane = possible_cranes['Component'].unique()
+        for component in unique_components:
+            if component not in unique_component_crane:
+                raise Exception('Error: Unable to find offload crane for {}'.format(component))
+
+        # Assume the support crane is situated at the site for one month
+        construct_duration_months = self.input_dict['construct_duration']
+        working_days_per_month = 24  # 4 weeks, 6 days per week
+        hours_per_day = hour_day[time_construct]
+        operation_time_all_turbines_hours = construct_duration_months * working_days_per_month * hours_per_day
+        operation_time = possible_cranes.copy()
+        operation_time = operation_time[['Boom system', 'Crane capacity tonne', 'Crane name', 'Crew type ID', 'Equipment name', 'Operation']]
+        operation_time['Operation time all turbines hrs'] = median_operation_time_all_turbines_hrs
+        operation_time['Operational construct days'] = median_operational_construct_days
+        operation_time['Time construct days'] = median_time_construct_days
+        operation_time['time_construct_bool'] = np.nan
+
+        # The cranes are listed multiple times. De
+        deduplicated_selection = ~possible_cranes['Crane name'].duplicated()
+        possible_cranes = possible_cranes[deduplicated_selection]
+        operation_time = operation_time[deduplicated_selection]
 
         return possible_cranes, operation_time
 
@@ -540,6 +647,7 @@ class ErectionCost(CostModule):
         for component in unique_components:
             if component not in unique_component_crane:
                 raise Exception('Error: Unable to find offload crane for {}'.format(component))
+        # self.log.debug('Crane(s) found for all components for offloading')
 
         return possible_cranes, operation_time
 
@@ -589,7 +697,7 @@ class ErectionCost(CostModule):
                                 crew_type,
                                 polygon]],
                               columns=['Equipment name', 'Equipment ID', 'Crane name', 'Boom system', 'Crane capacity tonne',
-                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr',
+                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr'
                                        'Hoist speed m per min', 'Speed of travel km per hr',
                                        'Crew type ID', 'Crane poly'])
             crane_poly = crane_poly.append(df, sort=True)
@@ -774,6 +882,11 @@ class ErectionCost(CostModule):
         time_construct = self.input_dict['time_construct']
         project_data = self.input_dict['project_data']
         hour_day = self.input_dict['hour_day']
+        equip = project_data['equip']
+        equip_price = project_data['equip_price']
+        crew = project_data['crew']
+        crew_price = project_data['crew_price']
+        turbine_rating_MW = self.input_dict['turbine_rating_MW']
 
         # TODO: consider removing equipment name and crane capacity from crane_specs tab (I believe these data are unused here and they get overwritten later with equip information from equip tab)
         join_wind_operation = join_wind_operation.drop(columns=['Equipment name', 'Crane capacity tonne'])
@@ -844,6 +957,14 @@ class ErectionCost(CostModule):
         mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])[
             'Mobilization cost USD'].max().reset_index()
 
+        # Mobilization cost is a function of turbine size for distributed wind.
+        # if self.in_distributed_mode:
+        #     mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] \
+        #                                                   * 2 \
+        #                                                   * self.mobilization_cost(turbine_rating_MW)
+        # else:
+        #     mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2
+
         mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2 # for mobilization and demobilizaton
 
         # join top and base crane data with mobilization data
@@ -879,7 +1000,6 @@ class ErectionCost(CostModule):
                                                             'Mobilization cost USD']
 
         return separate_topbase_crane_cost, topbase_same_crane_cost, crew_cost
-
 
     def find_minimum_cost_cranes(self):
         """
@@ -917,14 +1037,20 @@ class ErectionCost(CostModule):
         # reset index for separate crane costs
         total_separate_cost = total_separate_cost.reset_index()
 
-        # duplicate offload records because assuming two offload cranes are on site
-        total_separate_cost = total_separate_cost.append(
-            total_separate_cost.loc[total_separate_cost['Operation'] == 'Offload'], sort=True)
+        # In utility scale mode, duplicate the offload crane because there is the
+        # assumption that two should be on site.
+        #
+        # In distributed mode, there just be one offload crane, acting as a
+        # support crane on site. So in distributed mode skip this step.
+
+        if not self.in_distributed_mode:
+            total_separate_cost = total_separate_cost.append(
+                total_separate_cost.loc[total_separate_cost['Operation'] == 'Offload'], sort=True)
 
         # sum costs for separate cranes to get total for all cranes
         cost_chosen_separate = total_separate_cost['Total cost USD'].sum()
 
-        if allow_same_flag is True:
+        if not self.in_distributed_mode and allow_same_flag:
             # get the minimum cost for using the same crane for all operations
             cost_chosen_same = min(same_basetop['Total cost USD'])
 
@@ -938,9 +1064,36 @@ class ErectionCost(CostModule):
 
         return cost_chosen
 
+    def calculate_management_crews_cost_distributed(self):
+        """
+        For distributed mode operation, the sum of management costs should be 0
+        and the dataframes should be empty. That's because the management cost is
+        calculated as an override in the ManagementCost module.
+
+        This method just provides a placeholder that is an alternative to the
+        utility scale method below
+
+        Returns
+        -------
+        pd.DataFrame, pd.DataFrame, float
+            The first dataframe are management costs by each role on each team.
+            The second dataframe are management costs summed over aggregations of
+            teams. The float is the sum of all the management costs for erection.
+        """
+        crew_cost = self.output_dict['crew_cost'].copy()
+        crew_cost['per_diem_costs'] = 0
+        crew_cost['hourly_costs'] = 0
+        crew_cost['crew_level_total_costs'] = 0
+        empty_crew_cost = crew_cost.iloc[0:0]
+        empty_crew_cost_grouped = empty_crew_cost.copy()
+        return empty_crew_cost, empty_crew_cost_grouped, 0
+
     def calculate_management_crews_cost(self, erection_cost):
         """
         Calculates management costs for erection, based on rate of turbine deliveries.
+
+        This method is only for utility-scale operation. The method named
+        calculate_management_crews_cost_distributed() is for distributed operation.
 
         Parameters
         ----------
@@ -1016,7 +1169,10 @@ class ErectionCost(CostModule):
         self.output_dict['crane_specs'] = crane_specs
         self.output_dict['operation_time'] = operation_time
 
-        [offload_specs, offload_time] = self.calculate_offload_operation_time()
+        if self.in_distributed_mode:
+            offload_specs, offload_time = self.calculate_distributed_offload_specs_and_time(operation_time)
+        else:
+            offload_specs, offload_time = self.calculate_offload_operation_time()
 
         self.output_dict['offload_specs'] = offload_specs
         self.output_dict['offload_time'] = offload_time
@@ -1062,7 +1218,12 @@ class ErectionCost(CostModule):
         selected_detailed_data = erection_cost.merge(selected_time, on=['Crane name', 'Boom system', 'Operation'])
         selected_detailed_data['Total time per turbine'] = selected_detailed_data['Total time per op with weather'] / self.input_dict['num_turbines']
 
-        management_crews_cost, management_crews_cost_grouped, total_management_cost = self.calculate_management_crews_cost(selected_detailed_data)
+        if self.in_distributed_mode:
+            management_crews_cost, management_crews_cost_grouped, total_management_cost = \
+                self.calculate_management_crews_cost_distributed()
+        else:
+            management_crews_cost, management_crews_cost_grouped, total_management_cost = \
+                self.calculate_management_crews_cost(selected_detailed_data)
 
         selected_detailed_data['Subtotal for per diem labor (management) USD'] = management_crews_cost['per_diem_costs'].sum()
         selected_detailed_data['Subtotal for hourly labor (management) USD'] = management_crews_cost['hourly_costs'].sum()
@@ -1101,6 +1262,8 @@ class ErectionCost(CostModule):
         self.output_dict['crane_data_output'] = crane_data_output
         self.output_dict['crane_cost_details'] = crane_cost_details
         self.output_dict['total_cost_summed_erection'] = total_cost_summed_erection
+        self.output_dict['selected_detailed_data'] = selected_detailed_data
+        self.output_dict['crane_boom_operation_concat'] = selected_detailed_data['crane_boom_operation_concat']
 
         # Management crews data
         self.output_dict['management_crews_cost'] = management_crews_cost
