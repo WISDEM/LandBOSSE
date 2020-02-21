@@ -22,6 +22,7 @@ extended_project_list_path = os.path.join("calculated_parametric_inputs", "exten
 
 print("Reading costs...")
 costs = pd.read_csv(costs_path)
+costs.drop(columns=['Number of turbines', 'Turbine rating MW', 'Rotor diameter m'], inplace=True)
 
 print("Reading details...")
 details = pd.read_csv(details_path)

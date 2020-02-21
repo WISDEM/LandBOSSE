@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # Write the extended_project_list, which has all the parametric values.
     extended_project_list_path = os.path.join(file_ops.extended_project_list_path(), 'extended_project_list.csv')
     extended_project_list = final_result['extended_project_list']
-    extended_project_list.to_csv(extended_project_list_path)
+    extended_project_list.to_csv(extended_project_list_path, index=False)
 
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
