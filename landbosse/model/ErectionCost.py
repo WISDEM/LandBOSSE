@@ -697,7 +697,7 @@ class ErectionCost(CostModule):
                                 crew_type,
                                 polygon]],
                               columns=['Equipment name', 'Equipment ID', 'Crane name', 'Boom system', 'Crane capacity tonne',
-                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr'
+                                       'Max wind speed m per s', 'Setup time hr', 'Breakdown time hr',
                                        'Hoist speed m per min', 'Speed of travel km per hr',
                                        'Crew type ID', 'Crane poly'])
             crane_poly = crane_poly.append(df, sort=True)
