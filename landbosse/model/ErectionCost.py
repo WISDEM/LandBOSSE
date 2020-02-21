@@ -125,7 +125,7 @@ class ErectionCost(CostModule):
     rsmeans
         (p.DataFrame) RSMeans data
     """
-    def __init__(self, input_dict, output_dict, project_name, log):
+    def __init__(self, input_dict, output_dict, project_name):
         """
         There is a distributed mode in the code that is determined
         by the self.in_distributed_mode flag. If it is True, calculations
@@ -151,7 +151,7 @@ class ErectionCost(CostModule):
         self.input_dict = input_dict
         self.output_dict = output_dict
         self.project_name = project_name
-        self.log = log
+        # self.log = log
 
     def run_module(self):
         """
