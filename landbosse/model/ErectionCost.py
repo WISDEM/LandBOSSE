@@ -4,7 +4,7 @@ import numpy as np
 from scipy import sqrt
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-
+from math import ceil
 from .CostModule import CostModule
 from .WeatherDelay import WeatherDelay
 
