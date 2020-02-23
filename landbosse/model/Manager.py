@@ -82,7 +82,7 @@ class Manager:
             total_costs = total_costs.append(self.output_dict['total_substation_cost'], sort=False)
             total_costs = total_costs.append(self.output_dict['total_foundation_cost'], sort=False)
             total_costs = total_costs.append(self.output_dict['total_erection_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_development_cost'],sort=False)
+            total_costs = total_costs.append(self.output_dict['total_development_cost'], sort=False)
 
             self.output_dict['actual_construction_months'] = self.output_dict['siteprep_construction_months'] + \
                                                              self.output_dict['erection_construction_months'] + \
