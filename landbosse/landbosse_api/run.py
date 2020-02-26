@@ -6,7 +6,7 @@ from landbosse.model import Manager
 
 
 # Call this function - run_landbosse() - to run LandBOSSE.
-#it
+# this method calls the read_data() method to read the 2 excel input files, and creates a master input dictionary from it.
 def run_landbosse():
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
@@ -36,27 +36,19 @@ def run_landbosse():
     output_dict = dict()
     project_id_with_serial = 'SAM_Run'
 
+    # Manager class (1) manages the distribution of inout data for all modules and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
     mc.execute_landbosse(project_id_with_serial)
 
 
-    results = {"total_project_cost": None,
-               "total_management_cost": None,
-               "total_development_cost": None,
-               "total_sitepreparation_cost": None,
-               "total_foundation_cost": None,
-               "total_erection_cost": None,
-               "total_gridconnection_cost": None,
-               "total_collection_cost": None,
-               "total_substation_cost": None,
-                "errors": []
-               }
-
+    # results dictionary that gets returned by this function:
+    results = dict()
+    results['errors'] = []
     if master_input_dict['error']:
         for key, value in master_input_dict['error'].items():
             msg = "Error in " + key + ": " + str(value)
             results['errors'].append(msg)
-    else:
+    else:   # if project runs successfully, return a dictionary with results that are 3 layers deep (but 1-D)
         results['total_project_cost']                   =       output_dict['project_value_usd']
 
         # management cost module results:
@@ -147,6 +139,7 @@ def read_data():
                                                                                  parametric_value_list)
 
     return extended_project_list
+
 
 
 
