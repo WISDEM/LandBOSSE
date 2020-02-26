@@ -28,6 +28,7 @@ def run_landbosse():
 
         project_data_basename = project_parameters['Project data file']
         project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
+        # project_parameters['Labor cost multiplier']
         master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
         master_input_dict['error'] = dict()
 
@@ -60,9 +61,21 @@ def run_landbosse():
         results['total_development_cost'] = output_dict['summed_development_cost']
         results['total_sitepreparation_cost'] = output_dict['summed_sitepreparation_cost']
         results['total_foundation_cost'] = output_dict['summed_foundation_cost']
+
+        # erection module results:
         results['total_erection_cost'] = output_dict['total_cost_summed_erection']
+
+        # grid connection module results:
         results['total_gridconnection_cost'] = output_dict['trans_dist_usd']
+
+        #collection module results:
         results['total_collection_cost'] = output_dict['trans_dist_usd']
+        results['collection_equipment_rental_usd'] = output_dict['collection_equipment_rental_usd']
+        results['collection_labor_usd'] = output_dict['collection_labor_usd']
+        results['collection_material_usd'] = output_dict['collection_material_usd']
+        results['collection_mobilization_usd'] = output_dict['collection_mobilization_usd']
+
+        # substation module results:
         results['total_substation_cost'] = output_dict['summed_substation_cost']
 
     return results

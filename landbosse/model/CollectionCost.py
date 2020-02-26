@@ -713,14 +713,28 @@ class ArraySystem(CostModule):
 
         # Combine all calculated cost items into the 'collection_cost' dataframe:
         collection_cost = pd.DataFrame([],columns = ['Type of cost', 'Cost USD', 'Phase of construction'])  # todo: I believe Phase of construction here is the same as Operation ID in other modules? we should change to be consistent
+
         collection_cost = collection_cost.append(trenching_equipment_rental_cost_df)
         collection_cost = collection_cost.append(trenching_labor_cost_df)
         collection_cost = collection_cost.append(cable_cost_usd_per_LF_df)
 
+
         # Calculate Mobilization Cost and add to collection_cost dataframe:
-        mobilization_cost = pd.DataFrame([['Mobilization', collection_cost['Cost USD'].sum() * 0.05 , 'Collection']],
+        collection_mobilization_usd = collection_cost['Cost USD'].sum() * 0.05
+        mobilization_cost = pd.DataFrame([['Mobilization', collection_mobilization_usd , 'Collection']],
                                          columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         collection_cost = collection_cost.append(mobilization_cost)
+
+
+
+        #For LandBOSSE API, cost breakdown by type stored as floating point values:
+        calculate_costs_output_dict['collection_equipment_rental_usd'] = calculate_costs_output_dict[
+            'Equipment Cost USD with weather delays']
+        calculate_costs_output_dict['collection_labor_usd'] = calculate_costs_output_dict[
+            'Labor Cost USD with weather delays']
+        calculate_costs_output_dict['collection_material_usd'] = self._total_cable_cost
+        calculate_costs_output_dict['collection_mobilization_usd'] = collection_mobilization_usd
+
 
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
         calculate_costs_output_dict['summed_collection_cost'] = collection_cost['Cost USD'].sum()   #for landbosse_api

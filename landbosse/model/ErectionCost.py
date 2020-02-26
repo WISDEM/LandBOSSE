@@ -1092,6 +1092,15 @@ class ErectionCost(CostModule):
              ['Erection', 'Materials', 0]],
             columns=['Phase of construction', 'Type of cost', 'Cost USD'])
 
+        # For LandBOSSE API, cost breakdown by type stored as floating point values:
+        self.output_dict['erection_equipment_rental_usd'] = selected_detailed_data['Equipment rental cost USD'].sum()
+        self.output_dict['erection_labor_usd'] = selected_detailed_data['Labor cost USD'].sum()
+        self.output_dict['erection_material_usd'] = 0
+        self.output_dict['erection_other_usd'] = 0
+        self.output_dict['erection_mobilization_usd'] = selected_detailed_data['Mobilization cost USD'].sum()
+        self.output_dict['erection_fuel_usd'] =  selected_detailed_data['Fuel cost USD'].sum()
+
+
         total_cost_summed_erection = total_erection_cost.sum(numeric_only=True)[0]
 
         erection_wind_mult = selected_detailed_data['Wind multiplier']
