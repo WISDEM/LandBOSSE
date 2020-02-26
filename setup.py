@@ -27,7 +27,6 @@ setuptools.setup(
         'numpy==1.17.2',
         'sympy==1.4',
         'scipy==1.3.1',
-        'shapely==1.6.4.post2',
         'xlsxwriter==1.2.1',
         'xlrd==1.2.0',
         'pytest==5.2.1',
