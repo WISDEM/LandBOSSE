@@ -1,13 +1,12 @@
 import os
 import pandas as pd
-from logging import log
-from datetime import datetime
-
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
-import traceback
 
+
+# Call this function - run_landbosse() - to run LandBOSSE.
+#it
 def run_landbosse():
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
@@ -28,7 +27,9 @@ def run_landbosse():
 
         project_data_basename = project_parameters['Project data file']
         project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
-        # project_parameters['Labor cost multiplier']
+
+
+        # make sure you call create_master_input_dictionary() as soon as labor_cost_multiplier's value is changed.
         master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets, project_parameters)
         master_input_dict['error'] = dict()
 
@@ -115,7 +116,8 @@ def run_landbosse():
     return results
 
 
-
+# This method reads in the two input Excel files (project_list; project_1) and stores them as dataframes.
+# This method is called internally in run_landbosse(), where the data read in is converted to a master input dictionary.
 def read_data():
     path_to_project_list = os.path.dirname( __file__ )
     sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list', path_to_project_list)
@@ -148,5 +150,3 @@ def read_data():
 
 
 
-foo = run_landbosse()
-print(foo)

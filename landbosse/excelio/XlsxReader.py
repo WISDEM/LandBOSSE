@@ -368,7 +368,8 @@ class XlsxReader:
         # 'project_data' key in the incomplete_input_dict
 
         # Apply the labor multipliers
-        labor_cost_multiplier = project_parameters['Labor cost multiplier']
+        incomplete_input_dict['labor_cost_multiplier'] = project_parameters['Labor cost multiplier']
+        labor_cost_multiplier = incomplete_input_dict['labor_cost_multiplier']
         self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
 
         erection_input_worksheets = [
