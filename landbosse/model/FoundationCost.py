@@ -651,9 +651,17 @@ class FoundationCost(CostModule):
         foundation_cost = foundation_cost.append(material_costs)
 
         # calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
-        mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.1, 'Foundation']],
+        foundation_mob_cost = foundation_cost['Cost USD'].sum() * 0.1
+        mob_cost = pd.DataFrame([['Mobilization', foundation_mob_cost, 'Foundation']],
                                 columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         foundation_cost = foundation_cost.append(mob_cost)
+
+        # For LandBOSSE API, cost breakdown by type stored as floating point values:
+        calculate_costs_output_dict['foundation_equipment_rental_usd'] = equipment_cost_usd_with_weather_delays
+        calculate_costs_output_dict['foundation_labor_usd'] = labor_cost_usd_with_management_plus_weather_delays
+        calculate_costs_output_dict['foundation_material_usd'] = material_costs_sum
+        calculate_costs_output_dict['foundation_mobilization_usd'] = foundation_mob_cost
+
 
         # todo: we add a separate tab in the output file for costs (all costs will be the same format but it's a different format than other data)
         # columns in cost tab would include project_id, module, operation_id, type_of_cost, total_or_per_turbine, cost_usd

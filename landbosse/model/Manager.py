@@ -93,7 +93,7 @@ class Manager:
 
                 management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
                 management_cost.run_module()
-            except Exception as error:
+            except Exception as error:  # exception handling for landbosse_api
                 self.input_dict['error']['total_cost_error'] = error
             return 0
 

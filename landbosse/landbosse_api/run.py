@@ -56,27 +56,61 @@ def run_landbosse():
             msg = "Error in " + key + ": " + str(value)
             results['errors'].append(msg)
     else:
-        results['total_project_cost'] = output_dict['project_value_usd']
-        results['total_management_cost'] = output_dict['total_management_cost']
-        results['total_development_cost'] = output_dict['summed_development_cost']
-        results['total_sitepreparation_cost'] = output_dict['summed_sitepreparation_cost']
-        results['total_foundation_cost'] = output_dict['summed_foundation_cost']
+        results['total_project_cost']                   =       output_dict['project_value_usd']
 
-        # erection module results:
-        results['total_erection_cost'] = output_dict['total_cost_summed_erection']
+        # management cost module results:
+        results['total_management_cost']                =       output_dict['total_management_cost']
+        results['insurance_usd']                        =       output_dict['insurance_usd']
+        results['construction_permitting_usd']          =       output_dict['construction_permitting_usd']
+        results['project_management_usd']               =       output_dict['project_management_usd']
+        results['bonding_usd']                          =       output_dict['bonding_usd']
+        results['markup_contingency_usd']               =       output_dict['markup_contingency_usd']
+        results['engineering_usd']                      =       output_dict['engineering_usd']
+        results['site_facility_usd']                    =       output_dict['site_facility_usd']
+        results['total_management_cost']                =       output_dict['total_management_cost']
 
-        # grid connection module results:
-        results['total_gridconnection_cost'] = output_dict['trans_dist_usd']
+        # development cost module results:
+        results['total_development_cost']               =       output_dict['summed_development_cost']
+        if 'Development labor cost USD' in output_dict:
+            results['development_equipment_rental_usd'] =       master_input_dict['development_labor_cost_usd']
+        results['development_labor_usd']                =       0
+        results['development_material_usd']             =       0
+        results['development_mobilization_usd']         =       0
 
-        #collection module results:
-        results['total_collection_cost'] = output_dict['trans_dist_usd']
-        results['collection_equipment_rental_usd'] = output_dict['collection_equipment_rental_usd']
-        results['collection_labor_usd'] = output_dict['collection_labor_usd']
-        results['collection_material_usd'] = output_dict['collection_material_usd']
-        results['collection_mobilization_usd'] = output_dict['collection_mobilization_usd']
+        # site prep cost module results:
+        results['total_sitepreparation_cost']           =       output_dict['summed_sitepreparation_cost']
+        results['sitepreparation_equipment_rental_usd'] =       output_dict['collection_equipment_rental_usd']
+        results['sitepreparation_labor_usd']            =       output_dict['collection_labor_usd']
+        results['sitepreparation_material_usd']         =       output_dict['collection_material_usd']
+        results['sitepreparation_mobilization_usd']     =       output_dict['collection_mobilization_usd']
 
-        # substation module results:
-        results['total_substation_cost'] = output_dict['summed_substation_cost']
+        results['total_foundation_cost']                =       output_dict['summed_foundation_cost']
+        results['foundation_equipment_rental_usd']      =       output_dict['foundation_equipment_rental_usd']
+        results['foundation_labor_usd']                 =       output_dict['foundation_labor_usd']
+        results['foundation_material_usd']              =       output_dict['foundation_material_usd']
+        results['foundation_mobilization_usd']          =       output_dict['foundation_mobilization_usd']
+
+        # erection cost module results:
+        results['total_erection_cost']                  =       output_dict['total_cost_summed_erection']
+        results['erection_equipment_rental_usd']        =       output_dict['erection_equipment_rental_usd']
+        results['erection_labor_usd']                   =       output_dict['erection_labor_usd']
+        results['erection_material_usd']                =       output_dict['erection_material_usd']
+        results['erection_other_usd']                   =       output_dict['erection_other_usd']
+        results['erection_mobilization_usd']            =       output_dict['erection_mobilization_usd']
+        results['erection_fuel_usd']                    =       output_dict['erection_fuel_usd']
+
+        # grid connection cost module results:
+        results['total_gridconnection_cost']            =       output_dict['trans_dist_usd']
+
+        #collection cost module results:
+        results['total_collection_cost']                =       output_dict['summed_collection_cost']
+        results['collection_equipment_rental_usd']      =       output_dict['collection_equipment_rental_usd']
+        results['collection_labor_usd']                 =       output_dict['collection_labor_usd']
+        results['collection_material_usd']              =       output_dict['collection_material_usd']
+        results['collection_mobilization_usd']          =       output_dict['collection_mobilization_usd']
+
+        # substation cost module results:
+        results['total_substation_cost']                =       output_dict['summed_substation_cost']
 
     return results
 
