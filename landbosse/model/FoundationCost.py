@@ -410,6 +410,7 @@ class FoundationCost(CostModule):
         Foundation volume [in m^3] -> foundation_volume_concrete_m3_per_turbine
 
         """
+        #TODO: still updating/fine-tuning foundation size equations for small DW (Parangat - Feb 27, 2020)
         r = float(foundation_size_output_data['Radius_m'])
         if foundation_size_input_data['turbine_rating_MW'] < 0.1:
             foundation_size_output_data['excavated_volume_m3'] = r * r * foundation_size_input_data['depth']
