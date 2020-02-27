@@ -997,8 +997,8 @@ class ErectionCost(CostModule):
         hour_day = self.input_dict['hour_day']
         time_construct = self.input_dict['time_construct']
         deliveries_per_week = float(self.input_dict['rate_of_deliveries'])
-        duration_hours = erection_cost['Total time per op with weather'].sum()
-        duration_days = round(duration_hours / hour_day[time_construct])
+        duration_days = erection_cost['Time construct days'].sum()  
+        duration_hours = round(duration_days * hour_day[time_construct])
 
         # Merge crew and price data for management crews only.
         crew_cost = self.output_dict['crew_cost']
