@@ -494,7 +494,7 @@ class SitePreparationCost(CostModule):
             max_time_construct_days / 6))  # assumes working only 6 days per week
         siteprep_construction_months = calendar_construct_days / 30.0
         cost_new_roads_adder = \
-            num_turbines * 17639 + num_turbines * rotor_diameter_m * 24.8 + siteprep_construction_months * 55500 \
+            num_turbines * 17639 + num_turbines * rotor_diameter_m * 24.8 + calculate_cost_input_dict['construct_duration'] * 55500 \
             + num_access_roads * 3800
         cost_adder = self.new_and_existing_total_road_cost(cost_new_roads_adder)
         additional_costs = pd.DataFrame([['Other', cost_adder, 'Roads']],
