@@ -50,3 +50,9 @@
 + Added support for crane breakdowns
 
 + Fixed a roads issue.
+
+## 2.2.5
+
++ Fixed a solver problem that would hang during foundation calculations.
+
++ Added post processing scripts to load data into PostgreSQL
