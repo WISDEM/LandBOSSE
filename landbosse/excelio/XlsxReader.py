@@ -636,7 +636,9 @@ class XlsxReader:
         total_digit_count = 1
         index_digit_count = len(str(index))
 
-        if 0 < max_index < 1e1 - 1:
+        if max_index < 10:
+            total_digit_count = 1
+        elif 0 < max_index < 1e1 - 1:
             total_digit_count = 1
         elif 1e1 <= max_index < 1e2 - 1:
             total_digit_count = 2
