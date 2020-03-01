@@ -1,7 +1,7 @@
 import setuptools
 
 name = 'landbosse'
-version = '1.1.2'
+version = '2.2.3.93'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -29,9 +29,9 @@ setuptools.setup(
         'scipy==1.3.1',
         'xlsxwriter==1.2.1',
         'xlrd==1.2.0',
-        'pytest==5.2.1',
-        'pscyopg2-binary',
-        'sqlalchemy'
+        'pytest==5.3.5'
+        # 'pscyopg2-binary==2.8.4',
+        # 'sqlalchemy==1.3.13'
     ],
 
     command_options={
