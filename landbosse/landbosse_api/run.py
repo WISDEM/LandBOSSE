@@ -39,10 +39,11 @@ def run_landbosse():
 
 
     #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
+    # Refactoring Components DF based on user inputs
     tower_mass_tonne = tower_mass(master_input_dict['turbine_rating_MW'], master_input_dict['hub_height_meters'])
     num_tower_sections, tower_section_height_m = tower_specs(master_input_dict['hub_height_meters'], tower_mass_tonne)
-    master_input_dict['component_data'] = edit_tower_sections(master_input_dict['component_data'], num_tower_sections)
+    master_input_dict['component_data'] = edit_tower_sections(master_input_dict['component_data'], num_tower_sections,
+                                                              tower_mass_tonne, tower_section_height_m)
     #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
     # Manager class (1) manages the distribution of inout data for all modules and (2) executes landbosse
@@ -150,8 +151,8 @@ def read_data():
     return extended_project_list
 
 
-# print(run_landbosse())
-run_landbosse()
+print(run_landbosse())
+# run_landbosse()
 
 
 
