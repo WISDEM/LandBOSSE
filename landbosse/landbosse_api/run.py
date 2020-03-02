@@ -3,6 +3,7 @@ import pandas as pd
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
+from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections
 
 
 # Call this function - run_landbosse() - to run LandBOSSE.
@@ -35,6 +36,14 @@ def run_landbosse():
 
     output_dict = dict()
     project_id_with_serial = 'SAM_Run'
+
+
+    #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+    tower_mass_tonne = tower_mass(master_input_dict['turbine_rating_MW'], master_input_dict['hub_height_meters'])
+    num_tower_sections, tower_section_height_m = tower_specs(master_input_dict['hub_height_meters'], tower_mass_tonne)
+    master_input_dict['component_data'] = edit_tower_sections(master_input_dict['component_data'], num_tower_sections)
+    #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
     # Manager class (1) manages the distribution of inout data for all modules and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
@@ -141,7 +150,9 @@ def read_data():
     return extended_project_list
 
 
-print(run_landbosse())
+# print(run_landbosse())
+run_landbosse()
+
 
 
 
