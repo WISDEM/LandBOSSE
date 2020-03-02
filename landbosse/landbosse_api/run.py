@@ -3,7 +3,8 @@ import pandas as pd
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
-from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections
+from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections, blade_mass_ton, edit_blade_info, hub_mass, edit_hub_info, nacelle_mass, edit_nacelle_info
+# from landbosse.landbosse_api.turbine_scaling import *
 
 
 # Call this function - run_landbosse() - to run LandBOSSE.
@@ -37,14 +38,47 @@ def run_landbosse():
     output_dict = dict()
     project_id_with_serial = 'SAM_Run'
 
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    # Refactoring Components DF based on user input
 
-    #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-    # Refactoring Components DF based on user inputs
+    # print(master_input_dict['component_data'])
+
+    # nacelle
+    nacelle_mass_ton = nacelle_mass(master_input_dict['turbine_rating_MW'])
+    master_input_dict['component_data'] = edit_nacelle_info(master_input_dict['component_data'], nacelle_mass_ton,
+                                                            master_input_dict['hub_height_meters'])
+
+    master_input_dict['component_data'] = master_input_dict['component_data'].reset_index(drop=True)
+    # print(master_input_dict['component_data'])
+
+    # hub
+    hub_mass_ton = hub_mass(master_input_dict['turbine_rating_MW'])
+    master_input_dict['component_data'] = edit_hub_info(master_input_dict['component_data'], hub_mass_ton,
+                                                        master_input_dict['hub_height_meters'])
+
+    master_input_dict['component_data'] = master_input_dict['component_data'].reset_index(drop=True)
+    # print(master_input_dict['component_data'])
+
+    # combined 3 blades total mass in tons:
+    blade_mass = blade_mass_ton(master_input_dict['rotor_diameter_m'])
+    master_input_dict['component_data'] = edit_blade_info(master_input_dict['component_data'], blade_mass,
+                                                          master_input_dict['hub_height_meters'],
+                                                          master_input_dict['rotor_diameter_m'])
+
+    master_input_dict['component_data'] = master_input_dict['component_data'].reset_index(drop=True)
+    # print(master_input_dict['component_data'])
+
+    # tower
     tower_mass_tonne = tower_mass(master_input_dict['turbine_rating_MW'], master_input_dict['hub_height_meters'])
     num_tower_sections, tower_section_height_m = tower_specs(master_input_dict['hub_height_meters'], tower_mass_tonne)
     master_input_dict['component_data'] = edit_tower_sections(master_input_dict['component_data'], num_tower_sections,
                                                               tower_mass_tonne, tower_section_height_m)
-    #<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+    master_input_dict['component_data'] = master_input_dict['component_data'].reset_index(drop=True)
+    # print(master_input_dict['component_data'])
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
+
 
     # Manager class (1) manages the distribution of inout data for all modules and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
