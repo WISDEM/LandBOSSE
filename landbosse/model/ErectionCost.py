@@ -193,7 +193,7 @@ class ErectionCost(CostModule):
                 'last_number': row["Number of equipment"]
             })
 
-        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
+        for _, row in self.output_dict['erecetion_selected_detailed_data'].iterrows():
             result.append({
                 'unit': '',
                 'type': 'dataframe',
@@ -820,6 +820,9 @@ class ErectionCost(CostModule):
                                                         equip_crane_cost['Equipment price USD per hour'] * \
                                                         equip_crane_cost['Number of equipment']
 
+        # Drop duplicates from equip crane cost, if any
+        equip_crane_cost.drop_duplicates(subset=['Equipment ID', 'Operation', 'Crane name', 'Boom system'], inplace=True)
+
         equipment_cost_to_merge = equip_crane_cost[['Crane name', 'Boom system', 'Equipment ID', 'Operation', 'Equipment price USD per hour', 'Number of equipment', 'Equipment rental cost USD', 'Fuel consumption gal per day']]
         equipment_cost_to_merge = equipment_cost_to_merge.groupby(['Crane name', 'Boom system', 'Equipment ID', 'Operation']).sum().reset_index()
 
@@ -831,9 +834,11 @@ class ErectionCost(CostModule):
         non_management_crew_cost = crew_cost.loc[crew_cost['Operation'].isin(['Base', 'Top', 'Offload'])]
 
         # calculate crew costs
-        hours_per_week = 6 * hour_day[time_construct]
-        overtime_percentage = (hours_per_week - 40) / hours_per_week
-        normal_labor_rate = 40 / hours_per_week
+        non_overtime_hours_per_week = 40
+        working_days_per_week = 6
+        hours_per_week = working_days_per_week * hour_day[time_construct]
+        overtime_percentage = (hours_per_week - non_overtime_hours_per_week) / hours_per_week
+        normal_labor_rate = non_overtime_hours_per_week / hours_per_week
         crew_cost['Hourly rate for all workers'] = (non_management_crew_cost['Hourly rate USD per hour'] * non_management_crew_cost[
             'Number of workers']) * (normal_labor_rate + overtime_percentage * overtime_multiplier)
         crew_cost['Per diem all workers'] = non_management_crew_cost['Per diem USD per day'] * non_management_crew_cost['Number of workers']
