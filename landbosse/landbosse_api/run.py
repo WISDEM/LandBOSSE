@@ -235,29 +235,29 @@ def daterange(start_date, end_date):
 
 
 
-read_weather_data('/Users/pbhaskar/Desktop/az_rolling.srw')
+
 
 
 # Default inputs on the SAM UI. Commented out since SAM will pass these values down to LandBOSSE.
-# Un-comment these out
-sam_inputs = dict()
-sam_inputs['interconnect_voltage_kV'] = 137
-sam_inputs['distance_to_interconnect_mi'] = 10
-sam_inputs['num_turbines'] = 100
-sam_inputs['turbine_spacing_rotor_diameters'] = 4
-sam_inputs['row_spacing_rotor_diameters'] = 10
-sam_inputs['turbine_rating_MW'] = 1.5
-sam_inputs['hub_height_meters'] = 80
-sam_inputs['wind_shear_exponent'] = 0.20
-sam_inputs['depth'] = 2.36  # Foundation depth in m
-sam_inputs['rated_thrust_N'] =  589000
-sam_inputs['labor_cost_multiplier'] = 1
-sam_inputs['gust_velocity_m_per_s'] = 59.50
-sam_inputs['weather_file_path'] = '/Users/pbhaskar/Desktop/az_rolling.srw'  # provide absolute file path of weather file.
+# TODO: Un-comment these out if running this script directly.
+# sam_inputs = dict()
+# sam_inputs['interconnect_voltage_kV'] = 137
+# sam_inputs['distance_to_interconnect_mi'] = 10
+# sam_inputs['num_turbines'] = 100
+# sam_inputs['turbine_spacing_rotor_diameters'] = 4
+# sam_inputs['row_spacing_rotor_diameters'] = 10
+# sam_inputs['turbine_rating_MW'] = 1.5
+# sam_inputs['hub_height_meters'] = 80
+# sam_inputs['wind_shear_exponent'] = 0.20
+# sam_inputs['depth'] = 2.36  # Foundation depth in m
+# sam_inputs['rated_thrust_N'] =  589000
+# sam_inputs['labor_cost_multiplier'] = 1
+# sam_inputs['gust_velocity_m_per_s'] = 59.50
+# sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'  # provide absolute file path of weather file.
 
 
 
-print(run_landbosse(sam_inputs))
+# print(run_landbosse(sam_inputs))
 # run_landbosse()
 
 
