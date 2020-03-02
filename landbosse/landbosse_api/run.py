@@ -1,15 +1,18 @@
 import os
 import pandas as pd
+import shutil
 from landbosse.excelio import XlsxReader
+from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
-from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections, blade_mass_ton, edit_blade_info, hub_mass, edit_hub_info, nacelle_mass, edit_nacelle_info
-# from landbosse.landbosse_api.turbine_scaling import *
+from datetime import datetime, timedelta
+# from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections, blade_mass_ton, edit_blade_info, hub_mass, edit_hub_info, nacelle_mass, edit_nacelle_info
+from landbosse.landbosse_api.turbine_scaling import *
 
 
 # Call this function - run_landbosse() - to run LandBOSSE.
 # this method calls the read_data() method to read the 2 excel input files, and creates a master input dictionary from it.
-def run_landbosse():
+def run_landbosse(sam_input_dict):
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
@@ -36,7 +39,36 @@ def run_landbosse():
         master_input_dict['error'] = dict()
 
     output_dict = dict()
+    default_date_time = list()
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    # override default inputs with user modified inputs (on the SAM UI):
     project_id_with_serial = 'SAM_Run'
+    master_input_dict['interconnect_voltage_kV']            =   sam_input_dict['interconnect_voltage_kV']
+    master_input_dict['distance_to_interconnect_mi']        =   sam_input_dict['distance_to_interconnect_mi']
+    master_input_dict['num_turbines']                       =   sam_input_dict['num_turbines']
+    master_input_dict['turbine_spacing_rotor_diameters']    =   sam_input_dict['turbine_spacing_rotor_diameters']
+    master_input_dict['row_spacing_rotor_diameters']        =   sam_input_dict['row_spacing_rotor_diameters']
+    master_input_dict['turbine_rating_MW']                  =   sam_input_dict['turbine_rating_MW']
+    master_input_dict['hub_height_meters']                  =   sam_input_dict['hub_height_meters']
+    master_input_dict['wind_shear_exponent']                =   sam_input_dict['wind_shear_exponent']
+    master_input_dict['depth']                              =   sam_input_dict['depth'] # Foundation depth in m
+    master_input_dict['rated_thrust_N']                     =   sam_input_dict['rated_thrust_N']
+    master_input_dict['labor_cost_multiplier']              =   sam_input_dict['labor_cost_multiplier']
+    master_input_dict['gust_velocity_m_per_s']              =   sam_input_dict['gust_velocity_m_per_s']
+
+    # Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
+    # from breaking. Needs to have 8765 rows worth of date_time to stay consistent with shape of SAM weather data passed.
+    start_date = datetime(2011, 12, 30, 19, 00)
+    end_date = datetime(2012, 12, 30, 00, 00)
+    for single_date in daterange(start_date, end_date):
+        default_date_time.append(single_date.strftime("%Y-%m-%d %H:%M"))
+
+    weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
+    weather_window_input_df = weather_window_input_df.reset_index(drop=True)
+    weather_window_input_df.insert(loc=0, column='time', value=default_date_time)
+    master_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
+
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     # Refactoring Components DF based on user input
@@ -185,7 +217,47 @@ def read_data():
     return extended_project_list
 
 
-print(run_landbosse())
+def read_weather_data(file_path):
+    print(os.getcwd())
+    shutil.copy(file_path, 'temp_weather_file.txt')
+    weather_data = pd.read_csv('temp_weather_file.txt', sep=",", header=None)
+    os.remove('temp_weather_file.txt')
+    return weather_data
+
+# Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
+# from breaking. Needs to have 8765 rows worth of date_time to stay consistent with shape of SAM weather data passed.
+def daterange(start_date, end_date):
+    delta = timedelta(hours=1)
+    while start_date < end_date:
+        yield start_date
+        start_date += delta
+
+
+
+
+read_weather_data('/Users/pbhaskar/Desktop/az_rolling.srw')
+
+
+# Default inputs on the SAM UI. Commented out since SAM will pass these values down to LandBOSSE.
+# Un-comment these out
+sam_inputs = dict()
+sam_inputs['interconnect_voltage_kV'] = 137
+sam_inputs['distance_to_interconnect_mi'] = 10
+sam_inputs['num_turbines'] = 100
+sam_inputs['turbine_spacing_rotor_diameters'] = 4
+sam_inputs['row_spacing_rotor_diameters'] = 10
+sam_inputs['turbine_rating_MW'] = 1.5
+sam_inputs['hub_height_meters'] = 80
+sam_inputs['wind_shear_exponent'] = 0.20
+sam_inputs['depth'] = 2.36  # Foundation depth in m
+sam_inputs['rated_thrust_N'] =  589000
+sam_inputs['labor_cost_multiplier'] = 1
+sam_inputs['gust_velocity_m_per_s'] = 59.50
+sam_inputs['weather_file_path'] = '/Users/pbhaskar/Desktop/az_rolling.srw'  # provide absolute file path of weather file.
+
+
+
+print(run_landbosse(sam_inputs))
 # run_landbosse()
 
 
