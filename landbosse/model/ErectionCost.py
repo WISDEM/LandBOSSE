@@ -193,7 +193,7 @@ class ErectionCost(CostModule):
                 'last_number': row["Number of equipment"]
             })
 
-        for _, row in self.output_dict['erecetion_selected_detailed_data'].iterrows():
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
             result.append({
                 'unit': '',
                 'type': 'dataframe',
@@ -303,6 +303,13 @@ class ErectionCost(CostModule):
             'type': 'variable',
             'variable_df_key_col_name': 'number of hours in weather window',
             'value': len(self.input_dict['weather_window'])
+        })
+
+        result.append({
+            'unit': 'months',
+            'type': 'variable',
+            'variable_df_key_col_name': 'erection_construction_months',
+            'value': self.output_dict['erection_construction_months']
         })
 
         module = type(self).__name__
@@ -821,7 +828,7 @@ class ErectionCost(CostModule):
                                                         equip_crane_cost['Number of equipment']
 
         # Drop duplicates from equip crane cost, if any
-        equip_crane_cost.drop_duplicates(subset=['Equipment ID', 'Operation', 'Crane name', 'Boom system'], inplace=True)
+        # equip_crane_cost.drop_duplicates(subset=['Equipment ID', 'Operation', 'Crane name', 'Boom system'], inplace=True)
 
         equipment_cost_to_merge = equip_crane_cost[['Crane name', 'Boom system', 'Equipment ID', 'Operation', 'Equipment price USD per hour', 'Number of equipment', 'Equipment rental cost USD', 'Fuel consumption gal per day']]
         equipment_cost_to_merge = equipment_cost_to_merge.groupby(['Crane name', 'Boom system', 'Equipment ID', 'Operation']).sum().reset_index()
@@ -830,6 +837,7 @@ class ErectionCost(CostModule):
 
         # Merge crew and price data for non-management crews only (base, topping, and offload only)
         crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
+        # crew_cost.drop_duplicates(subset=['Labor type ID', 'Crew type ID', 'Operation', 'Crew name'], keep="first")
         self.output_dict['crew_cost'] = crew_cost
         non_management_crew_cost = crew_cost.loc[crew_cost['Operation'].isin(['Base', 'Top', 'Offload'])]
 
@@ -842,6 +850,12 @@ class ErectionCost(CostModule):
         crew_cost['Hourly rate for all workers'] = (non_management_crew_cost['Hourly rate USD per hour'] * non_management_crew_cost[
             'Number of workers']) * (normal_labor_rate + overtime_percentage * overtime_multiplier)
         crew_cost['Per diem all workers'] = non_management_crew_cost['Per diem USD per day'] * non_management_crew_cost['Number of workers']
+
+        # Crew cost group is getting two more people in it.
+        # Note to future self, enforce constraints on dataframes.
+        #
+        # Before crew_price sheet is used, sort based on labor cost. Then drop rows with duplicated job titles.
+        # Intent is to keep the most expensive labor row.
 
         # group crew costs by crew type and operation
         crew_cost_grouped = crew_cost.groupby(['Crew type ID', 'Operation']).sum().reset_index()

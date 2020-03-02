@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # debugger which can slow down when it is being used to debug multiple
     # processes.
 
-    run_parallel = False
+    run_parallel = True
     manager_runner = XlsxParallelManagerRunner(file_ops) if run_parallel else XlsxSerialManagerRunner(file_ops)
 
     # project_xlsx is the absolute path of the project_list.xlsx
