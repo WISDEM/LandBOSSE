@@ -253,7 +253,9 @@ def daterange(start_date, end_date):
 # sam_inputs['rated_thrust_N'] =  589000
 # sam_inputs['labor_cost_multiplier'] = 1
 # sam_inputs['gust_velocity_m_per_s'] = 59.50
-# sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'  # provide absolute file path of weather file.
+
+## Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
+# sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
 
 
