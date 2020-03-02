@@ -141,5 +141,7 @@ def read_data():
     return extended_project_list
 
 
+print(run_landbosse())
+
 
 
