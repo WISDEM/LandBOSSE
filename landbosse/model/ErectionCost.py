@@ -835,9 +835,12 @@ class ErectionCost(CostModule):
 
         possible_crane_cost = pd.merge(join_wind_operation, equipment_cost_to_merge, on=['Crane name', 'Boom system', 'Equipment ID', 'Operation'])
 
+        # Remove any duplicates from crew data.
+        crew_deduped = project_data['crew'].drop_duplicates(
+            subset=['Crew type ID', 'Operation', 'Crew name', 'Labor type ID'], keep="first")
+
         # Merge crew and price data for non-management crews only (base, topping, and offload only)
-        crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
-        # crew_cost.drop_duplicates(subset=['Labor type ID', 'Crew type ID', 'Operation', 'Crew name'], keep="first")
+        crew_cost = pd.merge(crew_deduped, project_data['crew_price'], on=['Labor type ID'])
         self.output_dict['crew_cost'] = crew_cost
         non_management_crew_cost = crew_cost.loc[crew_cost['Operation'].isin(['Base', 'Top', 'Offload'])]
 
