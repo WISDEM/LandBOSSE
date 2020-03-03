@@ -6,7 +6,6 @@ from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
 from datetime import datetime, timedelta
-# from landbosse.landbosse_api.turbine_scaling import tower_mass, tower_specs, edit_tower_sections, blade_mass_ton, edit_blade_info, hub_mass, edit_hub_info, nacelle_mass, edit_nacelle_info
 from landbosse.landbosse_api.turbine_scaling import *
 
 
@@ -49,6 +48,7 @@ def run_landbosse(sam_input_dict):
     master_input_dict['turbine_spacing_rotor_diameters']    =   sam_input_dict['turbine_spacing_rotor_diameters']
     master_input_dict['row_spacing_rotor_diameters']        =   sam_input_dict['row_spacing_rotor_diameters']
     master_input_dict['turbine_rating_MW']                  =   sam_input_dict['turbine_rating_MW']
+    master_input_dict['rotor_diameter_m']                   =   sam_input_dict['rotor_diameter_m']
     master_input_dict['hub_height_meters']                  =   sam_input_dict['hub_height_meters']
     master_input_dict['wind_shear_exponent']                =   sam_input_dict['wind_shear_exponent']
     master_input_dict['depth']                              =   sam_input_dict['depth'] # Foundation depth in m
@@ -63,10 +63,14 @@ def run_landbosse(sam_input_dict):
     for single_date in daterange(start_date, end_date):
         default_date_time.append(single_date.strftime("%Y-%m-%d %H:%M"))
 
-    weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
-    weather_window_input_df = weather_window_input_df.reset_index(drop=True)
-    weather_window_input_df.insert(loc=0, column='time', value=default_date_time)
-    master_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
+    # make sure weather data passed by SAM is hourly.
+    try:
+        weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
+        weather_window_input_df = weather_window_input_df.reset_index(drop=True)
+        weather_window_input_df.insert(loc=0, column='time', value=default_date_time)
+        master_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
+    except Exception as error:  # exception handling for landbosse_api
+        master_input_dict['error']['Weather_Data'] = error
 
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
@@ -218,7 +222,7 @@ def read_data():
 
 
 def read_weather_data(file_path):
-    print(os.getcwd())
+    # print(os.getcwd())
     shutil.copy(file_path, 'temp_weather_file.txt')
     weather_data = pd.read_csv('temp_weather_file.txt', sep=",", header=None)
     os.remove('temp_weather_file.txt')
@@ -247,6 +251,7 @@ def daterange(start_date, end_date):
 # sam_inputs['turbine_spacing_rotor_diameters'] = 4
 # sam_inputs['row_spacing_rotor_diameters'] = 10
 # sam_inputs['turbine_rating_MW'] = 1.5
+# sam_inputs['rotor_diameter_m'] = 70
 # sam_inputs['hub_height_meters'] = 80
 # sam_inputs['wind_shear_exponent'] = 0.20
 # sam_inputs['depth'] = 2.36  # Foundation depth in m
@@ -254,7 +259,8 @@ def daterange(start_date, end_date):
 # sam_inputs['labor_cost_multiplier'] = 1
 # sam_inputs['gust_velocity_m_per_s'] = 59.50
 
-## Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
+# Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
+# for instance:
 # sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
 
