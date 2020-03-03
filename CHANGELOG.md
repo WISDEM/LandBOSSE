@@ -56,3 +56,7 @@
 + Fixed a solver problem that would hang during foundation calculations.
 
 + Added post processing scripts to load data into PostgreSQL
+
+## 2.2.6
+
++ Fix setup.py to automatically find the `landbosse` package.
