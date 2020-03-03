@@ -1169,10 +1169,8 @@ class ErectionCost(CostModule):
         # Put some diagnostic data on selected_detailed_data. This is the number of crews needed
         # To complete the construction withing the construction duration.
 
-        # Since "number of crews" for offload and base / top is calculated on
-        # lines 549 and 430, respectively, "Number of crews" is being calculated
-        # through a proxy.The actual value should therefore be marked as
-        # something else.
+        # Operational days over time construct days isn't necessarily a proxy for a particular value.
+        # But in case it is useful for something, here it is.
 
         selected_detailed_data['Operational construct days over time construct days'] = \
             np.ceil(selected_detailed_data['Operational construct days'] / selected_detailed_data['Time construct days'])
