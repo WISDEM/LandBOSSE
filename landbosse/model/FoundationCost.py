@@ -86,13 +86,13 @@ class FoundationCost(CostModule):
         (int) estimated construction time in months
 
     num_delays
-        (int) Number of delay events   #TODO: Check with Alicia the definition is appropriate
+        (int) Number of delay events
 
     avg_hours_per_delay
-        (float) Average hours per delay event   #TODO: Check with Alicia the definition is appropriate
+        (float) Average hours per delay event
 
     std_dev_hours_per_delay
-        (float) Standard deviation from average hours per delay event   #TODO: Check with Alicia the definition is appropriate
+        (float) Standard deviation from average hours per delay event
 
     delay_speed_m_per_s
         (float) wind speed above which weather delays kick in
@@ -851,8 +851,14 @@ class FoundationCost(CostModule):
             self.weather_input_dict[
                 'wind_height_of_interest_m'] = self.input_dict['critical_height_non_erection_wind_delays_m']
 
-            # compute and specify weather delay mission time for roads
+            # duration_construction is in units of days
+            # duration_construction_months is in units of months
+            days_per_month = 30
             duration_construction = operation_data['Time construct days'].max(skipna=True)
+            duration_construction_months = duration_construction / days_per_month
+            self.output_dict['foundation_construction_months'] = duration_construction_months
+
+            # compute and specify weather delay mission time for roads
             operational_hrs_per_day = self.input_dict['hour_day'][self.input_dict['time_construct']]
             mission_time_hrs = duration_construction * operational_hrs_per_day
             self.weather_input_dict['mission_time_hours'] = mission_time_hrs
