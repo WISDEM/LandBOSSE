@@ -96,6 +96,7 @@ def edit_blade_info(components_DF, blade_mass_ton, HH, rotor_diameter_m):
     return components_DF
 
 def hub_mass(nameplate):
+    nameplate = nameplate * 1000    # convert form MW to kW
     hub_mass_ton = ((1e-06) * (nameplate ** 2)) + (0.0039 * nameplate) + 3.652
     return hub_mass_ton
 
@@ -120,6 +121,7 @@ def edit_hub_info(components_DF, hub_mass, HH):
 
 
 def nacelle_mass(nameplate):
+    nameplate = nameplate * 1000  # convert form MW to kW
     nacelle_mass_ton = ((4e-06) * (nameplate**2)) + (0.0233 * nameplate) + 3.7349
     return nacelle_mass_ton
 
