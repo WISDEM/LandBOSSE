@@ -31,7 +31,8 @@ setuptools.setup(
         'xlsxwriter',
         'xlrd',
         'psycopg2-binary',
-        'sqlalchemy'
+        'sqlalchemy',
+        'pytest'
     ],
     command_options={
             'build_sphinx': {
