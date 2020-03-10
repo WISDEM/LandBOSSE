@@ -144,8 +144,6 @@ class ErectionCost(CostModule):
             The output dictionary with key value pairs as found on the
             output documentation.
 
-        log
-            Python logging service for logging.
         """
         self.in_distributed_mode = input_dict['num_turbines'] <= 10
         self.input_dict = input_dict
