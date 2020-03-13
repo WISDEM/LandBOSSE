@@ -6,8 +6,8 @@ from wisdem.nrelcsm.nrel_csm import aep_csm
 from wisdem.turbine_costsse.nrel_csm_tcc_2015 import nrel_csm_2015
 
 blade_number   = 3
-machine_rating = 1e3 * np.arange(3.0, 10.1, 1.0) # kW
-rotor_diameter = np.arange(100.0, 301.0, 20.0) # m
+machine_rating = 1e3 * np.array([1.5, 2., 2.5, 3.5, 5., 6., 10.])  # kW
+rotor_diameter = np.array([91., 105., 117., 139., 166., 182., 235.])  # m
 blade_mass_exp = np.arange(1.7, 2.41, 0.1)
 max_tip_speed  = 90.0 # m/s
 opt_tsr        = 9.0  # Optimal tip speed ratio
