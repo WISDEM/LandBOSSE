@@ -27,8 +27,8 @@ weibull_k      = 2.0
 wind_speed     = np.arange(5.0, 15.1, 1.0) # m/s
 
 # Output containers
-tcc = [['Rating [kW]','Rotor Diam [m]','Blade Mass Exp','TCC [USD/kW]']]
-aep = [['Rating [kW]','Rotor Diam [m]','Wind Speed [m/s]','AEP [kWh/yr]']]
+tcc = [['Rating [kW]', 'Rotor Diam [m]', 'Blade Mass Exp', 'Hub Height [m]', 'TCC [USD/kW]']]
+aep = [['Rating [kW]', 'Rotor Diam [m]', 'Wind Speed [m/s]', 'AEP [kWh/yr]']]
 
 # Compute object instances
 prob_tcc = om.Problem()
@@ -44,17 +44,21 @@ aep_instance = aep_csm()
 # Calculation loop
 for irating, rating in enumerate(machine_rating):
     for idiam, diam in enumerate(rotor_diameter):
-        hub_height = diam + 20.0
-        
+        # Diameter or radius?
+        # hub_height = diam + 20.0
+
+        # Assume hub height = radius + 20 m (for tip clearance)
+        hub_height = (diam / 2.) + 20
+
         for iexp, bexp in enumerate(blade_mass_exp):
             prob_tcc['machine_rating'] = rating
             prob_tcc['rotor_diameter'] = diam
             prob_tcc['blade_user_exp'] = bexp
-            prob_tcc['hub_height']     = hub_height
+            prob_tcc['hub_height'] = hub_height
             
             prob_tcc.run_model()
             
-            tcc.append([rating, diam, bexp, float(prob_tcc['turbine_cost_kW']) ] )
+            tcc.append([rating, diam, bexp, hub_height, float(prob_tcc['turbine_cost_kW'])])
             
         for iwind, wind in enumerate(wind_speed):
             aep_instance.compute(rating, max_tip_speed, diam, max_Cp, opt_tsr,
