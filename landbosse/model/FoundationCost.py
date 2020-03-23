@@ -677,10 +677,10 @@ class FoundationCost(CostModule):
         foundation_cost = foundation_cost.append(material_costs)
 
         # Calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
-        # Assumed 10% of total foundation cost and add to foundation_cost for utility scale plant
+        # Assumed 5% of total foundation cost and add to foundation_cost for utility scale plant
         # A function of turbine size for distributed wind (< 10 turbines)
         if calculate_costs_input_dict['num_turbines'] > 10:
-            mobilization_cost = foundation_cost['Cost USD'].sum() * 0.1
+            mobilization_cost = foundation_cost['Cost USD'].sum() * 0.05
         else:
             if calculate_costs_input_dict['turbine_rating_MW'] < 0.1:
                 # Zero since mobilization cost of equipment is included in the equipment rental cost
