@@ -634,9 +634,7 @@ class FoundationCost(CostModule):
         # Create foundation cost dataframe
         foundation_cost = pd.DataFrame(columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-        # if calculate_costs_input_dict['turbine_rating_MW'] > 0.1:
-
-
+        # Calculate per diem
         per_diem = operation_data['Number of workers'] * operation_data['Number of crews'] * (operation_data['Time construct days'] +
                                                                                               np.ceil(operation_data['Time construct days'] / 7)) * calculate_costs_input_dict['rsmeans_per_diem']
         where_are_na_ns = np.isnan(per_diem)
@@ -644,86 +642,57 @@ class FoundationCost(CostModule):
         labor_equip_data['Cost USD'] = (labor_equip_data['Quantity of material'] * labor_equip_data['Rate USD per unit'] * calculate_costs_input_dict['overtime_multiplier'] + per_diem + calculate_costs_output_dict['managament_crew_cost_before_wind_delay']) * wind_multiplier
         self.output_dict['labor_equip_data'] = labor_equip_data
 
-        #Create equipment costs row to be appended to foundation_cost
+        # EQUIPMENT COST
+        # Create equipment costs row to be appended to foundation_cost
         equipment_dataframe = labor_equip_data[labor_equip_data['Type of cost'].str.match('Equipment rental')]
-
-        if calculate_costs_input_dict['turbine_rating_MW'] > 0.1:
-            equipment_dataframe = equipment_dataframe.where(
-                equipment_dataframe['Module'] == 'Foundations').dropna(
-                thresh=4)
-        else:
-            equipment_dataframe = equipment_dataframe.where(
-                equipment_dataframe['Module'] == 'Small DW Foundations').dropna(
-                thresh=4)
 
         equipment_cost_usd_without_delay = (
                 equipment_dataframe['Quantity of material'] * equipment_dataframe['Rate USD per unit'] *
                 calculate_costs_input_dict['overtime_multiplier'] + per_diem)
         equipment_cost_usd_with_weather_delays = equipment_cost_usd_without_delay.sum() * wind_multiplier
+        equipment_costs = pd.DataFrame([['Equipment rental', equipment_cost_usd_with_weather_delays, 'Foundation']],
+                                       columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-        if calculate_costs_input_dict['turbine_rating_MW'] > 0.1:
-            equipment_costs = pd.DataFrame([['Equipment rental', equipment_cost_usd_with_weather_delays, 'Foundation']],
-                                           columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-        else:
-            equipment_costs = pd.DataFrame([['Equipment rental', equipment_cost_usd_with_weather_delays, 'Small DW Foundations']],
-                                           columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-
-
+        # LABOR COST
         # Create labor costs row to be appended to foundation_cost
         labor_dataframe = labor_equip_data[labor_equip_data['Type of cost'].str.match('Labor')]
         labor_cost_usd_without_management= (labor_dataframe['Quantity of material'] * labor_dataframe['Rate USD per unit'] * calculate_costs_input_dict['overtime_multiplier'] + per_diem )
         labor_cost_usd_with_management = labor_cost_usd_without_management.sum() + calculate_costs_output_dict['managament_crew_cost_before_wind_delay']
         labor_cost_usd_with_management_plus_weather_delays = labor_cost_usd_with_management * wind_multiplier
-        if calculate_costs_input_dict['turbine_rating_MW'] > 0.1:
-            labor_costs = pd.DataFrame([['Labor', labor_cost_usd_with_management_plus_weather_delays, 'Foundation']],
-                                       columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-        else:
-            labor_costs = pd.DataFrame([['Labor', labor_cost_usd_with_management_plus_weather_delays, 'Small DW Foundations']],
-                                       columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+        labor_costs = pd.DataFrame([['Labor', labor_cost_usd_with_management_plus_weather_delays, 'Foundation']],
+                                   columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-
-
+        # MATERIAL COST
         material_cost_dataframe = pd.DataFrame(columns=['Operation ID', 'Type of cost', 'Cost USD'])
         material_cost_dataframe['Operation ID'] = material_data_entire_farm['Material type ID']
         material_cost_dataframe['Type of cost'] = 'Materials'
         material_cost_dataframe['Cost USD'] = material_data_entire_farm['Cost USD']
         material_costs_sum = material_cost_dataframe['Cost USD'].sum()
-        if calculate_costs_input_dict['turbine_rating_MW'] > 0.1:
-            material_costs = pd.DataFrame([['Materials', material_costs_sum, 'Foundation']],
-                                                   columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-        else:
-            material_costs = pd.DataFrame([['Materials', material_costs_sum, 'Small DW Foundations']],
-                                          columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+        material_costs = pd.DataFrame([['Materials', material_costs_sum, 'Foundation']],
+                                      columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-
-            # Append all cost items to foundation_cost
+        # Append all cost items to foundation_cost
         foundation_cost = foundation_cost.append(equipment_costs)
         foundation_cost = foundation_cost.append(labor_costs)
         foundation_cost = foundation_cost.append(material_costs)
 
-        # calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
-        # calculate mobilization cost as percentage (assumed 5%) of total foundation cost and add to foundation_cost for utility scale plant
-        # and as a function of turbine size for distributed wind:
+        # Calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
+        # Assumed 10% of total foundation cost and add to foundation_cost for utility scale plant
+        # A function of turbine size for distributed wind (< 10 turbines)
         if calculate_costs_input_dict['num_turbines'] > 10:
-            mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.05, 'Foundation']],
-                                    columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
+            mobilization_cost = foundation_cost['Cost USD'].sum() * 0.1
         else:
             if calculate_costs_input_dict['turbine_rating_MW'] < 0.1:
-                #since mobilization cost of equipment is included in the equipment rental cost
-                mob_cost = pd.DataFrame([['Mobilization', 0.0, 'Foundation']],
-                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-            elif calculate_costs_input_dict['turbine_rating_MW'] >= 0.1 and calculate_costs_input_dict['turbine_rating_MW'] < 0.25: #basically there is mobilization cost for 0-10 turbines 100+ kW in rating.
-                mob_cost = pd.DataFrame([['Mobilization', (
-                            foundation_cost['Cost USD'].sum() / calculate_costs_input_dict[
-                        'num_turbines']) * self.mobilization_cost(calculate_costs_input_dict['turbine_rating_MW']),
-                                          'Small DW Foundations']],
-                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+                # Zero since mobilization cost of equipment is included in the equipment rental cost
+                mobilization_cost = 0
             else:
-                mob_cost = pd.DataFrame([['Mobilization', (
-                            foundation_cost['Cost USD'].sum() / calculate_costs_input_dict[
-                        'num_turbines']) * self.mobilization_cost(calculate_costs_input_dict['turbine_rating_MW']),
-                                          'Foundation']],
-                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+                # There is mobilization cost for 0-10 turbines 100+ kW in rating.
+                num_turbines = calculate_costs_input_dict['num_turbines']
+                rating = calculate_costs_input_dict['turbine_rating_MW']
+                mobilization_multipler = self.mobilization_cost_multiplier(rating)
+                mobilization_cost = foundation_cost['Cost USD'].sum() / num_turbines * mobilization_multipler
+
+        mob_cost = pd.DataFrame([['Mobilization', mobilization_cost, 'Foundation']], columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         foundation_cost = foundation_cost.append(mob_cost)
 
         # todo: we add a separate tab in the output file for costs (all costs will be the same format but it's a different format than other data)
