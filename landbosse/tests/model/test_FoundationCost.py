@@ -27,16 +27,15 @@ class TestFoundtionCost(TestCase):
 
 
         self.input_dict = dict()
-        self.input_dict['depth'] = 1.5 # in m
+        self.input_dict['depth'] = 3.05 # in m
         self.project_name = 'project_1'
 
         self.input_dict['rated_thrust_N'] = 742e3
         self.input_dict['bearing_pressure_n_m2'] = 244200
         self.input_dict['critical_velocity_m_per_s'] = 52.5
         self.input_dict['gust_velocity_m_per_s'] = 60
-        self.input_dict['turbine_rating_MW'] = 0.02  # 20 kW Turbine
-        self.input_dict['rotor_diameter_m'] = 7    #Not used in foundation cost module, but reqd. by CostModule
 
+        
         #Below are the inputs for calculate_foundation_load():
         component_data = os.path.join(landbosse_test_input_dir(), 'components.csv')
         self.input_dict['component_data'] = pd.read_csv(component_data)
@@ -54,7 +53,7 @@ class TestFoundtionCost(TestCase):
         #'depth'
 
         #Below are the inputs for 'estimate_material_needs()':
-        self.input_dict['num_turbines'] = 1
+        self.input_dict['num_turbines'] = 100
         #foundation_volume_m3_per_turbine -> calculated in 'determine_foundation_size()':
 
         #Below are the inputs for 'estimate_construction_time()':
