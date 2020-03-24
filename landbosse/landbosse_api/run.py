@@ -47,7 +47,6 @@ def run_landbosse(sam_input_dict):
     master_input_dict['num_turbines']                       =   sam_input_dict['num_turbines']
     master_input_dict['turbine_spacing_rotor_diameters']    =   sam_input_dict['turbine_spacing_rotor_diameters']
     master_input_dict['row_spacing_rotor_diameters']        =   sam_input_dict['row_spacing_rotor_diameters']
-    master_input_dict['turbine_rating_MW']                  =   sam_input_dict['turbine_rating_MW']
     master_input_dict['rotor_diameter_m']                   =   sam_input_dict['rotor_diameter_m']
     master_input_dict['hub_height_meters']                  =   sam_input_dict['hub_height_meters']
     master_input_dict['wind_shear_exponent']                =   sam_input_dict['wind_shear_exponent']
@@ -55,6 +54,23 @@ def run_landbosse(sam_input_dict):
     master_input_dict['rated_thrust_N']                     =   sam_input_dict['rated_thrust_N']
     master_input_dict['labor_cost_multiplier']              =   sam_input_dict['labor_cost_multiplier']
     master_input_dict['gust_velocity_m_per_s']              =   sam_input_dict['gust_velocity_m_per_s']
+
+    # Ensuring user is runnning landbosse for turbine in range of [1]8] MW:
+    try:
+        if sam_input_dict['turbine_rating_MW'] > 8:
+            raise LargeTurbineSizeError
+        elif sam_input_dict['turbine_rating_MW'] < 1:
+            raise SmallTurbineSizeError
+        else:
+            master_input_dict['turbine_rating_MW']          =   sam_input_dict['turbine_rating_MW']
+    except LargeTurbineSizeError:
+        master_input_dict['error']['LargeTurbineSizeError'] = 'User selected turbine of rating greater than 8 MW. ' \
+                                                              'LandBOSSE provides reasonable results for turbines ' \
+                                                              'in range of 1-8 MW rating for now.'
+    except SmallTurbineSizeError:
+        master_input_dict['error']['SmallTurbineSizeError'] = 'User selected turbine of rating lesser than 1 MW. ' \
+                                                              'LandBOSSE provides reasonable results for turbines ' \
+                                                              'in range of 1-8 MW rating for now.'
 
     # Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
     # from breaking. Needs to have 8765 rows worth of date_time to stay consistent with shape of SAM weather data passed.
@@ -222,10 +238,8 @@ def read_data():
 
 
 def read_weather_data(file_path):
-    # print(os.getcwd())
-    shutil.copy(file_path, 'temp_weather_file.txt')
-    weather_data = pd.read_csv('temp_weather_file.txt', sep=",", header=None)
-    os.remove('temp_weather_file.txt')
+    # weather_data = pd.read_csv('temp_weather_file.txt', sep=",", header=None)
+    weather_data = pd.read_csv(file_path, sep=",", header=None)
     return weather_data
 
 # Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
@@ -263,6 +277,23 @@ def daterange(start_date, end_date):
 # for instance:
 # sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
+class Error(Exception):
+   """Base class for other exceptions"""
+   pass
+
+class SmallTurbineSizeError(Error):
+    """
+        Raised when user selects a turbine of rating less than 1 MW since LandBOSSE provides reasonable results for
+        turbines greater than 1 MW rating for now.
+    """
+    pass
+
+class LargeTurbineSizeError(Error):
+    """
+            Raised when user selects a turbine of rating less than 8 MW since LandBOSSE provides reasonable results for
+            turbines greater than 1 MW rating for now.
+    """
+    pass
 
 
 
