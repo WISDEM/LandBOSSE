@@ -73,9 +73,10 @@ def run_landbosse(sam_input_dict):
                                                               'in range of 1-8 MW rating for now.'
 
     # Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
-    # from breaking. Needs to have 8765 rows worth of date_time to stay consistent with shape of SAM weather data passed.
-    start_date = datetime(2011, 12, 30, 19, 00)
+    # from breaking. Needs to have 8760 rows worth of date_time to stay consistent with shape of SAM weather data passed.
+    start_date = datetime(2011, 12, 31, 00, 00)
     end_date = datetime(2012, 12, 30, 00, 00)
+    default_date_time = []
     for single_date in daterange(start_date, end_date):
         default_date_time.append(single_date.strftime("%Y-%m-%d %H:%M"))
 
@@ -84,7 +85,18 @@ def run_landbosse(sam_input_dict):
         weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
         weather_window_input_df = weather_window_input_df.reset_index(drop=True)
         weather_window_input_df.insert(loc=0, column='time', value=default_date_time)
-        master_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
+        column_names = weather_window_input_df.columns
+        renamed_columns = {
+            column_names[0]: 'Date UTC',
+            column_names[1]: 'Temp C',
+            column_names[2]: 'Pressure atm',
+            column_names[3]: 'Direction deg',
+            column_names[4]: 'Speed m per s'
+        }
+        weather_data = weather_window_input_df.rename(columns=renamed_columns)
+        weather_data = weather_data.reset_index(drop=True)
+        weather_data = weather_data[renamed_columns.values()]
+        master_input_dict['weather_window'] = read_weather_window(weather_data)
     except Exception as error:  # exception handling for landbosse_api
         master_input_dict['error']['Weather_Data'] = error
 
@@ -239,7 +251,7 @@ def read_data():
 
 def read_weather_data(file_path):
     # weather_data = pd.read_csv('temp_weather_file.txt', sep=",", header=None)
-    weather_data = pd.read_csv(file_path, sep=",", header=None)
+    weather_data = pd.read_csv(file_path, sep=",", header=None, skiprows=5, usecols=[0, 1, 2, 3, 4])
     return weather_data
 
 # Weather file passed by SAM does NOT have a 'Date UTC' column. So it needs to be manually added to prevent code
