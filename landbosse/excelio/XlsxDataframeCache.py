@@ -73,14 +73,7 @@ class XlsxDataframeCache:
             xlsx_filename = os.path.join(xlsx_path, f'{xlsx_basename}.xlsx')
 
         xlsx = pd.ExcelFile(xlsx_filename)
-        sheet_name_list = {sheet_name for sheet_name in xlsx.sheet_names}
-        weather_column_names = ['Date UTC', 'Temp C', 'Pressure atm', 'Direction deg', 'Speed m per s', '', '', '', '', '', '']
-        sheets_dict = {}
-        for sheet_name in sheet_name_list:
-            if sheet_name == 'weather_window':
-                sheets_dict[sheet_name] = xlsx.parse(sheet_name, header=None, skiprows=5, names=weather_column_names, usecols=['Date UTC', 'Temp C', 'Pressure atm', 'Direction deg', 'Speed m per s'])
-            else:
-                sheets_dict[sheet_name] = xlsx.parse(sheet_name)
+        sheets_dict = {sheet_name: xlsx.parse(sheet_name) for sheet_name in xlsx.sheet_names}
         cls._cache[xlsx_basename] = sheets_dict
         return cls.copy_dataframes(sheets_dict)
 
