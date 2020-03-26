@@ -377,7 +377,8 @@ class XlsxReader:
             'equip_price',
             'crew_price',
             'material_price',
-            'components'
+            'components',
+            'collection_layout'
         ]
 
         erection_project_data_dict = dict()
@@ -390,6 +391,9 @@ class XlsxReader:
         # Get the first set of data
         incomplete_input_dict['rsmeans'] = project_data_dataframes['rsmeans']
         incomplete_input_dict['site_facility_building_area_df'] = project_data_dataframes['site_facility_building_area']
+        incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
+        if project_parameters['Collection mode'] == 'manual' and (len(project_data_dataframes['collection_layout']['Adjacency matrix']) != (project_parameters['Number of turbines']+1)):
+            exit('ERROR: mismatch between # turbines and # turbine locations')
         incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
 
         # The weather window is stored on a sheet of the project_data, but
@@ -449,7 +453,7 @@ class XlsxReader:
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-        incomplete_input_dict['distance_to_grid_connection_km'] = project_parameters['Combined Homerun Trench Length to Substation (km)']
+        incomplete_input_dict['distance_to_grid_connection_mi'] = project_parameters['Distance to interconnect [mi]']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
         incomplete_input_dict['crew_cost'] = incomplete_input_dict['project_data']['crew_price']
 
@@ -469,7 +473,7 @@ class XlsxReader:
             'Combined Homerun Trench Length to Substation (km)']
 
         # Add inputs for transmission & Substation modules:
-        incomplete_input_dict['distance_to_interconnect_mi'] = project_parameters['Distance to interconnect (miles)']
+        incomplete_input_dict['distance_to_interconnect_mi'] = project_parameters['Distance to interconnect [mi]']
         incomplete_input_dict['interconnect_voltage_kV'] = project_parameters['Interconnect Voltage (kV)']
         new_switchyard = True
         if project_parameters['New Switchyard (y/n)'] == 'y':
@@ -499,6 +503,7 @@ class XlsxReader:
             incomplete_input_dict['markup_sales_and_use_tax'] = project_parameters['Markup sales and use tax']
             incomplete_input_dict['markup_overhead'] = project_parameters['Markup overhead']
             incomplete_input_dict['markup_profit_margin'] = project_parameters['Markup profit margin']
+            incomplete_input_dict['collection_mode'] = project_parameters['Collection mode']
 
         # Now fill any missing values with sensible defaults.
         defaults = DefaultMasterInputDict()
@@ -574,7 +579,7 @@ class XlsxReader:
         flag_use_user_homerun = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
         nameplate = project_parameters['Turbine rating MW']
 
-        distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
+        # distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625) #TODO decide between user defined dist to interconnect and formula
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
         new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
         road_length_adder_m = 1e3 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
@@ -596,7 +601,6 @@ class XlsxReader:
         project_parameters['Rate of deliveries(turbines per week)'] = rate_deliveries
         project_parameters['Development labor cost USD'] = development_labor_cost_usd
         project_parameters['Project size MW'] = project_size_MW
-        project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
         project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
         project_parameters['Road length adder (m)'] = road_length_adder_m
