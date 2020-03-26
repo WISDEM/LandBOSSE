@@ -82,19 +82,6 @@ def read_weather_window(weather_data, local_timezone='America/Denver'):
     pd.DataFrame
         A pandas data frame made from the CSV
     """
-    # set column names for weather data and keep only the renamed columns
-    column_names = weather_data[4:].columns
-    renamed_columns = {
-        column_names[0]: 'Date UTC',
-        column_names[1]: 'Temp C',
-        column_names[2]: 'Pressure atm',
-        column_names[3]: 'Direction deg',
-        column_names[4]: 'Speed m per s'
-    }
-    weather_data = weather_data[4:].rename(columns=renamed_columns)
-    weather_data = weather_data.reset_index(drop=True)
-    weather_data = weather_data[renamed_columns.values()]
-
     # Parse the datetime data and localize it to UTC
     weather_data['Date UTC'] = pd.to_datetime(weather_data['Date UTC']).dt.tz_localize('UTC')
 
