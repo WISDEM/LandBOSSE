@@ -23,7 +23,7 @@ setuptools.setup(
     tests_require=['nose'],
 
     install_requires=[
-        'pandas==0.25.1',
+        'pandas==1.0.3',
         'numpy==1.17.2',
         'sympy==1.4',
         'scipy==1.3.1',
