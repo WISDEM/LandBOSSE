@@ -65,6 +65,10 @@ def run_landbosse(sam_input_dict):
     master_input_dict['labor_cost_multiplier']              =   sam_input_dict['labor_cost_multiplier']
     master_input_dict['gust_velocity_m_per_s']              =   sam_input_dict['gust_velocity_m_per_s']
 
+    # update master input dict based on new labor cost multiplier:
+    labor_cost_multiplier = master_input_dict['labor_cost_multiplier']
+    xlsx_reader.apply_labor_multiplier_to_project_data_dict(project_data_sheets, labor_cost_multiplier)
+
     # Ensuring number of turbines is > 10:
     try:
         if sam_input_dict['num_turbines'] > 10:
