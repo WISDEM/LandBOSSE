@@ -2,7 +2,7 @@ import os
 import setuptools
 
 name = 'landbosse'
-version = '2.2.6'
+version = '2.2.7'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -20,11 +20,10 @@ setuptools.setup(
     description='LandBOSSE',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    # packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'],
-    packages=setuptools.find_packages(PACKAGE_PATH, "test"),
+    packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'],
+    # packages=setuptools.find_packages(PACKAGE_PATH, "test"),
     test_suite='nose.collector',
     tests_require=['nose'],
-
     install_requires=[
         'pandas==1.0.3',
         'numpy==1.17.2',
