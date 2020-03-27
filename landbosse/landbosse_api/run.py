@@ -310,9 +310,11 @@ sam_inputs['gust_velocity_m_per_s'] = 59.50
 # for instance:
 sam_inputs['weather_file_path'] = '/Users/pbhaskar/Desktop/az_rolling.srw'
 
+
 class Error(Exception):
    """Base class for other exceptions"""
    pass
+
 
 class SmallTurbineSizeError(Error):
     """
@@ -321,6 +323,7 @@ class SmallTurbineSizeError(Error):
     """
     pass
 
+
 class LargeTurbineSizeError(Error):
     """
             Raised when user selects a turbine of rating less than 8 MW since LandBOSSE provides reasonable results for
@@ -328,11 +331,13 @@ class LargeTurbineSizeError(Error):
     """
     pass
 
+
 class TurbineNumberError(Error):
     """
         Raised when number of turbines is less than 10; since LandBOSSE API does not currently handle BOS calculations
         for < 10 turbines.
     """
+
 
 class NegativeInputError(Error):
     """
