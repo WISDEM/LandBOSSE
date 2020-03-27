@@ -42,6 +42,16 @@ def run_landbosse(sam_input_dict):
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     # override default inputs with user modified inputs (on the SAM UI):
     project_id_with_serial = 'SAM_Run'
+
+    try:
+        for key, value in sam_input_dict.items():
+            if (type(value) == int or type(value) == float) and value < 0:
+                raise NegativeInputError
+    except NegativeInputError:
+        master_input_dict['error']['NegativeInputError'] = 'User entered a negative value for ' + key +'. This is an ' \
+                                                                                                       'invalid entry'
+
+
     master_input_dict['interconnect_voltage_kV']            =   sam_input_dict['interconnect_voltage_kV']
     master_input_dict['distance_to_interconnect_mi']        =   sam_input_dict['distance_to_interconnect_mi']
     master_input_dict['num_turbines']                       =   sam_input_dict['num_turbines']
@@ -284,7 +294,7 @@ def daterange(start_date, end_date):
 sam_inputs = dict()
 sam_inputs['interconnect_voltage_kV'] = 137
 sam_inputs['distance_to_interconnect_mi'] = 10
-sam_inputs['num_turbines'] = 1
+sam_inputs['num_turbines'] = 100
 sam_inputs['turbine_spacing_rotor_diameters'] = 4
 sam_inputs['row_spacing_rotor_diameters'] = 10
 sam_inputs['turbine_rating_MW'] = 1.5
@@ -322,6 +332,11 @@ class TurbineNumberError(Error):
     """
         Raised when number of turbines is less than 10; since LandBOSSE API does not currently handle BOS calculations
         for < 10 turbines.
+    """
+
+class NegativeInputError(Error):
+    """
+        User entered a negative input. This is an invalid entry.
     """
 
 
