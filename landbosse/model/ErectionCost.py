@@ -140,6 +140,11 @@ class ErectionCost(CostModule):
         self.output_dict = output_dict
         self.project_name = project_name
 
+        # These instance attributes are for diagnostics inside this class
+        # only.
+        self._possible_crane_cost = None
+        self._number_of_equip = None
+
     def run_module(self):
         """
         Runs the ErectionCost model and populates the IO dictionaries with
@@ -179,6 +184,24 @@ class ErectionCost(CostModule):
             A list of dicts, with each dict representing a row of the data.
         """
         result =[]
+
+        for _, row in self._number_of_equip.iterrows():
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': '_number_of_equip: Operation-Crane name-Boom system-Number of equipment',
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Number of equipment"]}',
+                'last_number': row["Number of equipment"]
+            })
+
+        for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
+            result.append({
+                'unit': '',
+                'type': 'dataframe',
+                'variable_df_key_col_name': f'erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days',
+                'value': f'{row["Operation"]}-{row["Crane name"]}-{row["Boom system"]}-{row["Operational construct days over time construct days"]}',
+                'last_number': row["Operational construct days over time construct days"]
+            })
 
         for row in self.output_dict['component_name_topvbase'].itertuples():
             dashed_row = '{} - {}'.format(row[1], row[2])
@@ -229,12 +252,12 @@ class ErectionCost(CostModule):
             })
 
         for _, row in self.output_dict['erection_selected_detailed_data'].iterrows():
-            value = row['Labor cost USD']
+            value = row['Labor cost USD without management']
             operation = row['Operation']
             result.append({
                 'unit': 'usd',
                 'type': 'dataframe',
-                'variable_df_key_col_name': f'erection_selected_detailed_data: crew cost',
+                'variable_df_key_col_name': f'erection_selected_detailed_data: crew cost without management',
                 'value': value,
                 'non_numeric_value': operation
             })
@@ -272,9 +295,52 @@ class ErectionCost(CostModule):
             result.append({
                 'unit': '',
                 'type': 'dataframe',
-                'variable_df_key_col_name': 'management_crews_cost: {}'.format(' <-> '.join(row.index)),
+                'variable_df_key_col_name': 'management_crews_cost: {}'.format(' - '.join(row.index)),
                 'value': ' - '.join(list(str(x) for x in row)[1:])
             })
+
+        result.append({
+            'unit': 'hours',
+            'type': 'variable',
+            'variable_df_key_col_name': 'number of hours in weather window',
+            'value': len(self.input_dict['weather_window'])
+        })
+
+        result.append({
+            'unit': 'none',
+            'type': 'variable',
+            'variable_df_key_col_name': 'time_weighted_weather_multiplier',
+            'value': self.output_dict['time_weighted_weather_multiplier']
+        })
+
+        result.append({
+            'unit': 'months',
+            'type': 'variable',
+            'variable_df_key_col_name': 'erection_construction_months',
+            'value': self.output_dict['erection_construction_months']
+        })
+
+        result.append({
+            'unit': 'usd',
+            'type': 'variable',
+            'variable_df_key_col_name': 'labor_cost_management',
+            'value': self.output_dict['labor_cost_management']
+        })
+
+        result.append({
+            'unit': 'usd',
+            'type': 'variable',
+            'variable_df_key_col_name': 'labor_cost_non_management',
+            'value': self.output_dict['labor_cost_non_management']
+        })
+
+        result.append({
+            'unit': 'usd',
+            'type': 'variable',
+            'variable_df_key_col_name': 'labor_cost_total',
+            'value': self.output_dict['labor_cost_total']
+        })
+
 
         module = type(self).__name__
         for _dict in result:
@@ -310,8 +376,10 @@ class ErectionCost(CostModule):
             Dataframe of possible_cranes (with geometry) and operational time for cranes
         """
         project_data = self.input_dict['project_data']
-        construct_duration = self.input_dict['construct_duration']
-        operational_construction_time = self.input_dict['operational_construction_time']
+        construct_duration = self.input_dict['construct_duration'] # Total project construction time (months)
+        operational_construction_time = self.input_dict['operational_construction_time'] # Hours, 10 or 24
+
+        # Why multiply by hardcoded 1/3?
         erection_construction_time = 1 / 3 * construct_duration
         breakpoint_between_base_and_topping_percent = self.input_dict['breakpoint_between_base_and_topping_percent']
         hub_height_m = self.input_dict['hub_height_meters']
@@ -790,23 +858,38 @@ class ErectionCost(CostModule):
                                                         equip_crane_cost['Equipment price USD per hour'] * \
                                                         equip_crane_cost['Number of equipment']
 
+        # Drop duplicates from equip crane cost, if any
+        # equip_crane_cost.drop_duplicates(subset=['Equipment ID', 'Operation', 'Crane name', 'Boom system'], inplace=True)
+
         equipment_cost_to_merge = equip_crane_cost[['Crane name', 'Boom system', 'Equipment ID', 'Operation', 'Equipment price USD per hour', 'Number of equipment', 'Equipment rental cost USD', 'Fuel consumption gal per day']]
         equipment_cost_to_merge = equipment_cost_to_merge.groupby(['Crane name', 'Boom system', 'Equipment ID', 'Operation']).sum().reset_index()
 
         possible_crane_cost = pd.merge(join_wind_operation, equipment_cost_to_merge, on=['Crane name', 'Boom system', 'Equipment ID', 'Operation'])
 
+        # Remove any duplicates from crew data.
+        crew_deduped = project_data['crew'].drop_duplicates(
+            subset=['Crew type ID', 'Operation', 'Crew name', 'Labor type ID'], keep="first")
+
         # Merge crew and price data for non-management crews only (base, topping, and offload only)
-        crew_cost = pd.merge(project_data['crew'], project_data['crew_price'], on=['Labor type ID'])
+        crew_cost = pd.merge(crew_deduped, project_data['crew_price'], on=['Labor type ID'])
         self.output_dict['crew_cost'] = crew_cost
         non_management_crew_cost = crew_cost.loc[crew_cost['Operation'].isin(['Base', 'Top', 'Offload'])]
 
         # calculate crew costs
-        hours_per_week = 6 * hour_day[time_construct]
-        overtime_percentage = (hours_per_week - 40) / hours_per_week
-        normal_labor_rate = 40 / hours_per_week
+        non_overtime_hours_per_week = 40
+        working_days_per_week = 6
+        hours_per_week = working_days_per_week * hour_day[time_construct]
+        overtime_percentage = (hours_per_week - non_overtime_hours_per_week) / hours_per_week
+        normal_labor_rate = non_overtime_hours_per_week / hours_per_week
         crew_cost['Hourly rate for all workers'] = (non_management_crew_cost['Hourly rate USD per hour'] * non_management_crew_cost[
             'Number of workers']) * (normal_labor_rate + overtime_percentage * overtime_multiplier)
         crew_cost['Per diem all workers'] = non_management_crew_cost['Per diem USD per day'] * non_management_crew_cost['Number of workers']
+
+        # Crew cost group is getting two more people in it.
+        # Note to future self, enforce constraints on dataframes.
+        #
+        # Before crew_price sheet is used, sort based on labor cost. Then drop rows with duplicated job titles.
+        # Intent is to keep the most expensive labor row.
 
         # group crew costs by crew type and operation
         crew_cost_grouped = crew_cost.groupby(['Crew type ID', 'Operation']).sum().reset_index()
@@ -818,8 +901,8 @@ class ErectionCost(CostModule):
         labor_day_operation = round(possible_crane_cost['Total time per op with weather'] / hour_day[time_construct])
         possible_crane_cost['Subtotal for hourly labor (non-management) USD'] = possible_crane_cost['Total time per op with weather'] * possible_crane_cost['Hourly rate for all workers']
         possible_crane_cost['Subtotal for per diem labor (non-management) USD'] = labor_day_operation * possible_crane_cost['Per diem all workers']
-        possible_crane_cost['Labor cost USD'] = possible_crane_cost['Subtotal for hourly labor (non-management) USD'] + \
-                                                possible_crane_cost['Subtotal for per diem labor (non-management) USD']
+        possible_crane_cost['Labor cost USD without management'] = possible_crane_cost['Subtotal for hourly labor (non-management) USD'] + \
+                                                                   possible_crane_cost['Subtotal for per diem labor (non-management) USD']
 
 
         # calculate fuel costs
@@ -835,12 +918,15 @@ class ErectionCost(CostModule):
         same_topbase_crane_list = possible_crane_topbase[['Crane name', 'Boom system']]
         possible_crane_topbase  = same_topbase_crane_list.merge(possible_crane_cost, on=['Crane name', 'Boom system'])
         possible_crane_topbase_sum = possible_crane_topbase.groupby(['Crane name',
-                                                                     'Boom system'])['Labor cost USD',
+                                                                     'Boom system'])['Labor cost USD without management',
                                                                                      'Subtotal for hourly labor (non-management) USD',
                                                                                      'Subtotal for per diem labor (non-management) USD',
                                                                                      'Equipment rental cost USD',
                                                                                      'Fuel cost USD'
         ].sum().reset_index()
+
+        # Store the possible cranes for the top and base for future diagnostics.
+        self._possible_crane_cost = possible_crane_cost.copy()
 
         # group crane spec data for mobilization
         mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])[
@@ -853,7 +939,7 @@ class ErectionCost(CostModule):
                                            on=['Crane name', 'Boom system'])
 
         # compute total project cost for erection
-        topbase_same_crane_cost['Total cost USD'] = topbase_same_crane_cost['Labor cost USD'] + \
+        topbase_same_crane_cost['Total cost USD'] = topbase_same_crane_cost['Labor cost USD without management'] + \
                                                     topbase_same_crane_cost['Equipment rental cost USD'] + \
                                                     topbase_same_crane_cost['Fuel cost USD'] + \
                                                     topbase_same_crane_cost[
@@ -863,7 +949,8 @@ class ErectionCost(CostModule):
         topbase_same_crane_cost['Operation'] = 'Base + Top'
 
         # calculate costs if top and base use separate cranes
-        separate_topbase = possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD',
+        separate_topbase = \
+            possible_crane_cost.groupby(['Operation', 'Crane name', 'Boom system'])['Labor cost USD without management',
                                                                                                    'Subtotal for hourly labor (non-management) USD',
                                                                                                    'Subtotal for per diem labor (non-management) USD',
                                                                                                    'Equipment rental cost USD',
@@ -874,7 +961,7 @@ class ErectionCost(CostModule):
         separate_topbase_crane_cost = pd.merge(separate_topbase, mobilization_costs, on=['Crane name', 'Boom system'])
 
         # compute total project cost for erection
-        separate_topbase_crane_cost['Total cost USD'] = separate_topbase_crane_cost['Labor cost USD'] + \
+        separate_topbase_crane_cost['Total cost USD'] = separate_topbase_crane_cost['Labor cost USD without management'] + \
                                                         separate_topbase_crane_cost['Equipment rental cost USD'] + \
                                                         separate_topbase_crane_cost['Fuel cost USD'] + \
                                                         separate_topbase_crane_cost[
@@ -963,8 +1050,8 @@ class ErectionCost(CostModule):
         hour_day = self.input_dict['hour_day']
         time_construct = self.input_dict['time_construct']
         deliveries_per_week = float(self.input_dict['rate_of_deliveries'])
-        duration_hours = erection_cost['Total time per op with weather'].sum()
-        duration_days = round(duration_hours / hour_day[time_construct])
+        duration_days = erection_cost['Time construct days'].sum()  
+        duration_hours = round(duration_days * hour_day[time_construct])
 
         # Merge crew and price data for management crews only.
         crew_cost = self.output_dict['crew_cost']
@@ -1004,6 +1091,11 @@ class ErectionCost(CostModule):
 
         # Total management cost
         total_management_cost = management_crews['crew_level_total_costs'].sum()
+
+        # erection_construction_months is the duration of erection time in
+        # units of months.
+        days_per_month = 30
+        self.output_dict['erection_construction_months'] = duration_days / days_per_month
 
         return management_crews, management_crew_cost_grouped, total_management_cost
 
@@ -1045,6 +1137,7 @@ class ErectionCost(CostModule):
 
         join_wind_operation['Wind multiplier'] = 1 / (1 - join_wind_operation['Wind delay percent'])
 
+        # 'Total time per op with weather' units are hours
         join_wind_operation['Total time per op with weather'] = (join_wind_operation['Operation time all turbines hrs'] *
                                                                  join_wind_operation['Wind multiplier'])
 
@@ -1066,12 +1159,6 @@ class ErectionCost(CostModule):
 
         management_crews_cost, management_crews_cost_grouped, total_management_cost = self.calculate_management_crews_cost(selected_detailed_data)
 
-        selected_detailed_data['Subtotal for per diem labor (management) USD'] = management_crews_cost['per_diem_costs'].sum()
-        selected_detailed_data['Subtotal for hourly labor (management) USD'] = management_crews_cost['hourly_costs'].sum()
-
-        selected_detailed_data['Labor cost USD'] += selected_detailed_data['Subtotal for hourly labor (management) USD'] + \
-                                                    selected_detailed_data['Subtotal for per diem labor (management) USD']
-
         crane_choice = selected_detailed_data[['Crane name', 'Boom system', 'Operation']].drop_duplicates()
 
         selected_detailed_data['crane_boom_operation_concat'] = selected_detailed_data[['Crane name', 'Boom system', 'Operation']].apply(lambda x: '-'.join(x), axis=1)
@@ -1083,10 +1170,17 @@ class ErectionCost(CostModule):
                             columns={"crane_boom_operation_concat": "Operation ID", "variable": "Type of cost",
                                      "value": "Cost"})
 
+        subtotal_per_diem_labor_management_USD = management_crews_cost['per_diem_costs'].sum()
+        subtotal_hourly_labor_management_USD = management_crews_cost['hourly_costs'].sum()
+
+        self.output_dict['labor_cost_management'] = subtotal_per_diem_labor_management_USD + subtotal_hourly_labor_management_USD
+        self.output_dict['labor_cost_non_management'] = selected_detailed_data['Labor cost USD without management'].sum()
+        self.output_dict['labor_cost_total'] = self.output_dict['labor_cost_management'] + self.output_dict['labor_cost_non_management']
+
         total_erection_cost = pd.DataFrame(
             [['Erection', 'Equipment rental', selected_detailed_data['Equipment rental cost USD'].sum()],
              ['Erection', 'Fuel', selected_detailed_data['Fuel cost USD'].sum()],
-             ['Erection', 'Labor', selected_detailed_data['Labor cost USD'].sum()],
+             ['Erection', 'Labor', self.output_dict['labor_cost_total']],
              ['Erection', 'Mobilization', selected_detailed_data['Mobilization cost USD'].sum()],
              ['Erection', 'Other', 0],
              ['Erection', 'Materials', 0]],
@@ -1094,7 +1188,7 @@ class ErectionCost(CostModule):
 
         # For LandBOSSE API, cost breakdown by type stored as floating point values:
         self.output_dict['erection_equipment_rental_usd'] = selected_detailed_data['Equipment rental cost USD'].sum()
-        self.output_dict['erection_labor_usd'] = selected_detailed_data['Labor cost USD'].sum()
+        self.output_dict['erection_labor_usd'] = self.output_dict['labor_cost_total']
         self.output_dict['erection_material_usd'] = 0
         self.output_dict['erection_other_usd'] = 0
         self.output_dict['erection_mobilization_usd'] = selected_detailed_data['Mobilization cost USD'].sum()
@@ -1112,6 +1206,23 @@ class ErectionCost(CostModule):
         self.output_dict['crane_data_output'] = crane_data_output
         self.output_dict['crane_cost_details'] = crane_cost_details
         self.output_dict['total_cost_summed_erection'] = total_cost_summed_erection
+
+        # Put some diagnostic data on selected_detailed_data. This is the number of crews needed
+        # To complete the construction withing the construction duration.
+
+        # Operational days over time construct days isn't necessarily a proxy for a particular value.
+        # But in case it is useful for something, here it is.
+
+        selected_detailed_data['Operational construct days over time construct days'] = \
+            np.ceil(selected_detailed_data['Operational construct days'] / selected_detailed_data['Time construct days'])
+
+        total_time_construct_days = (selected_detailed_data['Time construct days']).sum()
+        self.output_dict['time_weighted_weather_multiplier'] = (selected_detailed_data['Wind multiplier'] * (selected_detailed_data['Time construct days']) / total_time_construct_days).sum()
+
+        # Now get the number of equipment diagnostic data ready. This is held on an instance
+        # attribute because it isn't meant to be used outside of the class.
+        self._number_of_equip = selected_detailed_data.merge(self._possible_crane_cost, on=['Crane name', 'Boom system', 'Operation'], how='inner')
+        self._number_of_equip = self._number_of_equip[['Operation', 'Crane name', 'Boom system', 'Number of equipment']]
 
         # Management crews data
         self.output_dict['management_crews_cost'] = management_crews_cost

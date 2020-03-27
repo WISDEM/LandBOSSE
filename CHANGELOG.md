@@ -53,6 +53,20 @@
 
 ## 2.2.5
 
-+ Fixed a solver problem that would hang during foundation calculations.
++ Fixed a solver problem that would hang during foundation calculations. This was a bug encountered in the upgrade to SymPy 1.5.1
 
 + Added post processing scripts to load data into PostgreSQL
+
+## 2.2.6
+
++ Fix setup.py to automatically find the `landbosse` package.
+
+## 2.2.7
+
++ Chnaged construction duration functionality.
+
++ Weather window can now be extended to an arbitrarily long length by duplicating the underlying wind data.
+
++ All modules now report the actual construction time they require to perform the scope of work they model.
+
++ ManagementCost now keeps the management crew onsite for only the time necessary to complete all scope of work.
