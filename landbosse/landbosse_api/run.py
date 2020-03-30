@@ -315,6 +315,7 @@ def daterange(start_date, end_date):
 # sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
 
+
 class Error(Exception):
    """Base class for other exceptions"""
    pass
@@ -341,12 +342,14 @@ class TurbineNumberError(Error):
         Raised when number of turbines is less than 10; since LandBOSSE API does not currently handle BOS calculations
         for < 10 turbines.
     """
+    pass
 
 
 class NegativeInputError(Error):
     """
         User entered a negative input. This is an invalid entry.
     """
+    pass
 
 
 # print(run_landbosse(sam_inputs))
