@@ -302,7 +302,7 @@ def daterange(start_date, end_date):
 # sam_inputs['turbine_spacing_rotor_diameters'] = 4
 # sam_inputs['row_spacing_rotor_diameters'] = 10
 # sam_inputs['turbine_rating_MW'] = 1.5
-# sam_inputs['rotor_diameter_m'] = 70
+# sam_inputs['rotor_diameter_m'] = 77
 # sam_inputs['hub_height_meters'] = 80
 # sam_inputs['wind_shear_exponent'] = 0.20
 # sam_inputs['depth'] = 2.36  # Foundation depth in m

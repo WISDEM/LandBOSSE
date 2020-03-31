@@ -119,6 +119,12 @@ class Manager:
 
                 management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
                 management_cost.run_module()
+
+                self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0] + \
+                                                       self.output_dict['total_management_cost']
+
+                self.output_dict['project_value_usd'] = self.input_dict['project_value_usd']
+
             except Exception as error:  # exception handling for landbosse_api
                 self.input_dict['error']['total_cost_error'] = error
             return 0
