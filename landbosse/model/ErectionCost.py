@@ -956,12 +956,17 @@ class ErectionCost(CostModule):
 
         # Mobilization cost is a function of turbine size for distributed wind.
         # For utility scale wind, mobilization costs need to be doubled.
-        if self.in_distributed_mode:
-            mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] \
-                                                          * self.mobilization_cost(turbine_rating_MW)
-        else:
-            mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2
+        # if self.in_distributed_mode:
+        #     mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] \
+        #                                                   * self.mobilization_cost(turbine_rating_MW)
+        # else:
+        #     mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2
 
+        # For utility scale operations only: Double the mobilization cost to
+        # include both mobilization and demobilization costs.
+
+        if not self.in_distributed_mode:
+            mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2
 
 
         # join top and base crane data with mobilization data
