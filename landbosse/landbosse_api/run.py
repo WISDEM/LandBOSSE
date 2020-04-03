@@ -187,18 +187,14 @@ def run_landbosse(sam_input_dict):
                                                                                                        'invalid entry'
 
 
-    master_input_dict['interconnect_voltage_kV']            =   sam_input_dict['interconnect_voltage_kV']
-    master_input_dict['distance_to_interconnect_mi']        =   sam_input_dict['distance_to_interconnect_mi']
-    master_input_dict['num_turbines']                       =   sam_input_dict['num_turbines']
-    master_input_dict['turbine_spacing_rotor_diameters']    =   sam_input_dict['turbine_spacing_rotor_diameters']
-    master_input_dict['row_spacing_rotor_diameters']        =   sam_input_dict['row_spacing_rotor_diameters']
-    master_input_dict['rotor_diameter_m']                   =   sam_input_dict['rotor_diameter_m']
-    master_input_dict['hub_height_meters']                  =   sam_input_dict['hub_height_meters']
-    master_input_dict['wind_shear_exponent']                =   sam_input_dict['wind_shear_exponent']
-    master_input_dict['depth']                              =   sam_input_dict['depth'] # Foundation depth in m
-    master_input_dict['rated_thrust_N']                     =   sam_input_dict['rated_thrust_N']
-    master_input_dict['labor_cost_multiplier']              =   sam_input_dict['labor_cost_multiplier']
-    master_input_dict['gust_velocity_m_per_s']              =   sam_input_dict['gust_velocity_m_per_s']
+    # Loop to collect user provided inputs that will override defaults:
+
+    for key, _ in sam_input_dict.items():
+        if key == 'weather_file_path':  # weather_file_path is handled later in this codebase. Skip storing it for now.
+            pass
+        else:
+            master_input_dict[key] = sam_input_dict[key]
+
 
     # update master input dict based on new labor cost multiplier:
     labor_cost_multiplier = master_input_dict['labor_cost_multiplier']
@@ -436,19 +432,19 @@ def daterange(start_date, end_date):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
 sam_inputs = dict()
-sam_inputs['interconnect_voltage_kV'] = 137
-sam_inputs['distance_to_interconnect_mi'] = 10
-sam_inputs['num_turbines'] = 100
-sam_inputs['turbine_spacing_rotor_diameters'] = 4
-sam_inputs['row_spacing_rotor_diameters'] = 10
-sam_inputs['turbine_rating_MW'] = 1.5
-sam_inputs['rotor_diameter_m'] = 77
-sam_inputs['hub_height_meters'] = 80
-sam_inputs['wind_shear_exponent'] = 0.20
-sam_inputs['depth'] = 2.36  # Foundation depth in m
-sam_inputs['rated_thrust_N'] =  589000
-sam_inputs['labor_cost_multiplier'] = 1
-sam_inputs['gust_velocity_m_per_s'] = 59.50
+# sam_inputs['interconnect_voltage_kV'] = 137
+# sam_inputs['distance_to_interconnect_mi'] = 10
+# sam_inputs['num_turbines'] = 100
+# sam_inputs['turbine_spacing_rotor_diameters'] = 4
+# sam_inputs['row_spacing_rotor_diameters'] = 10
+# sam_inputs['turbine_rating_MW'] = 1.5
+# sam_inputs['rotor_diameter_m'] = 77
+# sam_inputs['hub_height_meters'] = 80
+# sam_inputs['wind_shear_exponent'] = 0.20
+# sam_inputs['depth'] = 2.36  # Foundation depth in m
+# sam_inputs['rated_thrust_N'] =  589000
+# sam_inputs['labor_cost_multiplier'] = 1
+# sam_inputs['gust_velocity_m_per_s'] = 59.50
 
 # Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
 # for instance:
@@ -492,7 +488,7 @@ class NegativeInputError(Error):
     pass
 
 
-print(run_landbosse(sam_inputs))
+# print(run_landbosse(sam_inputs))
 # run_landbosse()
 
 
