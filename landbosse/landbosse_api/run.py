@@ -107,7 +107,12 @@ def run_landbosse(sam_input_dict):
 
     # make sure weather data passed by SAM is hourly.
     try:
-        weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
+        if 'weather_file_path' in sam_input_dict:
+            weather_window_input_df = read_weather_data(sam_input_dict['weather_file_path'])
+        else:   # if user doesnt provide weather file, use default.
+            weather_file_path = input_output_path + '/project_data/az_rolling.srw'
+            weather_window_input_df = read_weather_data(weather_file_path)
+
         weather_window_input_df = weather_window_input_df.reset_index(drop=True)
         weather_window_input_df.insert(loc=0, column='time', value=default_date_time)
         column_names = weather_window_input_df.columns
