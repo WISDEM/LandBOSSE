@@ -53,4 +53,6 @@ class TestLandBOSSE_API(TestCase):
         weather_data = read_weather_data(self.file_path)
         self.assertEqual(len(weather_data), 8760)
 
-
+    def test_read_data(self):
+        project_list = read_data()
+        self.assertEqual(len(project_list.columns), 43)
