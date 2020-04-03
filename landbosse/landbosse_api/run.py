@@ -345,6 +345,7 @@ def run_landbosse(sam_input_dict):
         results['sitepreparation_labor_usd']            =       output_dict['sitepreparation_labor_usd']
         results['sitepreparation_material_usd']         =       output_dict['sitepreparation_material_usd']
         results['sitepreparation_mobilization_usd']     =       output_dict['sitepreparation_mobilization_usd']
+        results['sitepreparation_other_usd']            =       output_dict['sitepreparation_other_usd']
 
         results['total_foundation_cost']                =       output_dict['summed_foundation_cost']
         results['foundation_equipment_rental_usd']      =       output_dict['foundation_equipment_rental_usd']
@@ -431,7 +432,7 @@ def daterange(start_date, end_date):
 
 # Default inputs on the SAM UI. Commented out since SAM will pass these values down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-sam_inputs = dict()
+# sam_inputs = dict()
 # sam_inputs['interconnect_voltage_kV'] = 137
 # sam_inputs['distance_to_interconnect_mi'] = 10
 # sam_inputs['num_turbines'] = 100
@@ -449,6 +450,8 @@ sam_inputs = dict()
 # Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
 # for instance:
 # sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
+
+# print(run_landbosse(sam_inputs))
 
 
 
@@ -487,9 +490,6 @@ class NegativeInputError(Error):
     """
     pass
 
-
-# print(run_landbosse(sam_inputs))
-# run_landbosse()
 
 
 

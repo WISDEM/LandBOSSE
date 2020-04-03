@@ -520,10 +520,11 @@ class SitePreparationCost(CostModule):
 
 
         # For LandBOSSE API, cost breakdown by type stored as floating point values:
-        calculate_cost_output_dict['sitepreparation_equipment_rental_usd'] = float(labor_for_new_and_old_roads_cost_usd)
+        calculate_cost_output_dict['sitepreparation_equipment_rental_usd'] = float(equip_for_new_and_old_roads_cost_usd)
         calculate_cost_output_dict['sitepreparation_labor_usd'] = float(labor_for_new_and_old_roads_cost_usd)
         calculate_cost_output_dict['sitepreparation_material_usd'] = float(material_cost_of_old_and_new_roads)
         calculate_cost_output_dict['sitepreparation_mobilization_usd'] = mobilization_costs_new_plus_old_roads
+        calculate_cost_output_dict['sitepreparation_other_usd'] = cost_adder
 
         # floating point value for landbosse_api
         calculate_cost_output_dict['summed_sitepreparation_cost'] = total_road_cost['Cost USD'].sum()
