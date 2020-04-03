@@ -98,13 +98,13 @@ def run_landbosse(sam_input_dict):
             --------------------------------------------------------------------------------------------
             Total Site Preparation Cost (USD)                   |   summed_sitepreparation_cost         |
             --------------------------------------------------------------------------------------------
-            Total Collection Equipment Rental Cost (USD)        |   sitepreparation_equipment_rental_usd |
+            Total Site Preparation Equipment Rental Cost (USD)  |   sitepreparation_equipment_rental_usd |
             --------------------------------------------------------------------------------------------
-            Total Collection Labor Cost (USD)                   |   sitepreparation_labor_usd           |
+            Total Site Preparation Labor Cost (USD)             |   sitepreparation_labor_usd           |
             --------------------------------------------------------------------------------------------
-            Total Collection Material Cost (USD)                |   sitepreparation_material_usd        |
+            Total Site Preparation Material Cost (USD)          |   sitepreparation_material_usd        |
             --------------------------------------------------------------------------------------------
-            Total Collection Mobilization Cost (USD)            |   sitepreparation_mobilization_usd    |
+            Total Site Preparation Mobilization Cost (USD)      |   sitepreparation_mobilization_usd    |
             --------------------------------------------------------------------------------------------
             Total Foundation Cost (USD)                         |   summed_foundation_cost              |
             --------------------------------------------------------------------------------------------
