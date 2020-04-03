@@ -5,6 +5,7 @@ from unittest import TestCase
 
 class TestLandBOSSE_API(TestCase):
     def setUp(self):
+        self.file_path = os.path.dirname(__file__) + '/project_data/az_rolling.srw'
         self.api_inputs = dict()
         self.api_inputs['interconnect_voltage_kV'] = 137
         self.api_inputs['distance_to_interconnect_mi'] = 10
@@ -47,5 +48,9 @@ class TestLandBOSSE_API(TestCase):
 
     def test_total_substation_cost(self):
            self.assertEqual(self.results['total_substation_cost'], 4940746.072082901)
+
+    def test_read_weather_data(self):
+        weather_data = read_weather_data(self.file_path)
+        self.assertEqual(len(weather_data), 8760)
 
 
