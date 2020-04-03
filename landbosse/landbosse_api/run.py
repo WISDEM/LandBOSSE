@@ -9,9 +9,144 @@ from datetime import datetime, timedelta
 from landbosse.landbosse_api.turbine_scaling import *
 
 
-# Call this function - run_landbosse() - to run LandBOSSE.
-# this method calls the read_data() method to read the 2 excel input files, and creates a master input dictionary from it.
 def run_landbosse(sam_input_dict):
+    """
+    Call this function - run_landbosse() - to run LandBOSSE.
+    This method calls the read_data() method to read the 2 excel input files that are packaged with LandBOSSE,
+    and creates a master input dictionary from it.
+
+    The 2 excel input files packaged with LandBOSSE are:
+        1. project_list.xlxs : This file defines the high level project inputs that define a unique wind farm project
+        2. project_data_defaults.xlsx
+
+    Parameters
+        ----------
+        input_dict : Python Dictionary
+           This input dictionary is a required argument for this function. It consists of 13 required key:value pairs,
+           and 1 optional key:value pair ('weather_file_path'). The key:value pairs are as follows:
+
+                                KEY               | REQUIRED KEY? (Y/N)   | SUGGESTED SAMPLE DEFAULT VALUE
+                ----------------------------------|-----------------------|-------------------------|
+                'interconnect_voltage_kV'         |           Y           |         137             |
+                ------------------------------------------------------------------------------------
+                'distance_to_interconnect_mi'     |           Y           |         10              |
+                -------------------------------------------------------------------------------------
+                'num_turbines'                    |           Y           |         100             |
+                -------------------------------------------------------------------------------------
+                'turbine_spacing_rotor_diameters  |           Y           |         4               |
+                -------------------------------------------------------------------------------------
+                'row_spacing_rotor_diameters'     |           Y           |         10              |
+                -------------------------------------------------------------------------------------
+                'turbine_rating_MW'               |           Y           |         1.5             |
+                -------------------------------------------------------------------------------------
+                'rotor_diameter_m'                |           Y           |         77              |
+                -------------------------------------------------------------------------------------
+                'hub_height_meters'               |           Y           |         80              |
+                -------------------------------------------------------------------------------------
+                'wind_shear_exponent'             |           Y           |         0.2             |
+                -------------------------------------------------------------------------------------
+                'depth'                           |           Y           |         2.36            |
+                -------------------------------------------------------------------------------------
+                'rated_thrust_N'                  |           Y           |         589,000         |
+                -------------------------------------------------------------------------------------
+                'labor_cost_multiplier'           |           Y           |         1               |
+                -------------------------------------------------------------------------------------
+                'gust_velocity_m_per_s'           |           Y           |         59.50           |
+                -------------------------------------------------------------------------------------
+                'weather_file_path'               |           N           | <OPTIONAL>Provide an    |
+                                                  |                       |  absolute path to a .srw|
+                                                  |                       |  hourly weather file    |
+                                                  |                       |  (8760 rows).           |
+                                                  |                       |                         |
+                                                  |                       |  Else, default weather  |
+                                                  |                       |  file packaged with     |
+                                                  |                       |  LandBOSSE will be used.|
+                                                  |                       |                         |
+                                                  |                       |                         |
+                                                  |                       |                         |
+                -------------------------------------------------------------------------------------
+
+        Returns
+        -------
+        output_dict : Python Dictionary
+            Output dictionary container with balance-of-station costs calculated by the model. Following outputs are
+            returned:
+
+                        OUTPUT                                  |               KEY                    |
+            ----------------------------------------------------|--------------------------------------|
+            Total Management Cost                               |   total_management_cost               |
+            --------------------------------------------------------------------------------------------
+            Total Insurance Cost (USD)                          |   insurance_usd                       |
+            --------------------------------------------------------------------------------------------
+            Total Construction Permitting Cost (USD)            |   construction_permitting_usd         |
+            --------------------------------------------------------------------------------------------
+            Total Project Management Cost (USD)                 |   project_management_usd              |
+            --------------------------------------------------------------------------------------------
+            Total Bonding Cost (USD)                            |   bonding_usd                         |
+            --------------------------------------------------------------------------------------------
+            Total Markup Contingency Cost (USD)                 |   markup_contingency_usd              |
+            --------------------------------------------------------------------------------------------
+            Total Engineering Cost (USD)                        |   engineering_usd                     |
+            --------------------------------------------------------------------------------------------
+            Total Site Facility Cost (USD)                      |   site_facility_usd                   |
+            --------------------------------------------------------------------------------------------
+            Total Management Cost (USD)                         |   total_management_cost               |
+            --------------------------------------------------------------------------------------------
+            Total Development Cost (USD)                        |   summed_development_cost             |
+            --------------------------------------------------------------------------------------------
+            Total Development Labor Cost (USD)                  |   development_labor_cost_usd          |
+            --------------------------------------------------------------------------------------------
+            Total Site Preparation Cost (USD)                   |   summed_sitepreparation_cost         |
+            --------------------------------------------------------------------------------------------
+            Total Collection Equipment Rental Cost (USD)        |   sitepreparation_equipment_rental_usd |
+            --------------------------------------------------------------------------------------------
+            Total Collection Labor Cost (USD)                   |   sitepreparation_labor_usd           |
+            --------------------------------------------------------------------------------------------
+            Total Collection Material Cost (USD)                |   sitepreparation_material_usd        |
+            --------------------------------------------------------------------------------------------
+            Total Collection Mobilization Cost (USD)            |   sitepreparation_mobilization_usd    |
+            --------------------------------------------------------------------------------------------
+            Total Foundation Cost (USD)                         |   summed_foundation_cost              |
+            --------------------------------------------------------------------------------------------
+            Total Foundation Equipment Rental Cost (USD)        |   foundation_equipment_rental_usd     |
+            --------------------------------------------------------------------------------------------
+            Total Foundation Labor Cost (USD)                   |   foundation_labor_usd                |
+            --------------------------------------------------------------------------------------------
+            Total Foundation Material Cost (USD)                |   foundation_material_usd             |
+            --------------------------------------------------------------------------------------------
+            Total Foundation Mobilization Cost (USD)            |   foundation_mobilization_usd         |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Cost (USD)                     |   total_cost_summed_erection          |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Equipment Rental Cos (USD)     |   erection_equipment_rental_usd       |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Labor Cost (USD)               |   erection_labor_usd                  |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Material Cost (USD)            |   erection_material_usd               |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection - Other Cost (USD)             |   erection_other_usd                  |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Mobilization Cost (USD)        |   erection_mobilization_usd           |
+            --------------------------------------------------------------------------------------------
+            Total Tower Erection Fuel Cost (USD)                |   erection_fuel_usd                   |
+            --------------------------------------------------------------------------------------------
+            Total Transmission & Distribution Cost (USD)        |   trans_dist_usd                      |
+            --------------------------------------------------------------------------------------------
+            Total Collection Cost                               |   summed_collection_cost              |
+            --------------------------------------------------------------------------------------------
+            Total Collection System Equipment Rental Cost (USD) |   collection_equipment_rental_usd     |
+            --------------------------------------------------------------------------------------------
+            Total Collection System Labor Cost (USD)            |   collection_labor_usd                |
+            --------------------------------------------------------------------------------------------
+            Total Collection System Material Cost (USD)         |   collection_material_usd             |
+            --------------------------------------------------------------------------------------------
+            Total Collection System Mobilization Cost (USD)     |   collection_mobilization_usd         |
+            --------------------------------------------------------------------------------------------
+            Total Collection System Substation Cost (USD)       |   summed_substation_cost              |
+            --------------------------------------------------------------------------------------------
+
+    """
+
     input_output_path = os.path.dirname(__file__)
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
@@ -187,7 +322,7 @@ def run_landbosse(sam_input_dict):
             msg = "Error in " + key + ": " + str(value)
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results that are 3 layers deep (but 1-D)
-        results['total_bos_cost']                   =       output_dict['project_value_usd']
+        results['total_bos_cost']                       =       output_dict['project_value_usd']
 
         # management cost module results:
         results['total_management_cost']                =       output_dict['total_management_cost']
@@ -210,10 +345,10 @@ def run_landbosse(sam_input_dict):
 
         # site prep cost module results:
         results['total_sitepreparation_cost']           =       output_dict['summed_sitepreparation_cost']
-        results['sitepreparation_equipment_rental_usd'] =       output_dict['collection_equipment_rental_usd']
-        results['sitepreparation_labor_usd']            =       output_dict['collection_labor_usd']
-        results['sitepreparation_material_usd']         =       output_dict['collection_material_usd']
-        results['sitepreparation_mobilization_usd']     =       output_dict['collection_mobilization_usd']
+        results['sitepreparation_equipment_rental_usd'] =       output_dict['sitepreparation_equipment_rental_usd']
+        results['sitepreparation_labor_usd']            =       output_dict['sitepreparation_labor_usd']
+        results['sitepreparation_material_usd']         =       output_dict['sitepreparation_material_usd']
+        results['sitepreparation_mobilization_usd']     =       output_dict['sitepreparation_mobilization_usd']
 
         results['total_foundation_cost']                =       output_dict['summed_foundation_cost']
         results['foundation_equipment_rental_usd']      =       output_dict['foundation_equipment_rental_usd']
@@ -300,20 +435,20 @@ def daterange(start_date, end_date):
 
 # Default inputs on the SAM UI. Commented out since SAM will pass these values down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# sam_inputs = dict()
-# sam_inputs['interconnect_voltage_kV'] = 137
-# sam_inputs['distance_to_interconnect_mi'] = 10
-# sam_inputs['num_turbines'] = 100
-# sam_inputs['turbine_spacing_rotor_diameters'] = 4
-# sam_inputs['row_spacing_rotor_diameters'] = 10
-# sam_inputs['turbine_rating_MW'] = 1.5
-# sam_inputs['rotor_diameter_m'] = 77
-# sam_inputs['hub_height_meters'] = 80
-# sam_inputs['wind_shear_exponent'] = 0.20
-# sam_inputs['depth'] = 2.36  # Foundation depth in m
-# sam_inputs['rated_thrust_N'] =  589000
-# sam_inputs['labor_cost_multiplier'] = 1
-# sam_inputs['gust_velocity_m_per_s'] = 59.50
+sam_inputs = dict()
+sam_inputs['interconnect_voltage_kV'] = 137
+sam_inputs['distance_to_interconnect_mi'] = 10
+sam_inputs['num_turbines'] = 100
+sam_inputs['turbine_spacing_rotor_diameters'] = 4
+sam_inputs['row_spacing_rotor_diameters'] = 10
+sam_inputs['turbine_rating_MW'] = 1.5
+sam_inputs['rotor_diameter_m'] = 77
+sam_inputs['hub_height_meters'] = 80
+sam_inputs['wind_shear_exponent'] = 0.20
+sam_inputs['depth'] = 2.36  # Foundation depth in m
+sam_inputs['rated_thrust_N'] =  589000
+sam_inputs['labor_cost_multiplier'] = 1
+sam_inputs['gust_velocity_m_per_s'] = 59.50
 
 # Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
 # for instance:
@@ -357,7 +492,7 @@ class NegativeInputError(Error):
     pass
 
 
-# print(run_landbosse(sam_inputs))
+print(run_landbosse(sam_inputs))
 # run_landbosse()
 
 

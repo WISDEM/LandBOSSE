@@ -512,19 +512,24 @@ class SitePreparationCost(CostModule):
                                           columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
 
+        calculate_cost_output_dict['siteprep_construction_months'] = siteprep_construction_months
         road_cost = road_cost.append(mobilization_costs)
-
-        # total_road_cost = road_cost.groupby(by=['Type of cost']).sum().reset_index()
         total_road_cost = road_cost
-
-        # total_road_cost.loc[total_road_cost['Type of cost'] == 'Labor', 'Cost USD'] = float(total_road_cost.loc[total_road_cost['Type of cost'] == 'Labor', 'Cost USD']) + 48.8 * calculate_cost_output_dict['road_length_m']  #TODO:Why times 48.8 ?
-        # total_road_cost['Phase of construction'] = 'Roads'
-
         calculate_cost_output_dict['total_road_cost'] = total_road_cost
 
-        calculate_cost_output_dict['summed_sitepreparation_cost'] = total_road_cost['Cost USD'].sum() #floating point value for landbosse_api
 
-        calculate_cost_output_dict['siteprep_construction_months'] = siteprep_construction_months
+
+        # For LandBOSSE API, cost breakdown by type stored as floating point values:
+        calculate_cost_output_dict['sitepreparation_equipment_rental_usd'] = float(labor_for_new_and_old_roads_cost_usd)
+        calculate_cost_output_dict['sitepreparation_labor_usd'] = float(labor_for_new_and_old_roads_cost_usd)
+        calculate_cost_output_dict['sitepreparation_material_usd'] = float(material_cost_of_old_and_new_roads)
+        calculate_cost_output_dict['sitepreparation_mobilization_usd'] = mobilization_costs_new_plus_old_roads
+
+        # floating point value for landbosse_api
+        calculate_cost_output_dict['summed_sitepreparation_cost'] = total_road_cost['Cost USD'].sum()
+
+
+
 
         return total_road_cost
 
