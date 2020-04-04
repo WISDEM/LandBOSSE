@@ -1,4 +1,5 @@
-https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=pip_installable
+.. image:: https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=pip_installable
+    :target: https://travis-ci.com/WISDEM/LandBOSSE
 
 # LandBOSSE
 
