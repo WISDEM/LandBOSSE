@@ -74,6 +74,29 @@ LandBOSSE Provides:
                                                   |                       |                         |
                 -------------------------------------------------------------------------------------
 
+Here is an example of initializing a Python input dictionary based on the table above:
+input_dictionary = dict()
+input_dictionary = {
+                    'depth':2.36,
+                    'distance_to_interconnect_mi':10.0,
+                    'gust_velocity_m_per_s':59.5,
+                    'hub_height_meters':80.0,
+                    'interconnect_voltage_kV':137.0,
+                    'labor_cost_multiplier':1.0,
+                    'num_turbines':100,
+                    'rated_thrust_N':589000.0,
+                    'rotor_diameter_m':77.0,
+                    'row_spacing_rotor_diameters':10.0,
+                    'turbine_rating_MW':1.5,
+                    'turbine_spacing_rotor_diameters':4.0,
+                    'wind_shear_exponent':0.14
+                    }
+
+(OPTIONAL - Provide an absolute path to a .srw hourly weather file as follows):
+input_dictionary['weather_file_path']  = '/Users/<username>/Desktop/az_rolling.srw'
+
+
+
 <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 IF YOU ARE USING LANDBOSSE's API, PLEASE FOLLOW THESE STEPS:
 
@@ -192,5 +215,6 @@ output_dict : Python Dictionary
             --------------------------------------------------------------------------------------------
             Total Substation Cost (USD)                         |   summed_substation_cost              |
             --------------------------------------------------------------------------------------------
+
 
 """
