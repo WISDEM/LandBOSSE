@@ -1,4 +1,4 @@
-=for html <a href="https://travis-ci.com/WISDEM/LandBOSSE"><img src="https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=master"></a>
+<a href="https://travis-ci.com/WISDEM/LandBOSSE"><img src="https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=master"></a>
 
 # LandBOSSE
 
