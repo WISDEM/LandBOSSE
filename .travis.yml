@@ -8,7 +8,7 @@ install:
 
 # command to run tests
 script:
-  - python API_test.py
+  - python /landbosse/landbosse_api/API_test.py
 
 branches:
   only:
