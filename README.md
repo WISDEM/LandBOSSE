@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=pip_installable)
+=for html <a href="https://travis-ci.com/WISDEM/LandBOSSE"><img src="https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=master"></a>
 
 # LandBOSSE
 
