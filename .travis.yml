@@ -6,7 +6,7 @@ python:
 install:
   - pip install landbosse
 
-before_script: cd LandBOSSE
+before_script: cd $TRAVIS_BUILD_DIR/LandBOSSE
 
 
 # command to run tests
