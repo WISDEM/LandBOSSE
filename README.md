@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=pip_installable)
+
 # LandBOSSE
 
 ## Welcome to LandBOSSE!
