@@ -142,7 +142,7 @@ def run_landbosse(sam_input_dict):
             --------------------------------------------------------------------------------------------
             Total Collection System Mobilization Cost (USD)     |   collection_mobilization_usd         |
             --------------------------------------------------------------------------------------------
-            Total Collection System Substation Cost (USD)       |   summed_substation_cost              |
+            Total Substation Cost (USD)                         |   summed_substation_cost              |
             --------------------------------------------------------------------------------------------
 
     """
