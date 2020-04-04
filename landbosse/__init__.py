@@ -1,6 +1,9 @@
 """
 LandBOSSE
 =====
+This documentation will give you a brief summary of the LandBOSSE model, and also provide a step-by-step of how to run
+this model in Python:
+
 The Land-based Balance-of-System Systems Engineering (LandBOSSE) model is a systems engineering tool that estimates the
 balance-of-system (BOS) costs associated with installing utility scale wind plants (10, 1.5 MW turbines or larger). It
 can execute on macOS and Windows. At this time, for both platforms, it is a command line tool that needs to be accessed
@@ -14,10 +17,10 @@ Model for Land-Based Wind. Golden, CO: National Renewable Energy Laboratory. NRE
 https://www.nrel.gov/docs/fy19osti/72201.pdf.
 
 LandBOSSE Provides:
-  1. Calculated estimate of total Balance-of-Station (BOS) cost of a utility
-  scale land-based wind
-  farm
+  1. Calculated estimate of total Balance-of-Station (BOS) cost of a utility  scale land-based wind farm
+
   2. Total BOS cost broken down in to the following cost buckets:
+
     a. Total Foundation Cost --> this is the cost of cummulative cost of
     constructing wind turbine foundations. Total foundation cost is broken down
     into the following buckets:
@@ -25,8 +28,46 @@ LandBOSSE Provides:
         ii. Total equipment rental cost
         iii. Total material cost
         iv. Total mobilization cost
-    b. Total collection cost --> this is the total wind farm's cost of
-    constructing
+
+    b. Total collection cost --> this is the total wind farm's cost of constructing the wind farm's cable collection
+    system. Total collection cost is broken down into the following buckets:
+         i. Total labor cost
+        ii. Total equipment rental cost
+        iii. Total material cost
+        iv. Total mobilization cost
+
+    c. Total management cost --> this is the total project management cost. Shown below are all the cost buckets
+    considered in management cost:
+        i. Total insurance cost
+        ii. Construction permitting cost
+        iii. Project management cost
+        iv. Bonding cost
+        v. Markup contingency cost
+        vi. Engineering cost
+        vii. Site facility cost
+
+    d. Total erection cost --> this is the total cost of tower erection of all turbines in the project. Shown below are
+    all the cost buckets considered in tower erection:
+        i. Total quipment rental cost
+        ii. Total labor cost
+        iii. Total material cost
+        iv. Total mobilization cost
+        v. Total fuel cost
+        vi. Total other costs
+
+    e. Total substation cost --> this is the cost of building a substation for the wind farm
+
+    f. Total grid connection cost --> this is the cost of connecting to the grid interconnection
+
+    g. Total site preparation cost --> this is the cost of preparing the project site for wind farm construction and
+     constructing roads. Shown below are the all the cost buckets considered in the site preparation cost:
+        i. Total labor cost
+        ii. Total equipment rental cost
+        iii. Total material cost
+        iv. Total mobilization cost
+
+
+
   3. Here is a list of inputs required (and optional) to run LandBOSSE:
 
   input_dict : Python Dictionary
@@ -107,12 +148,12 @@ import landbosse
 STEP 2:
 
 from landbosse.landbosse_api.run import run_landbosse
+
 # run_landbosse(input_dictionary) is the main function for executing LandBOSSE.
 
 STEP 3:
 
-#initialize an input dictionary. run_landbosse() function takes in a single
-argument which is an input dictionary.
+# initialize an input dictionary. run_landbosse() function takes in a single argument which is an input dictionary.
 
 input_dictionary = dict()
 
