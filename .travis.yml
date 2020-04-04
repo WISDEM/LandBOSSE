@@ -6,12 +6,12 @@ python:
 install:
   - pip install landbosse
 
-before_script: cd $TRAVIS_BUILD_DIR/LandBOSSE
+before_script: cd $TRAVIS_BUILD_DIR/landbosse/landbosse_api/
 
 
 # command to run tests
 script:
-  - python /landbosse/landbosse_api/API_test.py
+  - python API_test.py
 
 branches:
   only:
