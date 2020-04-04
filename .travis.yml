@@ -1,11 +1,15 @@
 language: python
 python:
-	- "3.7"
+  - "3.7"
 
 # command to install dependencies
 install:
-	- pip install landbosse
+  - pip install landbosse
 
 # command to run tests
 script:
-	- pytest
+  - pytest
+
+branches:
+  only:
+    - pip_installable
