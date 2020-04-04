@@ -6,6 +6,9 @@ python:
 install:
   - pip install landbosse
 
+before_script: cd LandBOSSE
+
+
 # command to run tests
 script:
   - python /landbosse/landbosse_api/API_test.py
