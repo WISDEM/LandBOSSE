@@ -318,7 +318,7 @@ def run_landbosse(sam_input_dict):
             msg = "Error in " + key + ": " + str(value)
             results['errors'].append(msg)
     else:   # if project runs successfully, return a dictionary with results that are 3 layers deep (but 1-D)
-        results['total_bos_cost']                       =       output_dict['project_value_usd'] * 2
+        results['total_bos_cost']                       =       output_dict['project_value_usd'] 
 
         # management cost module results:
         results['total_management_cost']                =       output_dict['total_management_cost']
