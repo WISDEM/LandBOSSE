@@ -534,31 +534,6 @@ def daterange(start_date, end_date):
         start_date += delta
 
 
-# Default inputs on the SAM UI. Commented out since SAM will pass these values
-# down to LandBOSSE.
-# TODO: Un-comment these out if running this script directly.
-# sam_inputs = dict()
-# sam_inputs['interconnect_voltage_kV'] = 137
-# sam_inputs['distance_to_interconnect_mi'] = 10
-# sam_inputs['num_turbines'] = 100
-# sam_inputs['turbine_spacing_rotor_diameters'] = 4
-# sam_inputs['row_spacing_rotor_diameters'] = 10
-# sam_inputs['turbine_rating_MW'] = 1.5
-# sam_inputs['rotor_diameter_m'] = 77
-# sam_inputs['hub_height_meters'] = 80
-# sam_inputs['wind_shear_exponent'] = 0.20
-# sam_inputs['depth'] = 2.36  # Foundation depth in m
-# sam_inputs['rated_thrust_N'] =  589000
-# sam_inputs['labor_cost_multiplier'] = 1
-# sam_inputs['gust_velocity_m_per_s'] = 59.50
-
-# Provide absolute file path of wind weather file (.txt, .srw, or .csv). Wind
-# data used here follows the wind toolkit (WTK) formatted data. For instance:
-# sam_inputs['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
-
-# print(run_landbosse(sam_inputs))
-
-
 class Error(Exception):
     """
         Base class for other exceptions
@@ -597,3 +572,36 @@ class NegativeInputError(Error):
         User entered a negative input. This is an invalid entry.
     """
     pass
+
+
+# <><><><><><><><> EXAMPLE OF RUNNING THIS LANDBOSSE API <><><><><><><><><><><>
+
+# Default inputs on the SAM UI. Commented out since SAM will pass these values
+# down to LandBOSSE.
+# TODO: Un-comment these out if running this script directly.
+# input_dict = dict()
+# input_dict['interconnect_voltage_kV'] = 137
+# input_dict['distance_to_interconnect_mi'] = 10
+# input_dict['num_turbines'] = 100
+# input_dict['turbine_spacing_rotor_diameters'] = 4
+# input_dict['row_spacing_rotor_diameters'] = 10
+# input_dict['turbine_rating_MW'] = 1.5
+# input_dict['rotor_diameter_m'] = 77
+# input_dict['hub_height_meters'] = 80
+# input_dict['wind_shear_exponent'] = 0.20
+# input_dict['depth'] = 2.36  # Foundation depth in m
+# input_dict['rated_thrust_N'] =  589000
+# input_dict['labor_cost_multiplier'] = 1
+# input_dict['gust_velocity_m_per_s'] = 59.50
+
+# (Optional) Provide absolute file path of wind weather file (.txt, .srw, or
+# .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
+# If you do not provide a path to a weather file, this API will use the
+# default weather file shipped with LandBOSSE.
+
+# Example of how to provide path to weather file:
+# input_dict['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
+
+# BOS_results = run_landbosse(input_dict)
+
+# <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
