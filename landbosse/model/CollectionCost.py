@@ -544,8 +544,8 @@ class ArraySystem(CostModule):
 
         return total_cable_len, 9999
 
-    def create_ArraySystem(self):
 
+    def create_ArraySystem(self):
 
         #data used in parent classes:
         self.addl_specs = dict()
@@ -839,10 +839,8 @@ class ArraySystem(CostModule):
             calculate_costs_output_dict['mob_cost'] = collection_cost['Cost USD'].sum() * 0.05
         else:
             if calculate_costs_input_dict['turbine_rating_MW'] >= 0.1:
-                calculate_costs_output_dict['mob_cost'] = (collection_cost['Cost USD'].sum() /
-                                                           calculate_costs_input_dict[
-                                                               'num_turbines']) * self.mobilization_cost(
-                    calculate_costs_input_dict['turbine_rating_MW'])
+                calculate_costs_output_dict['mob_cost'] = collection_cost[
+                    'Cost USD'].sum() * self.mobilization_cost(calculate_costs_input_dict['turbine_rating_MW'])
             else:  # mobilization cost included in equipment rental cost
                 calculate_costs_output_dict['mob_cost'] = 0.0
 
