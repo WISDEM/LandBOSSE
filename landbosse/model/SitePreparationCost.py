@@ -157,6 +157,7 @@ class SitePreparationCost(CostModule):
         self._meters_per_inch = 0.025
         self._cubic_yards_per_cubic_meter = 1.30795
         self._square_feet_per_square_meter = 10.7639
+        self._mi_to_m = 1609.34
 
         # cubic meters for crane pad and maintenance ring for each turbine
         # (from old BOS model - AI - Access Roads & Site Imp. tab cell J33)
@@ -210,9 +211,14 @@ class SitePreparationCost(CostModule):
 
 
         """
-
-        road_properties_output['road_length_m'] = ((road_properties_input['num_turbines'] - 1) * road_properties_input['turbine_spacing_rotor_diameters'] * road_properties_input['rotor_diameter_m']) + road_properties_input['road_length_adder_m']
-
+        if self.input_dict['collection_mode'] == 'manual':
+            self.layout_length()
+            road_properties_output['road_length_m'] = self.output_dict['layout_length_km'] * 1000 + road_properties_input['road_length_adder_m']
+        else:
+            road_properties_output['road_length_m'] = ((road_properties_input['num_turbines'] - 1) *
+                                                       road_properties_input['turbine_spacing_rotor_diameters'] *
+                                                       road_properties_input['rotor_diameter_m']) + \
+                                                      road_properties_input['road_length_adder_m']
         # units of cubic meters
         road_properties_output['road_volume'] = road_properties_output['road_length_m'] * \
                                                 (road_properties_input['road_width_ft'] * self._meters_per_foot) * \

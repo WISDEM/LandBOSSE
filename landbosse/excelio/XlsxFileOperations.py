@@ -70,6 +70,8 @@ class XlsxFileOperations:
 
         input_path_from_env = os.environ.get('LANDBOSSE_INPUT_DIR', 'input')
         output_path_from_env = os.environ.get('LANDBOSSE_OUTPUT_DIR', 'output')
+        # input_path_from_env = os.environ['LANDBOSSE_INPUT_DIR'] if 'LANDBOSSE_INPUT_DIR' in os.environ else 'input'
+        # output_path_from_env = os.environ['LANDBOSSE_OUTPUT_DIR'] if 'LANDBOSSE_OUTPUT_DIR' in os.environ else 'output'
 
         # input and output paths from command line are initially set to None
         # to indicate they have not been found yet.

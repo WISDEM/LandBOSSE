@@ -48,6 +48,9 @@ class Manager:
             self.input_dict['weather_window'] = filtered_weather_window
             self.input_dict['weather_data_user_input'] = weather_data_user_input
 
+            collection_cost = ArraySystem(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
+            collection_cost.run_module()
+
             foundation_cost = FoundationCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             foundation_cost.run_module()
 
@@ -59,9 +62,6 @@ class Manager:
 
             transdist_cost = GridConnectionCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
             transdist_cost.run_module()
-
-            collection_cost = ArraySystem(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
-            collection_cost.run_module()
 
             development_cost = DevelopmentCost(input_dict=self.input_dict, output_dict=self.output_dict,
                                           project_name=project_name)
