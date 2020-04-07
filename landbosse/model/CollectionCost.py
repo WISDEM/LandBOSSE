@@ -742,7 +742,8 @@ class ArraySystem(CostModule):
         boolean_dictionary = {True: collection_construction_time * 30, False: np.NAN}
         operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
         operation_data['Time construct days'] = operation_data[['time_construct_bool', 'Number of days taken by single crew']].min(axis=1)
-        num_days = operation_data['Time construct days']
+        num_days = operation_data['Time construct days'].max()
+
 
         # No 'management crew' in small DW
         if construction_time_input_data['turbine_rating_MW'] >= 0.1:
@@ -758,12 +759,10 @@ class ArraySystem(CostModule):
         else:
             self.output_dict['managament_crew_cost_before_wind_delay'] = 0.0
 
-
         construction_time_output_data['operation_data_id_days_crews_workers'] = operation_data_id_days_crews_workers
         construction_time_output_data['operation_data_entire_farm'] = operation_data
 
         return construction_time_output_data['operation_data_entire_farm']
-
 
 
     def calculate_costs(self, calculate_costs_input_dict, calculate_costs_output_dict):
@@ -1032,8 +1031,13 @@ class ArraySystem(CostModule):
             self.weather_input_dict[
                 'wind_height_of_interest_m'] = self.input_dict['critical_height_non_erection_wind_delays_m']
 
-            # compute and specify weather delay mission time for roads
+            # Compute the duration of the construction for electrical collection
             duration_construction = operation_data['Time construct days'].max(skipna=True)
+            days_per_month = 30
+            duration_construction_months = duration_construction / days_per_month
+            self.output_dict['collection_construction_months'] = duration_construction_months
+
+            # compute and specify weather delay mission time for roads
             operational_hrs_per_day = self.input_dict['hour_day'][self.input_dict['time_construct']]
             mission_time_hrs = duration_construction * operational_hrs_per_day
             self.weather_input_dict['mission_time_hours'] = int(mission_time_hrs)

@@ -48,7 +48,7 @@ class XlsxFileOperations:
 
         There is a fourth option this method looks for:
 
-        --scaling-study or -s
+        --scaling or -s
 
         This enables auto scaling of input parameters as found in XlsxReader's
         apply_cost_and_scaling_modifications_to_project_parameters() method.
@@ -81,7 +81,7 @@ class XlsxFileOperations:
         validation_enabled =  '--validate' in sys.argv or '-v' in sys.argv
 
         # This is for scaling study operation
-        enable_scaling_study = '--scaling-study' in sys.argv or '-s' in sys.argv
+        enable_scaling_study = '--scaling' in sys.argv or '-s' in sys.argv
 
         # If validation and scaling study are simultaneously enabled, raise
         # an error

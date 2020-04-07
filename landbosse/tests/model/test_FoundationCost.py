@@ -35,7 +35,7 @@ class TestFoundtionCost(TestCase):
         self.input_dict['critical_velocity_m_per_s'] = 52.5
         self.input_dict['gust_velocity_m_per_s'] = 60
 
-
+        
         #Below are the inputs for calculate_foundation_load():
         component_data = os.path.join(landbosse_test_input_dir(), 'components.csv')
         self.input_dict['component_data'] = pd.read_csv(component_data)
