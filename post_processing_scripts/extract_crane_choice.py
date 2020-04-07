@@ -44,7 +44,8 @@ for project_id_with_serial in unique_project_id_with_serial:
     aligned_crane_choice = {
         "Project ID with serial": project_id_with_serial,
         "Number of turbines": top_row["Number of turbines"].values[0],
-        "Breakpoint between base and topping (percent)": top_row["Breakpoint between base and topping (percent)"].values[0],
+        "Breakpoint between base and topping (percent)": \
+            top_row["Breakpoint between base and topping (percent)"].values[0],
         "Turbine rating MW": top_row["Turbine rating MW"].values[0],
         "Crane breakdown fraction": top_row["Crane breakdown fraction"].values[0],
         "Labor cost multiplier": top_row["Labor cost multiplier"].values[0],
@@ -58,4 +59,4 @@ for project_id_with_serial in unique_project_id_with_serial:
 
 print("Writing crane choices...")
 aligned_crane_choice_df = pd.DataFrame(aligned_crane_choices)
-aligned_crane_choice_df.to_csv("crane_choices.csv")
+aligned_crane_choice_df.to_csv("crane_choices.csv", index=False)
