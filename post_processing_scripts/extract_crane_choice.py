@@ -8,9 +8,10 @@ df = pd.read_csv("extended_landbosse_details.csv")
 
 # Extract the crane choice data
 print("Selecting crane data")
-erection_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom system - Operation'")[[
+erection_df = df.query("`Module` == 'ErectionCost'")[[
     "Project ID with serial",
     "Variable name",
+    "Numeric value",
     "Non-numeric value",
     "Number of turbines",
     "Turbine rating MW",
@@ -21,29 +22,44 @@ erection_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom syste
     "Total project construction time (months)"
 ]]
 
-aligned_crane_choices = []
+aligned_erection_rows = []
 
 print("Selecting unique projects...")
 unique_project_id_with_serial = erection_df['Project ID with serial'].unique()
 
 print("Aligning crane types")
 for project_id_with_serial in unique_project_id_with_serial:
-    crane_rows_df = erection_df.query(
+    print(f"\t{project_id_with_serial}")
+
+    # Crane cost details
+    crane_cost_df = erection_df.query(
+        "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_cost_details: Operation ID - Type of cost - Cost'"
+    )
+    top_total_cost_row = crane_cost_df[crane_cost_df["Non-numeric value"].str.contains("Top - Total cost USD")]
+    base_total_cost_row = crane_cost_df[crane_cost_df["Non-numeric value"].str.contains("Base - Total cost USD")]
+    offload_total_cost_row = crane_cost_df[crane_cost_df["Non-numeric value"].str.contains("Offload - Total cost USD")]
+    top_total_cost = top_total_cost_row["Numeric value"].values[0]
+    offload_total_cost = offload_total_cost_row["Numeric value"].values[0]
+    if len(base_total_cost_row) > 0:
+        base_total_cost = base_total_cost_row["Numeric value"].values[0]
+    else:
+        base_total_cost = 0
+
+    # Crane choice
+    crane_choice_rows_df = erection_df.query(
         "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_choice: Crew name - Boom system - Operation'"
     )
-    top_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Top")]
-    base_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Base")]
-    offload_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Offload")]
-
+    top_row = crane_choice_rows_df[crane_choice_rows_df["Non-numeric value"].str.contains("Top")]
+    base_row = crane_choice_rows_df[crane_choice_rows_df["Non-numeric value"].str.contains("Base")]
+    offload_row = crane_choice_rows_df[crane_choice_rows_df["Non-numeric value"].str.contains("Offload")]
     offload = " ".join(offload_row["Non-numeric value"].values[0].split(" - ")[:-1])
     top = " ".join(top_row["Non-numeric value"].values[0].split(" - ")[:-1])
-
     if len(base_row) > 0:
         base = " ".join(base_row["Non-numeric value"].values[0].split(" - ")[:-1])
     else:
         base = "No base crane"
 
-    aligned_crane_choice = {
+    aligned_erection_row = {
         "Project ID with serial": project_id_with_serial,
         "Number of turbines": top_row["Number of turbines"].values[0],
         "Breakpoint between base and topping (percent)": \
@@ -52,13 +68,16 @@ for project_id_with_serial in unique_project_id_with_serial:
         "Crane breakdown fraction": top_row["Crane breakdown fraction"].values[0],
         "Labor cost multiplier": top_row["Labor cost multiplier"].values[0],
         "Hub height m": top_row["Hub height m"].values[0],
-        "Base": base,
-        "Offload": offload,
-        "Top": top
+        "Base crane choice": base,
+        "Offload crane choice": offload,
+        "Top crane choice": top,
+        "Base total cost": base_total_cost,
+        "Offload total cost": offload_total_cost,
+        "Top total cost": top_total_cost
     }
 
-    aligned_crane_choices.append(aligned_crane_choice)
+    aligned_erection_rows.append(aligned_erection_row)
 
 print("Writing crane choices...")
-aligned_crane_choice_df = pd.DataFrame(aligned_crane_choices)
+aligned_crane_choice_df = pd.DataFrame(aligned_erection_rows)
 aligned_crane_choice_df.to_csv("crane_choices.csv", index=False)
