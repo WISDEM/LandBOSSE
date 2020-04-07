@@ -114,4 +114,4 @@ for project_id_with_serial in unique_project_id_with_serial:
 
 print("Writing crane choices...")
 aligned_crane_choice_df = pd.DataFrame(aligned_erection_rows)
-aligned_crane_choice_df.to_csv("crane_choices.csv", index=False)
+aligned_crane_choice_df.to_csv("crane_details.csv", index=False)
