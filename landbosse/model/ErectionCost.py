@@ -316,7 +316,6 @@ class ErectionCost(CostModule):
         hub_height_m = self.input_dict['hub_height_meters']
         rotor_diameter_m = self.input_dict['rotor_diameter_m']
         num_turbines = float(self.input_dict['num_turbines'])
-        turbine_spacing_rotor_diameters = self.input_dict['turbine_spacing_rotor_diameters']
 
         # for components in component list determine if base or topping
         project_data['components']['Operation'] = project_data['components']['Lift height m'] > (
@@ -359,9 +358,13 @@ class ErectionCost(CostModule):
             drop=True)
 
         # calculate travel time per cycle
-        turbine_spacing = float(
-            turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m)
-        possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * num_turbines
+        if self.input_dict['collection_mode'] == 'auto':
+            turbine_spacing_rotor_diameters = self.input_dict['turbine_spacing_rotor_diameters']
+            dist = float(turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m) * num_turbines
+        else:
+            self.layout_length()
+            dist = self.output_dict['layout_length_km']
+        possible_cranes['Travel time hr'] = dist / possible_cranes['Speed of travel km per hr']
 
         # calculate erection time
         possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[
@@ -458,8 +461,7 @@ class ErectionCost(CostModule):
         operational_construction_time = self.input_dict['operational_construction_time']
         rate_of_deliveries = self.input_dict['rate_of_deliveries']
         rotor_diameter_m = self.input_dict['rotor_diameter_m']
-        num_turbines = float(self.input_dict['num_turbines'])
-        turbine_spacing_rotor_diameters = self.input_dict['turbine_spacing_rotor_diameters']
+        num_turbines = float(self.input_dict['num_turbines'])\
 
         offload_cranes = project_data['crane_specs'].where(
             project_data['crane_specs']['Equipment name'] == 'Offload crane')
@@ -487,19 +489,22 @@ class ErectionCost(CostModule):
                 drop=True)
 
             # calculate travel time per cycle
-            turbine_spacing = float(
-                turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m)
-            turbine_num = float(self.input_dict['num_turbines'])
-            possible_cranes['Travel time hr'] = turbine_spacing / possible_cranes['Speed of travel km per hr'] * num_turbines
+            if self.input_dict['collection_mode'] == 'auto':
+                turbine_spacing_rotor_diameters = self.input_dict['turbine_spacing_rotor_diameters']
+                dist = float(turbine_spacing_rotor_diameters * rotor_diameter_m * km_per_m) * num_turbines
+            else:
+                self.layout_length()
+                dist = self.output_dict['layout_length_km']
+            possible_cranes['Travel time hr'] = dist / possible_cranes['Speed of travel km per hr']
 
             # calculate erection time
             possible_cranes['Operation time hr'] = ((possible_cranes['Lift height m'] / possible_cranes[
                 'Hoist speed m per min'] * hr_per_min)
                                                     + (possible_cranes['Offload cycle time hrs'])
-                                                    ) * turbine_num
+                                                    ) * num_turbines
 
             # store setup time
-            possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * turbine_num
+            possible_cranes['Setup time hr'] = possible_cranes['Setup time hr'] * num_turbines
 
             erection_time = \
             possible_cranes.groupby(['Crane name', 'Equipment name', 'Crane capacity tonne', 'Crew type ID',
@@ -520,9 +525,9 @@ class ErectionCost(CostModule):
             # if more than one crew needed to complete within construction duration
             # then assume that all construction happens within that window and use
             # that timeframe for weather delays; if not, use the number of days calculated
-            operation_time['time_construct_bool'] = (turbine_num / operation_time['Operational construct days'] * 6
+            operation_time['time_construct_bool'] = (num_turbines / operation_time['Operational construct days'] * 6
                                                      > float(rate_of_deliveries))
-            boolean_dictionary = {True: (float(turbine_num) / (float(rate_of_deliveries) / 6)), False: np.NAN}
+            boolean_dictionary = {True: (float(num_turbines) / (float(rate_of_deliveries) / 6)), False: np.NAN}
             operation_time['time_construct_bool'] = operation_time['time_construct_bool'].map(boolean_dictionary)
             operation_time['Time construct days'] = operation_time[
                 ['time_construct_bool', 'Operational construct days']].max(

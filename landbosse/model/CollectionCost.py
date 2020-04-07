@@ -269,10 +269,10 @@ class ArraySystem(CostModule):
         self.mode = input_dict['collection_mode']
         if self.mode == 'manual':
             self.collection_layout = self.input_dict['collection_layout'].values
-            self.L = self.collection_layout[:, :2]  # length of cable segments [m]
+            self.L = self.collection_layout[:, :2]  # location of nodes [m]
             self.A = self.collection_layout[:, 2:]  # adjacency matrix for collection system. Zeroth element is substation
             dim = self.A.shape
-            self.n_segments = dim[1]-1  # #turbines = # cable segments = # nodes
+            self.n_segments = dim[1]-1  # #turbines = # cable segments = # nodes - 1
             self.output_dict['total_turb'] = self.n_segments
             self.C = np.zeros(self.n_segments + 1)  # init capacity vector: cable ampacity needed at each turbine
         self.calc_current_properties()
@@ -291,7 +291,7 @@ class ArraySystem(CostModule):
         self._total_turbine_counter = 0
         self.turbines_on_cable = []
         self.check_terminal = 0
-        self.collection_V = 9999;
+        self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
             if property['Rated Voltage (V)'] < self.collection_V:
@@ -744,7 +744,6 @@ class ArraySystem(CostModule):
 
         # add substation to transmission interconnect cable
         terminal_ampacity = self.n_segments * self.turbine_ampacity
-
 
         self.output_dict['dissipated_power'] = dissipated_power
         # print('TOTAL CABLE COST = $' + str(self._total_cable_cost))  # TODO remove after figuring out layout optimizer

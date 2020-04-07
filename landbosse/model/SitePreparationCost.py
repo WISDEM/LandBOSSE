@@ -212,8 +212,8 @@ class SitePreparationCost(CostModule):
 
         """
         if self.input_dict['collection_mode'] == 'manual':
-            road_properties_output['road_length_m'] = self.output_dict['total_cable_len_km']*1000 - self.input_dict[
-                'distance_to_interconnect_mi']*self._mi_to_m + road_properties_input['road_length_adder_m']
+            self.layout_length()
+            road_properties_output['road_length_m'] = self.output_dict['layout_length_km'] * 1000 + road_properties_input['road_length_adder_m']
         else:
             road_properties_output['road_length_m'] = ((road_properties_input['num_turbines'] - 1) *
                                                        road_properties_input['turbine_spacing_rotor_diameters'] *

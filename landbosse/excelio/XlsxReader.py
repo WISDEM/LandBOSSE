@@ -370,16 +370,33 @@ class XlsxReader:
         labor_cost_multiplier = project_parameters['Labor cost multiplier']
         self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
 
-        erection_input_worksheets = [
-            'crane_specs',
-            'equip',
-            'crew',
-            'equip_price',
-            'crew_price',
-            'material_price',
-            'components',
-            'collection_layout'
-        ]
+        # use turbine spacings for auto mode, and turbine locations for manual mode
+        if project_parameters['Collection mode'] == 'manual':
+            incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
+            erection_input_worksheets = [
+                'crane_specs',
+                'equip',
+                'crew',
+                'equip_price',
+                'crew_price',
+                'material_price',
+                'components',
+                'collection_layout'
+            ]
+        else:
+            incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
+            incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameters['Turbine spacing (times rotor diameter)']
+            erection_input_worksheets = [
+                'crane_specs',
+                'equip',
+                'crew',
+                'equip_price',
+                'crew_price',
+                'material_price',
+                'components'
+            ]
+        if project_parameters['Collection mode'] == 'manual' and (len(project_data_dataframes['collection_layout']['Adjacency matrix']) != (project_parameters['Number of turbines']+1)):
+            exit('ERROR: mismatch between # turbines and # turbine locations')
 
         erection_project_data_dict = dict()
         for worksheet in erection_input_worksheets:
@@ -391,9 +408,6 @@ class XlsxReader:
         # Get the first set of data
         incomplete_input_dict['rsmeans'] = project_data_dataframes['rsmeans']
         incomplete_input_dict['site_facility_building_area_df'] = project_data_dataframes['site_facility_building_area']
-        incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
-        if project_parameters['Collection mode'] == 'manual' and (len(project_data_dataframes['collection_layout']['Adjacency matrix']) != (project_parameters['Number of turbines']+1)):
-            exit('ERROR: mismatch between # turbines and # turbine locations')
         incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
 
         # The weather window is stored on a sheet of the project_data, but
@@ -439,7 +453,6 @@ class XlsxReader:
             project_parameters['Breakpoint between base and topping (percent)']
         incomplete_input_dict['fuel_usd_per_gal'] = project_parameters['Fuel cost USD per gal']
         incomplete_input_dict['rate_of_deliveries'] = project_parameters['Rate of deliveries (turbines per week)']
-        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameters['Turbine spacing (times rotor diameter)']
         incomplete_input_dict['depth'] = project_parameters['Foundation depth m']
         incomplete_input_dict['rated_thrust_N'] = project_parameters['Rated Thrust (N)']
         incomplete_input_dict['bearing_pressure_n_m2'] = project_parameters['Bearing Pressure (n/m2)']
@@ -451,7 +464,6 @@ class XlsxReader:
         incomplete_input_dict['road_quality'] = project_parameters['Road Quality (0-1)']
         incomplete_input_dict['line_frequency_hz'] = project_parameters['Line Frequency (Hz)']
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
-        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
         incomplete_input_dict['distance_to_grid_connection_mi'] = project_parameters['Distance to interconnect [mi]']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
@@ -466,7 +478,6 @@ class XlsxReader:
 
         incomplete_input_dict['line_frequency_hz'] = project_parameters['Line Frequency (Hz)']
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
-        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_home_run_trench'] = project_parameters[
             'Flag for user-defined home run trench length (0 = no; 1 = yes)']
         incomplete_input_dict['trench_len_to_substation_km'] = project_parameters[
