@@ -1,4 +1,3 @@
-from typing import Dict
 import pandas as pd
 
 # The extended_landbosse_details dataframe includes all the details along side
@@ -99,15 +98,18 @@ for project_id_with_serial in unique_project_id_with_serial:
         "Base crane choice": base,
         "Offload crane choice": offload,
         "Top crane choice": top,
-        "Base total cost": base_total_cost,
-        "Offload total cost": offload_total_cost,
-        "Top total cost": top_total_cost,
-        "Base wind multiplier": base_wind_multiplier,
-        "Offload wind multiplier": offload_wind_multiplier,
-        "Top wind multiplier": top_wind_multiplier,
-        "Base operation time all turbines (hours)": base_operation_time_hours,
-        "Offload operation time all turbines (hours)": offload_operation_time_hours,
-        "Top operation time all turbines (hours)": top_operation_time_hours
+        "Base total cost":
+            round(float(base_total_cost), 0) if base_total_cost is not None else None,
+        "Offload total cost": round(float(offload_total_cost), 0),
+        "Top total cost": round(float(top_total_cost), 0),
+        "Base wind multiplier":
+            round(float(base_wind_multiplier), 2) if base_wind_multiplier is not None else None,
+        "Offload wind multiplier": round(float(offload_wind_multiplier), 2),
+        "Top wind multiplier": round(float(top_wind_multiplier), 2),
+        "Base operation time all turbines (hours)":
+            round(float(base_operation_time_hours), 0) if base_operation_time_hours is not None else None,
+        "Offload operation time all turbines (hours)": round(float(offload_operation_time_hours), 0),
+        "Top operation time all turbines (hours)": round(float(top_operation_time_hours), 0)
     }
 
     aligned_erection_rows.append(aligned_erection_row)
