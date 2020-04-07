@@ -8,7 +8,7 @@ df = pd.read_csv("extended_landbosse_details.csv")
 
 # Extract the crane choice data
 print("Selecting crane data")
-crane_choice_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom system - Operation'")[[
+erection_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom system - Operation'")[[
     "Project ID with serial",
     "Variable name",
     "Non-numeric value",
@@ -24,11 +24,13 @@ crane_choice_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom s
 aligned_crane_choices = []
 
 print("Selecting unique projects...")
-unique_project_id_with_serial = crane_choice_df['Project ID with serial'].unique()
+unique_project_id_with_serial = erection_df['Project ID with serial'].unique()
 
 print("Aligning crane types")
 for project_id_with_serial in unique_project_id_with_serial:
-    crane_rows_df = crane_choice_df.query("`Project ID with serial` == @project_id_with_serial")
+    crane_rows_df = erection_df.query(
+        "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_choice: Crew name - Boom system - Operation'"
+    )
     top_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Top")]
     base_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Base")]
     offload_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Offload")]
