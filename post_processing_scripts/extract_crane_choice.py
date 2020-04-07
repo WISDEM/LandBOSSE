@@ -26,10 +26,6 @@ projects: Dict[str, Dict[str, str]] = {}
 
 unique_project_id_with_serial = crane_choice_df['Project ID with serial'].unique()
 
-def separate_crane_row(row):
-    crane_choice = str(row["Non-numeric value"])
-    return crane_choice.split(" - ")
-
 
 for project_id_with_serial in unique_project_id_with_serial:
     crane_rows_df = crane_choice_df.query("`Project ID with serial` == @project_id_with_serial")
@@ -47,6 +43,12 @@ for project_id_with_serial in unique_project_id_with_serial:
 
     projects[project_id_with_serial] = {
         "Project ID with serial": project_id_with_serial,
+        "Number of turbines": top_row["Number of turbines"].values[0],
+        "Breakpoint between base and topping (percent)": top_row["Breakpoint between base and topping (percent)"].values[0],
+        "Turbine rating MW": top_row["Turbine rating MW"].values[0],
+        "Crane breakdown fraction": top_row["Crane breakdown fraction"].values[0],
+        "Labor cost multiplier": top_row["Labor cost multiplier"].values[0],
+        "Hub height m": top_row["Hub height m"].values[0],
         "Base": base,
         "Offload": offload,
         "Top": top
