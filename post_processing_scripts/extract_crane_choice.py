@@ -45,6 +45,20 @@ for project_id_with_serial in unique_project_id_with_serial:
     else:
         base_wind_multiplier = None
 
+    # Re-using crane_data_df from above, operation time for all turbines
+    top_operation_time_hours_row = crane_data_df[
+        crane_data_df["Non-numeric value"].str.contains("Top - Operation time all turbines hrs")]
+    offload_operation_time_hours_row = crane_data_df[
+        crane_data_df["Non-numeric value"].str.contains("Offload - Operation time all turbines hrs")]
+    base_operation_time_hours_row = crane_data_df[
+        crane_data_df["Non-numeric value"].str.contains("Base - Operation time all turbines hrs")]
+    top_operation_time_hours = top_operation_time_hours_row["Numeric value"].values[0]
+    offload_operation_time_hours = offload_operation_time_hours_row["Numeric value"].values[0]
+    if len(base_operation_time_hours_row) > 0:
+        base_operation_time_hours = base_operation_time_hours_row["Numeric value"].values[0]
+    else:
+        base_operation_time_hours = None
+
     # Crane cost details
     crane_cost_df = erection_df.query(
         "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_cost_details: Operation ID - Type of cost - Cost'"
@@ -57,7 +71,7 @@ for project_id_with_serial in unique_project_id_with_serial:
     if len(base_total_cost_row) > 0:
         base_total_cost = base_total_cost_row["Numeric value"].values[0]
     else:
-        base_total_cost = 0
+        base_total_cost = None
 
     # Crane choice
     crane_choice_rows_df = erection_df.query(
@@ -90,7 +104,10 @@ for project_id_with_serial in unique_project_id_with_serial:
         "Top total cost": top_total_cost,
         "Base wind multiplier": base_wind_multiplier,
         "Offload wind multiplier": offload_wind_multiplier,
-        "Top wind multiplier": top_wind_multiplier
+        "Top wind multiplier": top_wind_multiplier,
+        "Base operation time all turbines (hours)": base_operation_time_hours,
+        "Offload operation time all turbines (hours)": offload_operation_time_hours,
+        "Top operation time all turbines (hours)": top_operation_time_hours
     }
 
     aligned_erection_rows.append(aligned_erection_row)
