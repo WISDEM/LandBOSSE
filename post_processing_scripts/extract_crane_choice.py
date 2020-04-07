@@ -31,6 +31,20 @@ print("Aligning crane types")
 for project_id_with_serial in unique_project_id_with_serial:
     print(f"\t{project_id_with_serial}")
 
+    # Crane data output
+    crane_data_df = erection_df.query(
+        "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_data_output: crane_boom_operation_concat - variable - value'"
+    )
+    top_wind_multiplier_row = crane_data_df[crane_data_df["Non-numeric value"].str.contains("Top - Wind multiplier")]
+    base_wind_multiplier_row = crane_data_df[crane_data_df["Non-numeric value"].str.contains("Base - Wind multiplier")]
+    offload_wind_multiplier_row = crane_data_df[crane_data_df["Non-numeric value"].str.contains("Offload - Wind multiplier")]
+    top_wind_multiplier = top_wind_multiplier_row["Numeric value"].values[0]
+    offload_wind_multiplier = offload_wind_multiplier_row["Numeric value"].values[0]
+    if len(base_wind_multiplier_row) > 0:
+        base_wind_multiplier = base_wind_multiplier_row["Numeric value"].values[0]
+    else:
+        base_wind_multiplier = None
+
     # Crane cost details
     crane_cost_df = erection_df.query(
         "`Project ID with serial` == @project_id_with_serial and `Variable name` == 'crane_cost_details: Operation ID - Type of cost - Cost'"
@@ -73,7 +87,10 @@ for project_id_with_serial in unique_project_id_with_serial:
         "Top crane choice": top,
         "Base total cost": base_total_cost,
         "Offload total cost": offload_total_cost,
-        "Top total cost": top_total_cost
+        "Top total cost": top_total_cost,
+        "Base wind multiplier": base_wind_multiplier,
+        "Offload wind multiplier": offload_wind_multiplier,
+        "Top wind multiplier": top_wind_multiplier
     }
 
     aligned_erection_rows.append(aligned_erection_row)
