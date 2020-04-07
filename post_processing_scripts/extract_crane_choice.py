@@ -85,7 +85,7 @@ for project_id_with_serial in unique_project_id_with_serial:
     if len(base_row) > 0:
         base = " ".join(base_row["Non-numeric value"].values[0].split(" - ")[:-1])
     else:
-        base = "No base crane"
+        base = None
 
     aligned_erection_row = {
         "Project ID with serial": project_id_with_serial,
