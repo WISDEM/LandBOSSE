@@ -3,11 +3,11 @@ import pandas as pd
 
 # The extended_landbosse_details dataframe includes all the details along side
 # all the project list inputs
-print("Reading extended details")
+print("Reading extended details...")
 df = pd.read_csv("extended_landbosse_details.csv")
 
 # Extract the crane choice data
-print("Selecting crane data")
+print("Selecting erection data...")
 erection_df = df.query("`Module` == 'ErectionCost'")[[
     "Project ID with serial",
     "Variable name",
@@ -27,7 +27,7 @@ aligned_erection_rows = []
 print("Selecting unique projects...")
 unique_project_id_with_serial = erection_df['Project ID with serial'].unique()
 
-print("Aligning crane types")
+print("Rearranging crane detail data from rows into columns...")
 for project_id_with_serial in unique_project_id_with_serial:
     print(f"\t{project_id_with_serial}")
 
