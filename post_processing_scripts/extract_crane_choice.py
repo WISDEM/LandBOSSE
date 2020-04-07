@@ -3,9 +3,11 @@ import pandas as pd
 
 # The extended_landbosse_details dataframe includes all the details along side
 # all the project list inputs
+print("Reading extended details")
 df = pd.read_csv("extended_landbosse_details.csv")
 
 # Extract the crane choice data
+print("Selecting crane data")
 crane_choice_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom system - Operation'")[[
     "Project ID with serial",
     "Variable name",
@@ -19,14 +21,12 @@ crane_choice_df = df.query("`Variable name` == 'crane_choice: Crew name - Boom s
     "Total project construction time (months)"
 ]]
 
-# The "Project ID with serial" is the key on the outer dictionary and the
-# the crane operations are the keys on the inner dictionary. The values on
-# the inner dictionary are the crane choices for each operation.
-projects: Dict[str, Dict[str, str]] = {}
+aligned_crane_choices = []
 
+print("Selecting unique projects...")
 unique_project_id_with_serial = crane_choice_df['Project ID with serial'].unique()
 
-
+print("Aligning crane types")
 for project_id_with_serial in unique_project_id_with_serial:
     crane_rows_df = crane_choice_df.query("`Project ID with serial` == @project_id_with_serial")
     top_row = crane_rows_df[crane_rows_df["Non-numeric value"].str.contains("Top")]
@@ -41,7 +41,7 @@ for project_id_with_serial in unique_project_id_with_serial:
     else:
         base = "No base crane"
 
-    projects[project_id_with_serial] = {
+    aligned_crane_choice = {
         "Project ID with serial": project_id_with_serial,
         "Number of turbines": top_row["Number of turbines"].values[0],
         "Breakpoint between base and topping (percent)": top_row["Breakpoint between base and topping (percent)"].values[0],
@@ -54,4 +54,8 @@ for project_id_with_serial in unique_project_id_with_serial:
         "Top": top
     }
 
-    print(projects[project_id_with_serial])
+    aligned_crane_choices.append(aligned_crane_choice)
+
+print("Writing crane choices...")
+aligned_crane_choice_df = pd.DataFrame(aligned_crane_choices)
+aligned_crane_choice_df.to_csv("crane_choices.csv")
