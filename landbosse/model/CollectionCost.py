@@ -792,6 +792,8 @@ class ArraySystem(CostModule):
                 'Equipment Cost USD with weather delays'], 'Collection']],
                                                               columns=['Type of cost', 'Cost USD',
                                                                        'Phase of construction'])
+
+        # switch for small DW
         else:
             if calculate_costs_output_dict['Equipment Cost USD with weather delays'] < 137:
                 calculate_costs_output_dict['Equipment Cost USD with weather delays'] = 137   #cost of renting for a day
@@ -816,6 +818,8 @@ class ArraySystem(CostModule):
             trenching_labor_cost_df = pd.DataFrame(
                 [['Labor', calculate_costs_output_dict['Labor Cost USD with weather delays'], 'Collection']],
                 columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+
+        # switch for small DW
         else:
             trenching_labor_cost_df = pd.DataFrame(
                 [['Labor', calculate_costs_output_dict['Labor Cost USD with weather delays'], 'Small DW Collection']],
@@ -840,6 +844,8 @@ class ArraySystem(CostModule):
             if calculate_costs_input_dict['turbine_rating_MW'] >= 0.1:
                 calculate_costs_output_dict['mob_cost'] = collection_cost[
                     'Cost USD'].sum() * self.mobilization_cost_multiplier(calculate_costs_input_dict['turbine_rating_MW'])
+
+            # switch for small DW
             else:  # mobilization cost included in equipment rental cost
                 calculate_costs_output_dict['mob_cost'] = 0.0
 
