@@ -5,7 +5,7 @@ import numpy as np
 from math import ceil
 
 from .XlsxOperationException import XlsxOperationException
-from .WeatherWindowCSVReader import read_weather_window
+from .WeatherWindowCSVReader import read_weather_window, extend_weather_window
 from ..model import DefaultMasterInputDict
 from .GridSearchTree import GridSearchTree
 
@@ -392,12 +392,6 @@ class XlsxReader:
         incomplete_input_dict['site_facility_building_area_df'] = project_data_dataframes['site_facility_building_area']
         incomplete_input_dict['material_price'] = project_data_dataframes['material_price']
 
-        # The weather window is stored on a sheet of the project_data, but
-        # needs preprocessing after it is read. The preprocessing changes it
-        # from wind toolkit format to a dataframe.
-        weather_window_input_df = project_data_dataframes['weather_window']
-        incomplete_input_dict['weather_window'] = read_weather_window(weather_window_input_df)
-
         # Read development tab, if it exists (it is optional since development costs can
         # be placed in the project list):
         if 'development' in project_data_dataframes:
@@ -504,6 +498,15 @@ class XlsxReader:
             incomplete_input_dict['markup_sales_and_use_tax'] = project_parameters['Markup sales and use tax']
             incomplete_input_dict['markup_overhead'] = project_parameters['Markup overhead']
             incomplete_input_dict['markup_profit_margin'] = project_parameters['Markup profit margin']
+
+        # The weather window is stored on a sheet of the project_data, but
+        # needs preprocessing after it is read. The preprocessing changes it
+        # from wind toolkit format to a dataframe.
+        number_of_months_for_construction = int(project_parameters['Total project construction time (months)'])
+        weather_window_input = project_data_dataframes['weather_window']
+        weather_window_intermediate = read_weather_window(weather_window_input)
+        extended_weather_window = extend_weather_window(weather_window_intermediate, number_of_months_for_construction)
+        incomplete_input_dict['weather_window'] = extended_weather_window
 
         # Now fill any missing values with sensible defaults.
         defaults = DefaultMasterInputDict()
@@ -638,7 +641,9 @@ class XlsxReader:
         total_digit_count = 1
         index_digit_count = len(str(index))
 
-        if 0 < max_index < 1e1 - 1:
+        if max_index < 10:
+            total_digit_count = 1
+        elif 0 < max_index < 1e1 - 1:
             total_digit_count = 1
         elif 1e1 <= max_index < 1e2 - 1:
             total_digit_count = 2
