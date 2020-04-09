@@ -669,7 +669,7 @@ class SitePreparationCost(CostModule):
                                               columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         else:
             mobilization_costs_new_roads = road_cost["Cost USD"].sum() * \
-                                           self.mobilization_cost(calculate_cost_input_dict['turbine_rating_MW'])
+                                           self.mobilization_cost_multiplier(calculate_cost_input_dict['turbine_rating_MW'])
             mobilization_costs_new_plus_old_roads = self.new_and_existing_total_road_cost(mobilization_costs_new_roads)
 
             if calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
