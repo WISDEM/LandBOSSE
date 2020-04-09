@@ -529,19 +529,25 @@ class SitePreparationCost(CostModule):
                                    calculate_cost_input_dict['overtime_multiplier']) + labor_per_diem) * \
                                  calculate_cost_output_dict['wind_multiplier']
 
-        if calculate_cost_input_dict['road_distributed_wind'] == True and calculate_cost_input_dict[
-            'turbine_rating_MW'] >= 0.1:
-            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + calculate_cost_output_dict[
-                'managament_crew_cost_before_wind_delay']
+        if calculate_cost_input_dict['road_distributed_wind'] and \
+                calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
+
+            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + \
+                                           calculate_cost_output_dict['managament_crew_cost_before_wind_delay']
+
             labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
             labor_costs = pd.DataFrame([['Labor', float(labor_for_new_and_old_roads_cost_usd), 'Roads']],
                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-        elif calculate_cost_input_dict['road_distributed_wind'] == True and calculate_cost_input_dict[
-            'turbine_rating_MW'] < 0.1:  # small DW
+
+        elif calculate_cost_input_dict['road_distributed_wind'] and \
+                calculate_cost_input_dict['turbine_rating_MW'] < 0.1:  # small DW
+
             labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum())
             labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
+
             labor_costs = pd.DataFrame([['Labor', float(labor_for_new_and_old_roads_cost_usd), 'Small DW Roads']],
                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+
         else:
             labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + (
                     48.8 * calculate_cost_output_dict['road_length_m']) + calculate_cost_output_dict[
@@ -676,20 +682,20 @@ class SitePreparationCost(CostModule):
             'value': self.output_dict['crane_path_width_m']     #TODO: Rename variable to: crane_path_width_ft
         })
 
-        if not input_dict['road_distributed_wind']:
-            result.append({
-                'unit': 'm',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Road length',
-                'value': float(self.output_dict['road_length_m'])
-            })
+        # if not input_dict['road_distributed_wind']:
+        result.append({
+            'unit': 'm',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Road length',
+            'value': float(self.output_dict['road_length_m'])
+        })
 
-            result.append({
-                'unit': 'm',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Road width',
-                'value': self.output_dict['road_width_m']
-            })
+        result.append({
+            'unit': 'm',
+            'type': 'variable',
+            'variable_df_key_col_name': 'Road width',
+            'value': self.output_dict['road_width_m']
+        })
 
         result.append({
             'unit': 'm',
