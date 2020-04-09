@@ -386,19 +386,21 @@ class SitePreparationCost(CostModule):
             crew_cost = self.input_dict['crew_cost']
             crew = self.input_dict['crew'][self.input_dict['crew']['Crew type ID'].str.contains('M0')]
             management_crew = pd.merge(crew_cost, crew, on=['Labor type ID'])
-            management_crew = management_crew.assign(
-                per_diem_total=management_crew['Per diem USD per day'] * management_crew[
-                    'Number of workers'] * num_days)
-            management_crew = management_crew.assign(
-                hourly_costs_total=management_crew['Hourly rate USD per hour'] * self.input_dict['hour_day'][
-                    self.input_dict['time_construct']] * num_days)
-            management_crew = management_crew.assign(
-                total_crew_cost_before_wind_delay=management_crew['per_diem_total'] + management_crew[
-                    'hourly_costs_total'])
+            management_crew = management_crew.assign(per_diem_total=
+                                                     management_crew['Per diem USD per day'] *
+                                                     management_crew['Number of workers'] *
+                                                     num_days)
+            management_crew = management_crew.assign(hourly_costs_total=
+                                                     management_crew['Hourly rate USD per hour'] *
+                                                     self.input_dict['hour_day'][self.input_dict['time_construct']] *
+                                                     num_days)
+            management_crew = management_crew.assign(total_crew_cost_before_wind_delay=
+                                                     management_crew['per_diem_total'] +
+                                                     management_crew['hourly_costs_total'])
             self.output_dict['management_crew'] = management_crew
-            self.output_dict['managament_crew_cost_before_wind_delay'] = management_crew[
-                'total_crew_cost_before_wind_delay'].sum()
 
+            self.output_dict['managament_crew_cost_before_wind_delay'] = management_crew[
+                                                     'total_crew_cost_before_wind_delay'].sum()
 
         estimate_construction_time_output['operation_data'] = operation_data
 
@@ -549,16 +551,22 @@ class SitePreparationCost(CostModule):
                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         else:
-            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + (
-                    48.8 * calculate_cost_output_dict['road_length_m']) + calculate_cost_output_dict[
-                                               'managament_crew_cost_before_wind_delay']
-            labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
-            labor_costs = pd.DataFrame([['Labor', float(labor_for_new_and_old_roads_cost_usd), 'Roads']],
-                                   columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + \
+                                           (48.8 * calculate_cost_output_dict['road_length_m']) + \
+                                           calculate_cost_output_dict['managament_crew_cost_before_wind_delay']
 
+            labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(
+                                                                    labor_for_new_roads_cost_usd)
 
+            labor_costs = pd.DataFrame([['Labor',
+                                         float(labor_for_new_and_old_roads_cost_usd),
+                                         'Roads']],
 
-        #Filter out equipment costs from rsmeans tab:
+                                       columns=['Type of cost',
+                                                'Cost USD',
+                                                'Phase of construction'])
+
+        # Filter out equipment costs from rsmeans tab:
         if calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
             equipment_data = labor_equip_data[labor_equip_data['Type of cost'] == 'Equipment rental'].copy()
         else:
