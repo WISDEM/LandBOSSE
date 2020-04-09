@@ -490,64 +490,69 @@ class ArraySystem(CostModule):
             Total length of individual cable type
         """
 
-        # If terminal cable has already been accounted for, skip any calculations for other cables.
+        # If terminal cable has already been accounted for, skip any
+        # calculations for other cables.
         if (cable.turb_sequence - 1) > check_terminal:
             cable.array_cable_len = 0
             cable.total_length = 0
             cable.num_turb_per_cable = 0
             return 0, 0
 
-        # If num full strings < = 1, find which cable the final turbine is on, and calculate total cable length
-        # (including the len to substation) using that cable.
-        elif num_full_strings <= 1 and num_partial_strings >= 0:  # Essentially a switch for distributed wind
+        # If num full strings < = 1, find which cable the final turbine
+        # is on, and calculate total cable length (including the len to
+        # substation) using that cable.
 
-            # if number of turbines is less than total string capacity, find the terminal cable and find total cable len
+        # This 'elif' is essentially a switch for distributed wind:
+        elif num_full_strings < 1 and num_partial_strings >= 0:
+
+            # if number of turbines is less than total string capacity,
+            # find the terminal cable and find total cable len
             # up till that cable.
-            if total_turbines <= turbines_per_cable[
-                count]:  # If total turbines in project are less than cumulative turbines uptil and including that cable.
-                # total_cable_len = (num_full_strings * cable.array_cable_len + num_partial_strings * (cable.array_cable_len * perc_partial_string) + len_to_substation)
-                terminal_string = cable.turb_sequence - 1  # Flag the cable that is the actual terminal cable
 
-                if (cable.turb_sequence - 1) == 0:  # That is, if cable #1 can hold more turbines than specified by user
+            # If total turbines in project are less than cumulative turbines
+            # up till and including that cable.
 
-                    cable.num_turb_per_cable = total_turbines
-                    cable.array_cable_len = (
-                            (cable.num_turb_per_cable + cable.downstream_connection) * cable.turb_section_length)
+            terminal_string = cable.turb_sequence - 1  # Flag this cable as it is
+            # also the actual terminal cable
 
-                    total_cable_len = ((num_full_strings * cable.array_cable_len) + (
-                                num_partial_strings * cable.array_cable_len)) + len_to_substation
+            if (cable.turb_sequence - 1) == 0:  # That is, if cable # 1 can hold
+                # more turbines than specified by user, it is the terminal cable
 
-                else:
+                cable.num_turb_per_cable = total_turbines
+                cable.array_cable_len = ((cable.num_turb_per_cable + cable.downstream_connection)
+                                         * cable.turb_section_length)
 
-                    cable.num_turb_per_cable = total_turbines - turbines_per_cable[(count - 1)]
-                    cable.array_cable_len = (
-                            (cable.num_turb_per_cable + cable.downstream_connection) * cable.turb_section_length)
-
-                    total_cable_len = ((num_full_strings * cable.array_cable_len) +
-                                       (num_partial_strings * cable.array_cable_len)) + len_to_substation
-
-                return total_cable_len, terminal_string
+                total_cable_len = ((num_full_strings * cable.array_cable_len) +
+                                   (num_partial_strings * cable.array_cable_len)) + len_to_substation
 
             else:
 
-                total_cable_len = num_full_strings * cable.array_cable_len + num_partial_strings * (
-                            cable.array_cable_len * perc_partial_string)
+                cable.num_turb_per_cable = total_turbines - turbines_per_cable[(count - 1)]
+                cable.array_cable_len = ((cable.num_turb_per_cable + cable.downstream_connection) *
+                                         cable.turb_section_length)
+
+                total_cable_len = ((num_full_strings * cable.array_cable_len) +
+                                   (num_partial_strings * cable.array_cable_len)) + len_to_substation
+
+            return total_cable_len, terminal_string
 
         else:  # Switch for utility scale landbosse
             if cable.turb_sequence == len(cable_specs):
-                # Only add len_to_substation to the final cable in the string
-                total_cable_len = (num_full_strings * cable.array_cable_len + num_partial_strings * (
-                            cable.array_cable_len * perc_partial_string) + len_to_substation)
-            else:
-                total_cable_len = (num_full_strings * cable.array_cable_len + num_partial_strings * (
-                            cable.array_cable_len * perc_partial_string))
 
+                # Only add len_to_substation to the final cable in the string
+                total_cable_len = (num_full_strings * cable.array_cable_len +
+                                   num_partial_strings * (cable.array_cable_len * perc_partial_string) +
+                                   len_to_substation)
+            else:
+                total_cable_len = (num_full_strings * cable.array_cable_len +
+                                   num_partial_strings * (cable.array_cable_len * perc_partial_string))
+
+        # here 9999 == flag to announce that the terminal cable has NOT been reached
+        # and to continue calculations for each cable
         return total_cable_len, 9999
 
-
     def create_ArraySystem(self):
-
-        #data used in parent classes:
+        # data used in parent classes:
         self.addl_specs = dict()
         self.addl_specs['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
         self.addl_specs['upstream_turb'] = 0
@@ -589,19 +594,27 @@ class ArraySystem(CostModule):
             self.addl_specs['upstream_turb'] += cable.num_turb_per_cable
             self.addl_specs['turb_sequence'] += 1
 
-
-            # Calculate number of required strings to support plant capacity
-        self.output_dict['turb_per_string'], self.output_dict['num_full_strings'], self.output_dict['num_partial_strings'], self.output_dict['perc_partial_string'], self.output_dict['num_turb_per_cable'] = self.calc_num_strings()
+        # Calculate number of required strings to support plant capacity
+        self.output_dict['turb_per_string'], \
+            self.output_dict['num_full_strings'], \
+            self.output_dict['num_partial_strings'], \
+            self.output_dict['perc_partial_string'], \
+            self.output_dict['num_turb_per_cable'] = self.calc_num_strings()
 
         # Calculate total length of cable run to substation
-        self.output_dict['num_strings'] = self.output_dict['num_full_strings'] + self.output_dict['num_partial_strings']
+        self.output_dict['num_strings'] = self.output_dict[
+                                'num_full_strings'] + self.output_dict['num_partial_strings']
 
-        if self.input_dict['user_defined_distance_to_grid_connection'] == 0:
-            distributed_wind_distance_to_grid = (self.input_dict['turbine_spacing_rotor_diameters'] * self.input_dict[
-                'rotor_diameter_m']) / 1000  # This only gets used if number of strings is <= 1
-            self.output_dict['distance_to_grid_connection_km'] = self.calc_cable_len_to_substation(
-                distributed_wind_distance_to_grid, self.input_dict['turbine_spacing_rotor_diameters'],
-                self.input_dict['row_spacing_rotor_diameters'], self.output_dict['num_strings'])
+        if self.input_dict['user_defined_distance_to_grid_connection'] == 0:    # where (0 = No) and (1 = Yes)
+
+            # This only gets used if number of strings is <= 1 :
+            distributed_wind_distance_to_grid = (self.input_dict[
+                'turbine_spacing_rotor_diameters'] * self.input_dict['rotor_diameter_m']) / 1000
+            self.output_dict['distance_to_grid_connection_km'] = self.\
+                calc_cable_len_to_substation(distributed_wind_distance_to_grid,
+                                             self.input_dict['turbine_spacing_rotor_diameters'],
+                                             self.input_dict['row_spacing_rotor_diameters'],
+                                             self.output_dict['num_strings'])
         else:
             self.output_dict['distance_to_grid_connection_km'] = self.input_dict['distance_to_grid_connection_km']
 
