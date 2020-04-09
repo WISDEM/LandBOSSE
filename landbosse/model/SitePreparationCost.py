@@ -527,9 +527,16 @@ class SitePreparationCost(CostModule):
             # labor_data = labor_equip_data[labor_equip_data['Type of cost'] == 'Labor'].copy()
             labor_data = labor_equip_data[labor_equip_data['Module'] == 'Small DW Roads'].copy()
 
-        labor_data['Cost USD'] = ((material_data['Quantity of material'].iloc[0] * labor_data['Rate USD per unit'] *
-                                   calculate_cost_input_dict['overtime_multiplier']) + labor_per_diem) * \
-                                 calculate_cost_output_dict['wind_multiplier']
+        quantity_material = material_data['Quantity of material']
+        labor_usd_per_unit = labor_data['Rate USD per unit']
+        overtime_multiplier = calculate_cost_input_dict['overtime_multiplier']
+        wind_multiplier = calculate_cost_output_dict['wind_multiplier']
+
+        labor_data['Cost USD'] = ((labor_data['Quantity of material'] *
+                                   labor_data['Rate USD per unit'] *
+                                   calculate_cost_input_dict['overtime_multiplier']) +
+                                  labor_per_diem
+                                  ) * calculate_cost_output_dict['wind_multiplier']
 
         if calculate_cost_input_dict['road_distributed_wind'] and \
                 calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
@@ -551,12 +558,10 @@ class SitePreparationCost(CostModule):
                                        columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         else:
-            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + \
-                                           (48.8 * calculate_cost_output_dict['road_length_m']) + \
+            labor_for_new_roads_cost_usd = labor_data['Cost USD'].sum() + \
                                            calculate_cost_output_dict['managament_crew_cost_before_wind_delay']
 
-            labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(
-                                                                    labor_for_new_roads_cost_usd)
+            labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
 
             labor_costs = pd.DataFrame([['Labor',
                                          float(labor_for_new_and_old_roads_cost_usd),
