@@ -745,13 +745,6 @@ class SitePreparationCost(CostModule):
         result.append({
             'unit': 'm',
             'type': 'variable',
-            'variable_df_key_col_name': 'Road width',
-            'value': self.output_dict['road_width_m']
-        })
-
-        result.append({
-            'unit': 'm',
-            'type': 'variable',
             'variable_df_key_col_name': 'Road thickness',
             'value': self.output_dict['road_thickness_m']
         })
