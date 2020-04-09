@@ -597,7 +597,7 @@ class SitePreparationCost(CostModule):
                                            columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         # add costs for other operations not included in process data for utility mode (e.g., fencing, access roads)
-        if not calculate_cost_input_dict['road_distributed_wind']:
+        if calculate_cost_input_dict['turbine_rating_MW'] > 0.1:
             num_turbines = calculate_cost_input_dict['num_turbines']
             rotor_diameter_m = calculate_cost_input_dict['rotor_diameter_m']
             construct_duration = calculate_cost_input_dict['construct_duration']
@@ -613,11 +613,7 @@ class SitePreparationCost(CostModule):
         else:  # No 'Other' cost in distributed wind mode:
             cost_new_roads_adder = 0
             cost_adder = self.new_and_existing_total_road_cost(cost_new_roads_adder)
-            if calculate_cost_input_dict['turbine_rating_MW'] < 0.1:
-                additional_costs = pd.DataFrame([['Other', float(cost_adder), 'Small DW Roads']],
-                                                columns=['Type of cost', 'Cost USD', 'Phase of construction'])
-            else:
-                additional_costs = pd.DataFrame([['Other', float(cost_adder), 'Roads']],
+            additional_costs = pd.DataFrame([['Other', float(cost_adder), 'Small DW Roads']],
                                             columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
 
@@ -637,8 +633,8 @@ class SitePreparationCost(CostModule):
             mobilization_costs = pd.DataFrame([['Mobilization', mobilization_costs_new_plus_old_roads, 'Roads']],
                                               columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         else:
-            mobilization_costs_new_roads = (road_cost["Cost USD"].sum() / calculate_cost_input_dict[
-                'num_turbines']) * self.mobilization_cost(calculate_cost_input_dict['turbine_rating_MW'])
+            mobilization_costs_new_roads = road_cost["Cost USD"].sum() * \
+                                           self.mobilization_cost(calculate_cost_input_dict['turbine_rating_MW'])
             mobilization_costs_new_plus_old_roads = self.new_and_existing_total_road_cost(mobilization_costs_new_roads)
 
             if calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
@@ -695,13 +691,13 @@ class SitePreparationCost(CostModule):
             'value': self.output_dict['crane_path_width_m']     #TODO: Rename variable to: crane_path_width_ft
         })
 
-        # if not input_dict['road_distributed_wind']:
-        result.append({
-            'unit': 'm',
-            'type': 'variable',
-            'variable_df_key_col_name': 'Road length',
-            'value': float(self.output_dict['road_length_m'])
-        })
+        if not input_dict['road_distributed_wind']:
+            result.append({
+                'unit': 'm',
+                'type': 'variable',
+                'variable_df_key_col_name': 'Road length',
+                'value': float(self.output_dict['road_length_m'])
+            })
 
         result.append({
             'unit': 'm',
