@@ -15,8 +15,6 @@ install:
   - pip install pytest
 
 
-before_script: cd
-
 env:
   global:
     - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
@@ -24,7 +22,7 @@ env:
 
 # command to run tests
 script:
-  - python $TRAVIS_BUILD_DIR/main.py
+  - python $TRAVIS_BUILD_DIR/main.py --validate
 
 branches:
   only:

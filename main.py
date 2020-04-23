@@ -49,7 +49,6 @@ if __name__ == '__main__':
     extended_project_list = final_result['extended_project_list']
     extended_project_list.to_csv(extended_project_list_path, index=False)
 
-    validation_enabled = True
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
         print('Running validation.')
