@@ -49,6 +49,7 @@ if __name__ == '__main__':
     extended_project_list = final_result['extended_project_list']
     extended_project_list.to_csv(extended_project_list_path, index=False)
 
+    validation_enabled = True
     # Run validation or not depending on whether validation was enabled.
     if validation_enabled:
         print('Running validation.')
@@ -67,8 +68,10 @@ if __name__ == '__main__':
         )
         if validation_was_successful:
             print('Validation passed.')
+            build_status = 0
         else:
             print('Validation failed. See mismatched data above.')
+            build_status = 1
 
     # XlsxGenerator has a context manager that writes each individual
     # worksheet to the output .xlsx. Also, copy file input structure.
@@ -95,3 +98,9 @@ if __name__ == '__main__':
 
     # Print end timestamp
     print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
+
+    if validation_enabled:
+        if build_status:
+            exit(build_status)
+        else:
+            exit(build_status)
