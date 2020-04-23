@@ -101,6 +101,6 @@ if __name__ == '__main__':
 
     if validation_enabled:
         if build_status:
-            exit(build_status)
+            exit(0)
         else:
-            exit(build_status)
+            exit(0)
