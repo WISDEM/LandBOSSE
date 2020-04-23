@@ -14,6 +14,7 @@ install:
   - pip install sqlalchemy
   - pip install pytest
 
+
 before_script: cd
 
 env:
@@ -23,10 +24,8 @@ env:
 
 # command to run tests
 script:
-  - pytest $TRAVIS_BUILD_DIR/landbosse/landbosse_api/API_test/API_test.py
   - python $TRAVIS_BUILD_DIR/main.py
 
 branches:
   only:
-    - pip_installable
     - issue_136_add_tests

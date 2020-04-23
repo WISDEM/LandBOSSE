@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=issue_136_add_tests)](https://travis-ci.com/WISDEM/LandBOSSE)
 # LandBOSSE
 
 ## Welcome to LandBOSSE!
