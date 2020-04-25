@@ -1,0 +1,133 @@
+Project ID with serial,Number of turbines,Turbine rating MW,Rotor diameter m,Module,Type of cost,Cost per turbine,Cost per project,Cost per kW
+foundation_validation_ge15,100,1.5,77,FoundationCost,Equipment rental,3075.5356983444512,307553.56983444514,2.0503571322296343
+foundation_validation_ge15,100,1.5,77,FoundationCost,Labor,36776.5998672175,3677659.9867217494,24.517733244811662
+foundation_validation_ge15,100,1.5,77,FoundationCost,Materials,55730.312160670925,5573031.2160670925,37.153541440447285
+foundation_validation_ge15,100,1.5,77,FoundationCost,Mobilization,9558.244772623288,955824.4772623288,6.372163181748859
+foundation_validation_ge15,100,1.5,77,SitePreparationCost,Materials,7977.515345973179,797751.5345973179,5.318343563982119
+foundation_validation_ge15,100,1.5,77,SitePreparationCost,Equipment rental,4120.138400387764,412013.84003877634,2.7467589335918423
+foundation_validation_ge15,100,1.5,77,SitePreparationCost,Labor,6094.631296755779,609463.1296755779,4.0630875311705195
+foundation_validation_ge15,100,1.5,77,SitePreparationCost,Other,13073.0076,1307300.76,8.7153384
+foundation_validation_ge15,100,1.5,77,SitePreparationCost,Mobilization,830.0935196747491,83009.35196747491,0.5533956797831661
+foundation_validation_ge15,100,1.5,77,SubstationCost,Other,48591.82072082901,4859182.072082901,32.39454714721934
+foundation_validation_ge15,100,1.5,77,GridConnectionCost,Other,40847.751528987756,4084775.152898776,27.231834352658506
+foundation_validation_ge15,100,1.5,77,CollectionCost,Equipment rental,4266.1468629607625,426614.6862960762,2.8440979086405083
+foundation_validation_ge15,100,1.5,77,CollectionCost,Labor,14028.880267842393,1402888.0267842393,9.352586845228263
+foundation_validation_ge15,100,1.5,77,CollectionCost,Materials,28080.551406992992,2808055.140699299,18.720367604661995
+foundation_validation_ge15,100,1.5,77,CollectionCost,Mobilization,2318.7789268898077,231877.89268898076,1.5458526179265384
+foundation_validation_ge15,100,1.5,77,DevelopmentCost,Equipment rental,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,DevelopmentCost,Labor,1500.0,150000.0,1.0
+foundation_validation_ge15,100,1.5,77,DevelopmentCost,Materials,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,DevelopmentCost,Mobilization,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,DevelopmentCost,Other,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,ErectionCost,Equipment rental,7489.114927891536,748911.4927891536,4.992743285261024
+foundation_validation_ge15,100,1.5,77,ErectionCost,Fuel,288.255,28825.5,0.19217
+foundation_validation_ge15,100,1.5,77,ErectionCost,Labor,51346.53803238275,5134653.8032382745,34.23102535492183
+foundation_validation_ge15,100,1.5,77,ErectionCost,Mobilization,8993.1,899310.0,5.9954
+foundation_validation_ge15,100,1.5,77,ErectionCost,Other,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,ErectionCost,Materials,0.0,0.0,0.0
+foundation_validation_ge15,100,1.5,77,ManagementCost,insurance,1910.4820914839781,191048.20914839781,1.2736547276559855
+foundation_validation_ge15,100,1.5,77,ManagementCost,Construction Permitting,4102.813849977123,410281.38499771233,2.7352092333180824
+foundation_validation_ge15,100,1.5,77,ManagementCost,Project Management,18877.634920373403,1887763.4920373403,12.585089946915602
+foundation_validation_ge15,100,1.5,77,ManagementCost,Bonding,3411.5751633642467,341157.5163364247,2.274383442242831
+foundation_validation_ge15,100,1.5,77,ManagementCost,Markup Contingency,44418.70862700248,4441870.862700248,29.612472418001655
+foundation_validation_ge15,100,1.5,77,ManagementCost,Engineering Foundation and Collections System (includes met mast),20713.25,2071325.0,13.808833333333334
+foundation_validation_ge15,100,1.5,77,ManagementCost,Site Facility,13067.4835,1306748.35,8.711655666666667
+foundation_validation_clipper25,60,2.5,96,FoundationCost,Equipment rental,4328.6395793238335,259718.37475943,1.7314558317295334
+foundation_validation_clipper25,60,2.5,96,FoundationCost,Labor,54153.04075485068,3249182.4452910405,21.66121630194027
+foundation_validation_clipper25,60,2.5,96,FoundationCost,Materials,79189.45702087482,4751367.421252489,31.675782808349926
+foundation_validation_clipper25,60,2.5,96,FoundationCost,Mobilization,13767.113735504934,826026.824130296,5.506845494201974
+foundation_validation_clipper25,60,2.5,96,SitePreparationCost,Materials,9819.7012663029,589182.075978174,3.9278805065211597
+foundation_validation_clipper25,60,2.5,96,SitePreparationCost,Equipment rental,5164.818732503807,309889.12395022844,2.065927493001523
+foundation_validation_clipper25,60,2.5,96,SitePreparationCost,Labor,8636.378865688694,518182.73194132163,3.4545515462754777
+foundation_validation_clipper25,60,2.5,96,SitePreparationCost,Other,15118.348800000002,907100.9280000001,6.04733952
+foundation_validation_clipper25,60,2.5,96,SitePreparationCost,Mobilization,1028.527025492353,61711.62152954118,0.4114108101969412
+foundation_validation_clipper25,60,2.5,96,SubstationCost,Other,80986.36786804836,4859182.072082901,32.39454714721934
+foundation_validation_clipper25,60,2.5,96,GridConnectionCost,Other,68079.58588164627,4084775.152898776,27.231834352658506
+foundation_validation_clipper25,60,2.5,96,CollectionCost,Equipment rental,6185.469051967864,371128.14311807184,2.4741876207871454
+foundation_validation_clipper25,60,2.5,96,CollectionCost,Labor,22167.905739850914,1330074.344391055,8.867162295940366
+foundation_validation_clipper25,60,2.5,96,CollectionCost,Materials,42610.63029774422,2556637.817864653,17.04425211909769
+foundation_validation_clipper25,60,2.5,96,CollectionCost,Mobilization,3548.2002544781503,212892.01526868902,1.4192801017912602
+foundation_validation_clipper25,60,2.5,96,DevelopmentCost,Equipment rental,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,DevelopmentCost,Labor,2500.0,150000.0,1.0
+foundation_validation_clipper25,60,2.5,96,DevelopmentCost,Materials,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,DevelopmentCost,Mobilization,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,DevelopmentCost,Other,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Equipment rental,9442.94619610586,566576.7717663517,3.7771784784423446
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Fuel,304.5,18270.0,0.1218
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Labor,54137.46507780618,3248247.9046683707,21.654986031122473
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Mobilization,10195.566666666668,611734.0,4.078226666666667
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Other,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,ErectionCost,Materials,0.0,0.0,0.0
+foundation_validation_clipper25,60,2.5,96,ManagementCost,insurance,2715.9001117631965,162954.00670579178,1.0863600447052786
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Construction Permitting,6362.09835514442,381725.90130866517,2.544839342057768
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Project Management,27236.217376005065,1634173.0425603038,10.894486950402026
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Bonding,4849.821628148565,290989.2976889139,1.9399286512594258
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Markup Contingency,63144.6775984943,3788680.655909658,25.25787103939772
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Engineering Foundation and Collections System (includes met mast),29169.75,1750185.0,11.6679
+foundation_validation_clipper25,60,2.5,96,ManagementCost,Site Facility,18172.71336666667,1090362.8020000001,7.269085346666667
+foundation_validation_iea36_85,28,3.6,130,FoundationCost,Equipment rental,6896.713391516902,193107.97496247326,1.9157537198658061
+foundation_validation_iea36_85,28,3.6,130,FoundationCost,Labor,92108.62005788709,2579041.3616208388,25.585727793857526
+foundation_validation_iea36_85,28,3.6,130,FoundationCost,Materials,126939.83331499761,3554315.332819933,35.26106480972156
+foundation_validation_iea36_85,28,3.6,130,FoundationCost,Mobilization,22594.516676440166,632646.4669403246,6.27625463234449
+foundation_validation_iea36_85,28,3.6,130,SitePreparationCost,Materials,13626.406670782499,381539.38678190997,3.7851129641062498
+foundation_validation_iea36_85,28,3.6,130,SitePreparationCost,Equipment rental,7323.5532132819,205059.4899718932,2.03432033702275
+foundation_validation_iea36_85,28,3.6,130,SitePreparationCost,Labor,15153.565527433708,424299.83476814383,4.209323757620474
+foundation_validation_iea36_85,28,3.6,130,SitePreparationCost,Other,20695.042285714288,579461.184,5.748622857142857
+foundation_validation_iea36_85,28,3.6,130,SitePreparationCost,Mobilization,1508.0019723609892,42224.055226107695,0.4188894367669414
+foundation_validation_iea36_85,28,3.6,130,SubstationCost,Other,152739.8920652843,4276716.977827961,42.42774779591231
+foundation_validation_iea36_85,28,3.6,130,GridConnectionCost,Other,145884.826889242,4084775.152898776,40.523563024789446
+foundation_validation_iea36_85,28,3.6,130,CollectionCost,Equipment rental,8413.897316476641,235589.12486134595,2.3371936990212894
+foundation_validation_iea36_85,28,3.6,130,CollectionCost,Labor,41150.3459417194,1152209.6863681432,11.43065165047761
+foundation_validation_iea36_85,28,3.6,130,CollectionCost,Materials,58053.68003893764,1625503.0410902537,16.12602223303823
+foundation_validation_iea36_85,28,3.6,130,CollectionCost,Mobilization,5380.896164856684,150665.09261598715,1.4946933791268566
+foundation_validation_iea36_85,28,3.6,130,DevelopmentCost,Equipment rental,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,DevelopmentCost,Labor,5357.142857142857,150000.0,1.4880952380952381
+foundation_validation_iea36_85,28,3.6,130,DevelopmentCost,Materials,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,DevelopmentCost,Mobilization,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,DevelopmentCost,Other,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Equipment rental,8523.196081758582,238649.49028924032,2.367554467155162
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Fuel,345.375,9670.5,0.0959375
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Labor,73765.53735056703,2065435.0458158767,20.490427041824173
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Mobilization,19227.64285714286,538374.0,5.3410119047619045
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Other,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,ErectionCost,Materials,0.0,0.0,0.0
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,insurance,4547.266639771841,127323.46591361157,1.2631296221588448
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Construction Permitting,12113.650811673977,339182.2227268714,3.364903003242772
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Project Management,55117.69998332142,1543295.5995329998,15.310472217589284
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Bonding,8120.118999592574,227363.33198859208,2.2555886109979375
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Markup Contingency,105723.9493746953,2960270.582491468,29.367763715193135
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Engineering Foundation and Collections System (includes met mast),52491.17857142857,1469753.0,14.580882936507937
+foundation_validation_iea36_85,28,3.6,130,ManagementCost,Site Facility,30052.964285714286,841483.0,8.348045634920634
+foundation_validation_iea36_120,28,3.6,130,FoundationCost,Equipment rental,10709.425147310367,299863.9041246903,2.974840318697324
+foundation_validation_iea36_120,28,3.6,130,FoundationCost,Labor,131157.8842379004,3672420.7586612115,36.432745621639
+foundation_validation_iea36_120,28,3.6,130,FoundationCost,Materials,199084.46785865628,5574365.100042376,55.30124107184896
+foundation_validation_iea36_120,28,3.6,130,FoundationCost,Mobilization,34095.1777243867,954664.9762828278,9.47088270121853
+foundation_validation_iea36_120,28,3.6,130,SitePreparationCost,Materials,13626.406670782499,381539.38678190997,3.7851129641062498
+foundation_validation_iea36_120,28,3.6,130,SitePreparationCost,Equipment rental,7323.5532132819,205059.4899718932,2.03432033702275
+foundation_validation_iea36_120,28,3.6,130,SitePreparationCost,Labor,15153.565527433708,424299.83476814383,4.209323757620474
+foundation_validation_iea36_120,28,3.6,130,SitePreparationCost,Other,20695.042285714288,579461.184,5.748622857142857
+foundation_validation_iea36_120,28,3.6,130,SitePreparationCost,Mobilization,1508.0019723609892,42224.055226107695,0.4188894367669414
+foundation_validation_iea36_120,28,3.6,130,SubstationCost,Other,152739.8920652843,4276716.977827961,42.42774779591231
+foundation_validation_iea36_120,28,3.6,130,GridConnectionCost,Other,145884.826889242,4084775.152898776,40.523563024789446
+foundation_validation_iea36_120,28,3.6,130,CollectionCost,Equipment rental,8413.897316476641,235589.12486134595,2.3371936990212894
+foundation_validation_iea36_120,28,3.6,130,CollectionCost,Labor,41150.3459417194,1152209.6863681432,11.43065165047761
+foundation_validation_iea36_120,28,3.6,130,CollectionCost,Materials,58053.68003893764,1625503.0410902537,16.12602223303823
+foundation_validation_iea36_120,28,3.6,130,CollectionCost,Mobilization,5380.896164856684,150665.09261598715,1.4946933791268566
+foundation_validation_iea36_120,28,3.6,130,DevelopmentCost,Equipment rental,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,DevelopmentCost,Labor,5357.142857142857,150000.0,1.4880952380952381
+foundation_validation_iea36_120,28,3.6,130,DevelopmentCost,Materials,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,DevelopmentCost,Mobilization,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,DevelopmentCost,Other,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Equipment rental,15939.774906505549,446313.69738215534,4.427715251807097
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Fuel,507.5892857142857,14212.5,0.1409970238095238
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Labor,85921.13032354663,2405791.649059306,23.86698064542962
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Mobilization,32118.214285714286,899310.0,8.92172619047619
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Other,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,ErectionCost,Materials,0.0,0.0,0.0
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,insurance,5438.407122392617,152275.39942699327,1.5106686451090603
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Construction Permitting,14643.796242222219,410026.29478222213,4.067721178395061
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Project Management,55117.69998332142,1543295.5995329998,15.310472217589284
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Bonding,9711.441289986817,271920.35611963086,2.6976225805518936
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Markup Contingency,126442.96559562834,3540403.0366775934,35.12304599878565
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Engineering Foundation and Collections System (includes met mast),60048.32142857143,1681353.0,16.680089285714285
+foundation_validation_iea36_120,28,3.6,130,ManagementCost,Site Facility,30052.964285714286,841483.0,8.348045634920634
