@@ -317,13 +317,12 @@ class ErectionCost(CostModule):
             'value': self.output_dict['time_weighted_weather_multiplier']
         })
 
-        if not self.in_distributed_mode:
-            result.append({
-                'unit': 'months',
-                'type': 'variable',
-                'variable_df_key_col_name': 'erection_construction_months',
-                'value': self.output_dict['erection_construction_months']
-            })
+        result.append({
+            'unit': 'months',
+            'type': 'variable',
+            'variable_df_key_col_name': 'erection_construction_months',
+            'value': self.output_dict['erection_construction_months']
+        })
 
         result.append({
             'unit': 'usd',
@@ -1167,7 +1166,6 @@ class ErectionCost(CostModule):
         crew_cost['crew_level_total_costs'] = 0
         empty_crew_cost = crew_cost.iloc[0:0]
         empty_crew_cost_grouped = empty_crew_cost.copy()
-        self.output_dict['erection_construction_months'] = np.NaN
         return empty_crew_cost, empty_crew_cost_grouped, 0
 
     def calculate_management_crews_cost(self, erection_cost):
