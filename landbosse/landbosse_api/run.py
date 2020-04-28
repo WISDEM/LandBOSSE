@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 from landbosse.excelio import XlsxReader
 from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
@@ -183,8 +184,9 @@ def run_landbosse(input_dict):
 
         # make sure you call create_master_input_dictionary() as soon as
         # labor_cost_multiplier's value is changed.
-        master_input_dict = xlsx_reader.create_master_input_dictionary(
-                                project_data_sheets, project_parameters)
+        # The weather dataframe key in input_dict is 'user_weather_DF':
+        master_input_dict = xlsx_reader.create_master_input_dictionary(project_data_sheets,
+                                                                       project_parameters)
         master_input_dict['error'] = dict()
 
     output_dict = dict()
@@ -261,14 +263,16 @@ def run_landbosse(input_dict):
 
     # make sure weather data passed by SAM is hourly.
     try:
-        if 'weather_file_path' in input_dict:
+        if 'weather_file_path' in input_dict:  # if user provides weather file, use it
             weather_window_input_df = read_weather_data(
                                            input_dict['weather_file_path'])
-
-        else:   # if user doesnt provide weather file, use default.
+        elif 'user_weather_DF' in input_dict:  # if user provides weather DF, use it
+            weather_window_input_df = input_dict['user_weather_DF']
+        else:   # if user doesn't provide weather data, use default file
             weather_file_path = input_output_path + \
                                 '/project_data/az_rolling.srw'
             weather_window_input_df = read_weather_data(weather_file_path)
+
 
         weather_window_input_df = weather_window_input_df.reset_index(
                                                                 drop=True)
@@ -579,29 +583,35 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# input_dict = dict()
-# input_dict['interconnect_voltage_kV'] = 137
-# input_dict['distance_to_interconnect_mi'] = 10
-# input_dict['num_turbines'] = 100
-# input_dict['turbine_spacing_rotor_diameters'] = 4
-# input_dict['row_spacing_rotor_diameters'] = 10
-# input_dict['turbine_rating_MW'] = 1.5
-# input_dict['rotor_diameter_m'] = 77
-# input_dict['hub_height_meters'] = 80
-# input_dict['wind_shear_exponent'] = 0.20
-# input_dict['depth'] = 2.36  # Foundation depth in m
-# input_dict['rated_thrust_N'] =  589000
-# input_dict['labor_cost_multiplier'] = 1
-# input_dict['gust_velocity_m_per_s'] = 59.50
+input_dict = dict()
+input_dict['interconnect_voltage_kV'] = 137
+input_dict['distance_to_interconnect_mi'] = 10
+input_dict['num_turbines'] = 100
+input_dict['turbine_spacing_rotor_diameters'] = 4
+input_dict['row_spacing_rotor_diameters'] = 10
+input_dict['turbine_rating_MW'] = 1.5
+input_dict['rotor_diameter_m'] = 77
+input_dict['hub_height_meters'] = 80
+input_dict['wind_shear_exponent'] = 0.20
+input_dict['depth'] = 2.36  # Foundation depth in m
+input_dict['rated_thrust_N'] =  589000
+input_dict['labor_cost_multiplier'] = 1
+input_dict['gust_velocity_m_per_s'] = 59.50
+
 
 # (Optional) Provide absolute file path of wind weather file (.txt, .srw, or
 # .csv). Wind data used here follows the wind toolkit (WTK) formatted data.
 # If you do not provide a path to a weather file, this API will use the
 # default weather file shipped with LandBOSSE.
 
+# Alternatively, provide a [8760 x 4] dataframe with WTK formatted data:
+# [Temp (C), Pressure (atm), Wind Direction (deg), Wind Speed(m/s)]
+
 # Example of how to provide path to weather file:
 # input_dict['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
-# BOS_results = run_landbosse(input_dict)
+# Example of how to provide weather input dataframe:
+# input_dict['user_weather_DF'] = pd.DataFrame(np.column_stack((15*np.ones((8760, 1)), np.ones((8760, 1)), 180*np.ones((8760, 1)), 9*np.ones((8760, 1)))))
 
+BOS_results = run_landbosse(input_dict)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
