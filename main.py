@@ -98,8 +98,6 @@ if __name__ == '__main__':
     # Print end timestamp
     print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
 
+    # returns an exit code of either 0 (successful validation), or 1 (validation failed).
     if validation_enabled:
-        if build_status:
-            exit(build_status)
-        else:
-            exit(build_status)
+        exit(build_status)
