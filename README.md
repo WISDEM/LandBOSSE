@@ -1,6 +1,4 @@
-.. image:: https://badge.fury.io/py/landbosse.svg
-    :target: https://badge.fury.io/py/landbosse
-    
+
 [![Build Status](https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=pip_installable)](https://travis-ci.com/WISDEM/LandBOSSE)
 
 # LandBOSSE
