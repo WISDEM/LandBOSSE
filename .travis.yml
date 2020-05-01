@@ -26,4 +26,4 @@ script:
 
 branches:
   only:
-    - issue_136_add_tests
+    - develop
