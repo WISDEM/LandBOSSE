@@ -583,20 +583,20 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-input_dict = dict()
-input_dict['interconnect_voltage_kV'] = 137
-input_dict['distance_to_interconnect_mi'] = 10
-input_dict['num_turbines'] = 100
-input_dict['turbine_spacing_rotor_diameters'] = 4
-input_dict['row_spacing_rotor_diameters'] = 10
-input_dict['turbine_rating_MW'] = 1.5
-input_dict['rotor_diameter_m'] = 77
-input_dict['hub_height_meters'] = 80
-input_dict['wind_shear_exponent'] = 0.20
-input_dict['depth'] = 2.36  # Foundation depth in m
-input_dict['rated_thrust_N'] =  589000
-input_dict['labor_cost_multiplier'] = 1
-input_dict['gust_velocity_m_per_s'] = 59.50
+# input_dict = dict()
+# input_dict['interconnect_voltage_kV'] = 137
+# input_dict['distance_to_interconnect_mi'] = 10
+# input_dict['num_turbines'] = 100
+# input_dict['turbine_spacing_rotor_diameters'] = 4
+# input_dict['row_spacing_rotor_diameters'] = 10
+# input_dict['turbine_rating_MW'] = 1.5
+# input_dict['rotor_diameter_m'] = 77
+# input_dict['hub_height_meters'] = 80
+# input_dict['wind_shear_exponent'] = 0.20
+# input_dict['depth'] = 2.36  # Foundation depth in m
+# input_dict['rated_thrust_N'] =  589000
+# input_dict['labor_cost_multiplier'] = 1
+# input_dict['gust_velocity_m_per_s'] = 59.50
 
 
 # (Optional) Provide absolute file path of wind weather file (.txt, .srw, or
@@ -611,7 +611,11 @@ input_dict['gust_velocity_m_per_s'] = 59.50
 # input_dict['weather_file_path'] = '/Users/<username>/Desktop/az_rolling.srw'
 
 # Example of how to provide weather input dataframe:
-# input_dict['user_weather_DF'] = pd.DataFrame(np.column_stack((15*np.ones((8760, 1)), np.ones((8760, 1)), 180*np.ones((8760, 1)), 9*np.ones((8760, 1)))))
-
-BOS_results = run_landbosse(input_dict)
+# input_dict['user_weather_DF'] = pd.DataFrame(np.column_stack((15*np.ones((8760, 1)),
+#                                                               np.ones((8760, 1)),
+#                                                               180*np.ones((8760, 1)),
+#                                                               9*np.ones((8760, 1)))))
+#
+# BOS_results = run_landbosse(input_dict)
+# print(BOS_results)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
