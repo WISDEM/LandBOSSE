@@ -44,15 +44,16 @@ class TestCollectionCost(TestCase):
         self.input_dict['cable_specs_pd'] = pd.read_csv(cable_specs_path) #Read in cable specs into a dataframe.
         # self.input_dict['cable_specs'] = self.input_dict['cable_specs_pd'].T.to_dict()
 
-        self.input_dict['user_defined_home_run_trench'] = 0    # 0 = No ; 1 = Yes
-        self.input_dict['trench_len_to_substation_km'] = 50
+        self.input_dict['user_defined_distance_to_grid_connection'] = 0  # 0 = No ; 1 = Yes
+        self.input_dict['distance_to_grid_connection_km'] = 2
         self.project_name = 'project_1'
 
         #Inputs for ArraySystem:
 
-        self.input_dict['plant_capacity_MW'] = 100
-        self.input_dict['row_spacing_rotor_diameters'] = 7
-        self.input_dict['turbine_rating_MW'] = 1.5
+        self.input_dict['num_turbines'] = 1
+        self.input_dict['plant_capacity_MW'] = 15
+        self.input_dict['row_spacing_rotor_diameters'] = 5
+        self.input_dict['turbine_rating_MW'] = 0.02
         self.input_dict['upstream_turb'] = 0
         self.input_dict['turb_sequence'] = 1
         self.input_dict['depth'] = 45
