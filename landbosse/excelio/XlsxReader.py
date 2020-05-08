@@ -436,6 +436,11 @@ class XlsxReader:
         incomplete_input_dict['gust_velocity_m_per_s'] = project_parameters['50-year Gust Velocity (m/s)']
         incomplete_input_dict['project_size_megawatts'] = project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
 
+        if project_parameters['Calculate road cost for distributed wind? (y/n)'] == 'y':
+            incomplete_input_dict['road_distributed_wind'] = True
+        else:
+            incomplete_input_dict['road_distributed_wind'] = False
+        incomplete_input_dict['site_prep_area_m2'] = project_parameters['Site prep area for Distributed wind (m2)']
         incomplete_input_dict['road_length_adder_m'] = project_parameters['Road length adder (m)']
         incomplete_input_dict['fraction_new_roads'] = project_parameters['Percent of roads that will be constructed']
         incomplete_input_dict['road_quality'] = project_parameters['Road Quality (0-1)']
