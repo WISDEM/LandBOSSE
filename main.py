@@ -67,8 +67,10 @@ if __name__ == '__main__':
         )
         if validation_was_successful:
             print('Validation passed.')
+            build_status = 0
         else:
             print('Validation failed. See mismatched data above.')
+            build_status = 1
 
     # XlsxGenerator has a context manager that writes each individual
     # worksheet to the output .xlsx. Also, copy file input structure.
@@ -95,3 +97,12 @@ if __name__ == '__main__':
 
     # Print end timestamp
     print(f'>>>>>>>> End run {datetime.now()} <<<<<<<<<<')
+
+    # returns an exit code of either 0 (successful validation), or 1 (validation failed).
+    #
+    # If validation was not enabled, exit with a status of 0 (no errors)
+
+    if validation_enabled:
+        exit(build_status)
+    else:
+        exit(0)

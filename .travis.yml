@@ -1,0 +1,30 @@
+language: python
+python:
+  - "3.7"
+
+# command to install dependencies
+install:
+  - pip install pandas==0.25.2
+  - pip install numpy
+  - pip install sympy
+  - pip install shapely
+  - pip install xlsxwriter
+  - pip install xlrd
+  - pip install psycopg2-binary
+  - pip install sqlalchemy
+  - pip install pytest
+
+
+env:
+  global:
+    - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
+    - LANDBOSSE_OUTPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
+
+# command to run tests
+script:
+  - python $TRAVIS_BUILD_DIR/main.py --validate
+
+branches:
+  only:
+    - develop
+    - issue_108_integrate_DW
