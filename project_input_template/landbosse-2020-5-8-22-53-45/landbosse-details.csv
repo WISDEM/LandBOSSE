@@ -1,0 +1,786 @@
+Project ID with serial,Module,Variable name,Unit,Numeric value,Non-numeric value
+foundation_validation_ge15,FoundationCost,wind_multiplier,,1.0,
+foundation_validation_ge15,FoundationCost,F_dead,kN,1798.08695652174,
+foundation_validation_ge15,FoundationCost,F_horiz,kN,624.8822519784526,
+foundation_validation_ge15,FoundationCost,M_tot_kN,kN_m,47120.0,
+foundation_validation_ge15,FoundationCost,Radius_o,m,7.365382452356683,
+foundation_validation_ge15,FoundationCost,Radius_g,m,0.0,
+foundation_validation_ge15,FoundationCost,Radius_b,m,7.164040491294042,
+foundation_validation_ge15,FoundationCost,Radius,m,7.365382452356683,
+foundation_validation_ge15,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,180.9943404451053,
+foundation_validation_ge15,FoundationCost,steel_mass_short_ton_per_turbine,short_ton,20.611635489888595,
+foundation_validation_ge15,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,180.9943404451053,
+foundation_validation_ge15,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Rebar installation-1649-19.0-1.0
+foundation_validation_ge15,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Concrete placement-117-2.0-3.0
+foundation_validation_ge15,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Excavation-60-1.0-nan
+foundation_validation_ge15,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Backfill-37-1.0-1.0
+foundation_validation_ge15,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,ton (short),,0-Steel - rebar-2.06e+01
+foundation_validation_ge15,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic yards,,1-Concrete 5000 psi-2.33e+02
+foundation_validation_ge15,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,2-Excavated dirt-6.00e+02
+foundation_validation_ge15,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,3-Backfill-6.00e+02
+foundation_validation_ge15,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,307553.56983444514,Equipment rental <--> Foundation <--> 307554
+foundation_validation_ge15,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,3677659.9867217494,Labor <--> Foundation <--> 3677660
+foundation_validation_ge15,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,5573031.2160670925,Materials <--> Foundation <--> 5573032
+foundation_validation_ge15,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,477912.2386311644,Mobilization <--> Foundation <--> 477913
+foundation_validation_ge15,SitePreparationCost,Total road volume,m^3,55090.4,
+foundation_validation_ge15,SitePreparationCost,Depth to subgrade,m,0.1,
+foundation_validation_ge15,SitePreparationCost,Crane path width,ft,13.7,
+foundation_validation_ge15,SitePreparationCost,Road length,m,35492.0,
+foundation_validation_ge15,SitePreparationCost,Road width,m,6.0,
+foundation_validation_ge15,SitePreparationCost,Road thickness,m,0.2,
+foundation_validation_ge15,SitePreparationCost,Material volume,cubic yards,100157.12926519998,
+foundation_validation_ge15,SitePreparationCost,Topsoil volume,cubic yards,63597.813118,
+foundation_validation_ge15,SitePreparationCost,Embankment volume crane,cubic yards,63597.813118,
+foundation_validation_ge15,SitePreparationCost,Embankment volume road,cubic yards,55706.11368,
+foundation_validation_ge15,SitePreparationCost,Rough grading area,ft^2,22.921940327999998,
+foundation_validation_ge15,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,797751.5345973179,Materials <--> Roads <--> 797752
+foundation_validation_ge15,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,412013.84003877634,Equipment rental <--> Roads <--> 412014
+foundation_validation_ge15,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,609463.1296755779,Labor <--> Roads <--> 609464
+foundation_validation_ge15,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1307300.76,Other <--> Roads <--> 1307301
+foundation_validation_ge15,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,83009.35196747491,Mobilization <--> Roads <--> 83010
+foundation_validation_ge15,SubstationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4859182.072082901,Other <--> Substation <--> 4859183
+foundation_validation_ge15,GridConnectionCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4084775.152898776,Other <--> Transmission and Distribution <--> 4084776
+foundation_validation_ge15,Collection Cost,Total Number of Turbines,,100.0,
+foundation_validation_ge15,Collection Cost,Total trench length,km,61.416659228538016,
+foundation_validation_ge15,Collection Cost,Total cable length,km,61.416659228538016,
+foundation_validation_ge15,Collection Cost,Number of Turbines Per String in Full String,,38.0,
+foundation_validation_ge15,Collection Cost,Number of Full Strings,,2.0,
+foundation_validation_ge15,Collection Cost,Number of Turbines in Partial String,,24.0,
+foundation_validation_ge15,Collection Cost,Number of Partial Strings,,1.0,
+foundation_validation_ge15,Collection Cost,Total number of strings full + partial,,3.0,
+foundation_validation_ge15,Collection Cost,Trench Length to Substation (km),,31.540659228538015,
+foundation_validation_ge15,Collection Cost,Cable Length to Substation (km),,31.540659228538015,
+foundation_validation_ge15,Collection Cost,Array cable length for cable  AWG 1/0,km,3.388,
+foundation_validation_ge15,Collection Cost,Total cable length for cable  AWG 1/0,km,10.164,
+foundation_validation_ge15,Collection Cost,Total cable cost for cable  AWG 1/0,usd,200078.74015748032,
+foundation_validation_ge15,Collection Cost,Array cable length for cable  AWG 4/0,km,1.8479999999999999,
+foundation_validation_ge15,Collection Cost,Total cable length for cable  AWG 4/0,km,5.544,
+foundation_validation_ge15,Collection Cost,Total cable cost for cable  AWG 4/0,usd,163700.7874015748,
+foundation_validation_ge15,Collection Cost,Array cable length for cable  MCM 500,km,2.464,
+foundation_validation_ge15,Collection Cost,Total cable length for cable  MCM 500,km,6.776,
+foundation_validation_ge15,Collection Cost,Total cable cost for cable  MCM 500,usd,289002.624671916,
+foundation_validation_ge15,Collection Cost,Array cable length for cable  MCM1000,km,2.464,
+foundation_validation_ge15,Collection Cost,Total cable length for cable  MCM1000,km,4.928,
+foundation_validation_ge15,Collection Cost,Total cable cost for cable  MCM1000,usd,258687.66404199475,
+foundation_validation_ge15,Collection Cost,Array cable length for cable  MCM1250,km,1.232,
+foundation_validation_ge15,Collection Cost,Total cable length for cable  MCM1250,km,34.00465922853802,
+foundation_validation_ge15,Collection Cost,Total cable cost for cable  MCM1250,usd,1896585.3244263332,
+foundation_validation_ge15,Collection Cost,"Number of turbines per cable type in full strings [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,"[12.0, 6.0, 8.0, 8.0, 4.0]"
+foundation_validation_ge15,Collection Cost,"Percent length of cable in partial string [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,[1.   1.   0.75 0.   0.  ]
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"0 <--> Project manager <--> 119.0 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 107100.0 <--> 120510.0"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"1 <--> Site manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"2 <--> Construction manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"3 <--> Project engineer <--> 93.5 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 84150.0 <--> 97560.0"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"4 <--> Safety or qc manager <--> 106.11764705882352 <--> 149 <--> (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 95505.88235294116 <--> 108915.88235294116"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"5 <--> Logistics manager <--> 99.9 <--> 149 <--> (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 89910.0 <--> 103320.0"
+foundation_validation_ge15,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"6 <--> Office admin <--> 44.56249999999999 <--> 149 <--> (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 40106.24999999999 <--> 53516.24999999999"
+foundation_validation_ge15,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,426614.6862960762,Equipment rental <--> Collection <--> 426615
+foundation_validation_ge15,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1402888.0267842393,Labor <--> Collection <--> 1402889
+foundation_validation_ge15,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,2808055.140699299,Materials <--> Collection <--> 2808056
+foundation_validation_ge15,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,231877.89268898076,Mobilization <--> Collection <--> 231878
+foundation_validation_ge15,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Equipment rental - Development - 0
+foundation_validation_ge15,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Labor - Development - 150000
+foundation_validation_ge15,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Materials - Development - 0
+foundation_validation_ge15,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Mobilization - Development - 0
+foundation_validation_ge15,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Other - Development - 0
+foundation_validation_ge15,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Offload-LB 75-Hydraulic-2
+foundation_validation_ge15,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,3,Top-LR1500-SL3F-3
+foundation_validation_ge15,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,5,Base-LR1600/2-SL3F-5
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Offload-LB 75-Hydraulic-1.0
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Top-LR1500-SL3F-1.0
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Base-LR1600/2-SL3F-1.0
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Nacelle GE 1.5SLE - Top
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Hub - Top
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 1 - Top
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 2 - Top
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 3 - Top
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 1 - Base
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 2 - Base
+foundation_validation_ge15,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 3 - Top
+foundation_validation_ge15,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LB 75 - Hydraulic - Offload
+foundation_validation_ge15,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1500 - SL3F - Top
+foundation_validation_ge15,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1600/2 - SL3F - Base
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,36857.799999999996,LB 75-Hydraulic-Offload - Equipment rental cost USD - 36857.799999999996
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,504996.26918536006,LR1500-SL3F-Top - Equipment rental cost USD - 504996.26918536006
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,207057.42360379346,LR1600/2-SL3F-Base - Equipment rental cost USD - 207057.42360379346
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,3432.0,LB 75-Hydraulic-Offload - Fuel cost USD - 3432.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,19153.5,LR1500-SL3F-Top - Fuel cost USD - 19153.5
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6240.0,LR1600/2-SL3F-Base - Fuel cost USD - 6240.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,554198.6623406666,LB 75-Hydraulic-Offload - Labor cost USD without management - 554198.6623406666
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1710091.6711404957,LR1500-SL3F-Top - Labor cost USD without management - 1710091.6711404957
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,479639.6382571127,LR1600/2-SL3F-Base - Labor cost USD without management - 479639.6382571127
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,368796.0,LR1500-SL3F-Top - Mobilization cost USD - 368796.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,498354.0,LR1600/2-SL3F-Base - Mobilization cost USD - 498354.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,476718.66234066663,LB 75-Hydraulic-Offload - Subtotal for hourly labor (non-management) USD - 476718.66234066663
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1474373.6711404957,LR1500-SL3F-Top - Subtotal for hourly labor (non-management) USD - 1474373.6711404957
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,412887.6382571127,LR1600/2-SL3F-Base - Subtotal for hourly labor (non-management) USD - 412887.6382571127
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,77480.0,LB 75-Hydraulic-Offload - Subtotal for per diem labor (non-management) USD - 77480.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,235718.0,LR1500-SL3F-Top - Subtotal for per diem labor (non-management) USD - 235718.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,66752.0,LR1600/2-SL3F-Base - Subtotal for per diem labor (non-management) USD - 66752.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,626648.4623406667,LB 75-Hydraulic-Offload - Total cost USD - 626648.4623406667
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2603037.4403258557,LR1500-SL3F-Top - Total cost USD - 2603037.4403258557
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1191291.0618609062,LR1600/2-SL3F-Base - Total cost USD - 1191291.0618609062
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,263.27,LB 75-Hydraulic-Offload - Operation time all turbines hrs - 263.27
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,710.4,LR1500-SL3F-Top - Operation time all turbines hrs - 710.4
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,222.9,LR1600/2-SL3F-Base - Operation time all turbines hrs - 222.9
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,263.27,LB 75-Hydraulic-Offload - Total time per op with weather - 263.27
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1132.2786304604485,LR1500-SL3F-Top - Total time per op with weather - 1132.2786304604485
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,317.086406743941,LR1600/2-SL3F-Base - Total time per op with weather - 317.086406743941
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.0,LB 75-Hydraulic-Offload - Wind multiplier - 1.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.5938606847697756,LR1500-SL3F-Top - Wind multiplier - 1.5938606847697756
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.422550052687039,LR1600/2-SL3F-Base - Wind multiplier - 1.422550052687039
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,26.326999999999998,LB 75-Hydraulic-Offload - Operational construct days - 26.326999999999998
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,71.03999999999999,LR1500-SL3F-Top - Operational construct days - 71.03999999999999
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,22.29,LR1600/2-SL3F-Base - Operational construct days - 22.29
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,60.0,LB 75-Hydraulic-Offload - Time construct days - 60.0
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,71.03999999999999,LR1500-SL3F-Top - Time construct days - 71.03999999999999
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,22.29,LR1600/2-SL3F-Base - Time construct days - 22.29
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.6327,LB 75-Hydraulic-Offload - Total time per turbine - 2.6327
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,11.322786304604485,LR1500-SL3F-Top - Total time per turbine - 11.322786304604485
+foundation_validation_ge15,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,3.17086406743941,LR1600/2-SL3F-Base - Total time per turbine - 3.17086406743941
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,36857.799999999996,LB 75-Hydraulic-Offload - Equipment rental cost USD - 36857.799999999996
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,504996.26918536006,LR1500-SL3F-Top - Equipment rental cost USD - 504996.26918536006
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,207057.42360379346,LR1600/2-SL3F-Base - Equipment rental cost USD - 207057.42360379346
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,3432.0,LB 75-Hydraulic-Offload - Fuel cost USD - 3432.0
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,19153.5,LR1500-SL3F-Top - Fuel cost USD - 19153.5
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,6240.0,LR1600/2-SL3F-Base - Fuel cost USD - 6240.0
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,554198.6623406666,LB 75-Hydraulic-Offload - Labor cost USD without management - 554198.6623406666
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1710091.6711404957,LR1500-SL3F-Top - Labor cost USD without management - 1710091.6711404957
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,479639.6382571127,LR1600/2-SL3F-Base - Labor cost USD without management - 479639.6382571127
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,368796.0,LR1500-SL3F-Top - Mobilization cost USD - 368796.0
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,498354.0,LR1600/2-SL3F-Base - Mobilization cost USD - 498354.0
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,626648.4623406667,LB 75-Hydraulic-Offload - Total cost USD - 626648.4623406667
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,2603037.4403258557,LR1500-SL3F-Top - Total cost USD - 2603037.4403258557
+foundation_validation_ge15,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1191291.0618609062,LR1600/2-SL3F-Base - Total cost USD - 1191291.0618609062
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,748911.4927891536,Erection - Equipment rental - 748911.4927891536
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,28825.5,Erection - Fuel - 28825.5
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,5134653.8032382745,Erection - Labor - 5134653.8032382745
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,899310.0,Erection - Mobilization - 899310.0
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Other - 0.0
+foundation_validation_ge15,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Materials - 0.0
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,554198.6623406666,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,1710091.6711404957,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,479639.6382571127,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: mobilization,usd,32160,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: mobilization,usd,368796,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: mobilization,usd,498354,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.0,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.5938606847697756,
+foundation_validation_ge15,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.422550052687039,
+foundation_validation_ge15,ErectionCost,total_cost_summed_erection,usd,6811700.7960274285,
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project manager - 1.0 - 119.0 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 119.0 - 149.0 - 22846.17 - 206750.59999999998 - 229596.76999999996"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Site manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 22846.17 - 194936.28 - 217782.45"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Construction manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 22846.17 - 194936.28 - 217782.45"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project engineer - 1.0 - 93.5 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 93.5 - 149.0 - 22846.17 - 162446.9 - 185293.07"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Safety or qc manager - 1.0 - 106.11764705882352 - 149 - (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 106.11764705882352 - 149.0 - 22846.17 - 184368.79999999996 - 207214.96999999997"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Logistics manager - 1.0 - 99.9 - 149 - (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 99.9 - 149.0 - 22846.17 - 173566.26 - 196412.43"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Office admin - 1.0 - 44.56249999999999 - 149 - (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 44.56249999999999 - 149.0 - 22846.17 - 77422.88749999998 - 100269.05749999998"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Tool room - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 22846.17 - 149138.416 - 171984.586"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Electrician - 2.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 171.68 - 298.0 - 45692.34 - 298276.832 - 343969.172"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - Electrician - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 22846.17 - 149138.416 - 171984.586"
+foundation_validation_ge15,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - QC/QA tech - 2.0 - 87.125 - 149 - (50% burden for QC/QC Manager) https://www.ziprecruiter.com/Salaries/How-Much-Does-a-Construction-Quality-Control-Manager-Make-an-Hour ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 174.25 - 298.0 - 45692.34 - 302741.94999999995 - 348434.2899999999"
+foundation_validation_ge15,ErectionCost,number of hours in weather window,hours,2700,
+foundation_validation_ge15,ErectionCost,time_weighted_weather_multiplier,none,1.336571471469634,
+foundation_validation_ge15,ErectionCost,erection_construction_months,months,5.111,
+foundation_validation_ge15,ErectionCost,labor_cost_management,usd,2390723.8315,
+foundation_validation_ge15,ErectionCost,labor_cost_non_management,usd,2743929.971738275,
+foundation_validation_ge15,ErectionCost,labor_cost_total,usd,5134653.8032382745,
+foundation_validation_ge15,ManagementCost,insurance_usd,usd,188371.90061206327,
+foundation_validation_ge15,ManagementCost,construction_permitting_usd,usd,400723.14022508904,
+foundation_validation_ge15,ManagementCost,bonding_usd,usd,336378.393950113,
+foundation_validation_ge15,ManagementCost,project_management_usd,usd,1887763.4920373403,
+foundation_validation_ge15,ManagementCost,markup_contingency_usd,usd,4379646.689230471,
+foundation_validation_ge15,ManagementCost,engineering_usd,usd,2071325.0,
+foundation_validation_ge15,ManagementCost,site_facility_usd,usd,1306748.35,
+foundation_validation_clipper25,FoundationCost,wind_multiplier,,1.0,
+foundation_validation_clipper25,FoundationCost,F_dead,kN,3013.5596521739135,
+foundation_validation_clipper25,FoundationCost,F_horiz,kN,863.5977357102074,
+foundation_validation_clipper25,FoundationCost,M_tot_kN,kN_m,80720.0,
+foundation_validation_clipper25,FoundationCost,Radius_o,m,8.618336311794335,
+foundation_validation_clipper25,FoundationCost,Radius_g,m,0.0,
+foundation_validation_clipper25,FoundationCost,Radius_b,m,8.63464199622059,
+foundation_validation_clipper25,FoundationCost,Radius,m,8.63464199622059,
+foundation_validation_clipper25,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,257.1821866415812,
+foundation_validation_clipper25,FoundationCost,steel_mass_short_ton_per_turbine,short_ton,29.28790741474327,
+foundation_validation_clipper25,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,257.1821866415812,
+foundation_validation_clipper25,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Rebar installation-1406-16.0-1.0
+foundation_validation_clipper25,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Concrete placement-100-2.0-3.0
+foundation_validation_clipper25,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Excavation-51-1.0-nan
+foundation_validation_clipper25,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Backfill-31-1.0-1.0
+foundation_validation_clipper25,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,ton (short),,0-Steel - rebar-2.93e+01
+foundation_validation_clipper25,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic yards,,1-Concrete 5000 psi-3.31e+02
+foundation_validation_clipper25,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,2-Excavated dirt-8.37e+02
+foundation_validation_clipper25,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,3-Backfill-8.37e+02
+foundation_validation_clipper25,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,259718.37475943,Equipment rental <--> Foundation <--> 259719
+foundation_validation_clipper25,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,3249182.4452910405,Labor <--> Foundation <--> 3249183
+foundation_validation_clipper25,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4751367.421252489,Materials <--> Foundation <--> 4751368
+foundation_validation_clipper25,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,413013.412065148,Mobilization <--> Foundation <--> 413014
+foundation_validation_clipper25,SitePreparationCost,Total road volume,m^3,40687.200000000004,
+foundation_validation_clipper25,SitePreparationCost,Depth to subgrade,m,0.1,
+foundation_validation_clipper25,SitePreparationCost,Crane path width,ft,13.7,
+foundation_validation_clipper25,SitePreparationCost,Road length,m,27656.0,
+foundation_validation_clipper25,SitePreparationCost,Road width,m,6.0,
+foundation_validation_clipper25,SitePreparationCost,Road thickness,m,0.2,
+foundation_validation_clipper25,SitePreparationCost,Material volume,cubic yards,73971.3843036,
+foundation_validation_clipper25,SitePreparationCost,Topsoil volume,cubic yards,49556.55132399999,
+foundation_validation_clipper25,SitePreparationCost,Embankment volume crane,cubic yards,49556.55132399999,
+foundation_validation_clipper25,SitePreparationCost,Embankment volume road,cubic yards,43407.198240000005,
+foundation_validation_clipper25,SitePreparationCost,Rough grading area,ft^2,17.861185104,
+foundation_validation_clipper25,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,589182.075978174,Materials <--> Roads <--> 589183
+foundation_validation_clipper25,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,309889.12395022844,Equipment rental <--> Roads <--> 309890
+foundation_validation_clipper25,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,518182.73194132163,Labor <--> Roads <--> 518183
+foundation_validation_clipper25,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,907100.9280000001,Other <--> Roads <--> 907101
+foundation_validation_clipper25,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,61711.62152954118,Mobilization <--> Roads <--> 61712
+foundation_validation_clipper25,SubstationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4859182.072082901,Other <--> Substation <--> 4859183
+foundation_validation_clipper25,GridConnectionCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4084775.152898776,Other <--> Transmission and Distribution <--> 4084776
+foundation_validation_clipper25,Collection Cost,Total Number of Turbines,,60.0,
+foundation_validation_clipper25,Collection Cost,Total trench length,km,53.42865922853802,
+foundation_validation_clipper25,Collection Cost,Total cable length,km,53.42865922853802,
+foundation_validation_clipper25,Collection Cost,Number of Turbines Per String in Full String,,23.0,
+foundation_validation_clipper25,Collection Cost,Number of Full Strings,,2.0,
+foundation_validation_clipper25,Collection Cost,Number of Turbines in Partial String,,14.0,
+foundation_validation_clipper25,Collection Cost,Number of Partial Strings,,1.0,
+foundation_validation_clipper25,Collection Cost,Total number of strings full + partial,,3.0,
+foundation_validation_clipper25,Collection Cost,Trench Length to Substation (km),,31.540659228538015,
+foundation_validation_clipper25,Collection Cost,Cable Length to Substation (km),,31.540659228538015,
+foundation_validation_clipper25,Collection Cost,Array cable length for cable  AWG 1/0,km,2.3040000000000003,
+foundation_validation_clipper25,Collection Cost,Total cable length for cable  AWG 1/0,km,6.912000000000001,
+foundation_validation_clipper25,Collection Cost,Total cable cost for cable  AWG 1/0,usd,136062.99212598428,
+foundation_validation_clipper25,Collection Cost,Array cable length for cable  AWG 4/0,km,1.1520000000000001,
+foundation_validation_clipper25,Collection Cost,Total cable length for cable  AWG 4/0,km,3.4560000000000004,
+foundation_validation_clipper25,Collection Cost,Total cable cost for cable  AWG 4/0,usd,102047.2440944882,
+foundation_validation_clipper25,Collection Cost,Array cable length for cable  MCM 500,km,1.92,
+foundation_validation_clipper25,Collection Cost,Total cable length for cable  MCM 500,km,5.3759999999999994,
+foundation_validation_clipper25,Collection Cost,Total cable cost for cable  MCM 500,usd,229291.33858267716,
+foundation_validation_clipper25,Collection Cost,Array cable length for cable  MCM1000,km,1.92,
+foundation_validation_clipper25,Collection Cost,Total cable length for cable  MCM1000,km,3.84,
+foundation_validation_clipper25,Collection Cost,Total cable cost for cable  MCM1000,usd,201574.8031496063,
+foundation_validation_clipper25,Collection Cost,Array cable length for cable  MCM1250,km,1.1520000000000001,
+foundation_validation_clipper25,Collection Cost,Total cable length for cable  MCM1250,km,33.84465922853801,
+foundation_validation_clipper25,Collection Cost,Total cable cost for cable  MCM1250,usd,1887661.4399118973,
+foundation_validation_clipper25,Collection Cost,"Number of turbines per cable type in full strings [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,"[7.0, 3.0, 5.0, 5.0, 3.0]"
+foundation_validation_clipper25,Collection Cost,"Percent length of cable in partial string [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,[1.  1.  0.8 0.  0. ]
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"0 <--> Project manager <--> 119.0 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 107100.0 <--> 120510.0"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"1 <--> Site manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"2 <--> Construction manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"3 <--> Project engineer <--> 93.5 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 84150.0 <--> 97560.0"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"4 <--> Safety or qc manager <--> 106.11764705882352 <--> 149 <--> (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 95505.88235294116 <--> 108915.88235294116"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"5 <--> Logistics manager <--> 99.9 <--> 149 <--> (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 89910.0 <--> 103320.0"
+foundation_validation_clipper25,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"6 <--> Office admin <--> 44.56249999999999 <--> 149 <--> (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 40106.24999999999 <--> 53516.24999999999"
+foundation_validation_clipper25,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,371128.14311807184,Equipment rental <--> Collection <--> 371129
+foundation_validation_clipper25,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1330074.344391055,Labor <--> Collection <--> 1330075
+foundation_validation_clipper25,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,2556637.817864653,Materials <--> Collection <--> 2556638
+foundation_validation_clipper25,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,212892.01526868902,Mobilization <--> Collection <--> 212893
+foundation_validation_clipper25,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Equipment rental - Development - 0
+foundation_validation_clipper25,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Labor - Development - 150000
+foundation_validation_clipper25,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Materials - Development - 0
+foundation_validation_clipper25,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Mobilization - Development - 0
+foundation_validation_clipper25,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Other - Development - 0
+foundation_validation_clipper25,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Base-LB 258-Hydraulic-2
+foundation_validation_clipper25,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Offload-LB 75-Hydraulic-2
+foundation_validation_clipper25,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,5,Top-LR1600/2-SL3F-5
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Base-LB 258-Hydraulic-1.0
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Offload-LB 75-Hydraulic-1.0
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Top-LR1600/2-SL3F-1.0
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Nacelle Clipper 2.5 - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Hub - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 1 - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 2 - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 3 - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 1 - Base
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 2 - Base
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 3 - Top
+foundation_validation_clipper25,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 4 - Top
+foundation_validation_clipper25,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LB 258 - Hydraulic - Base
+foundation_validation_clipper25,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LB 75 - Hydraulic - Offload
+foundation_validation_clipper25,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1600/2 - SL3F - Top
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,41213.41883294712,LB 258-Hydraulic-Base - Equipment rental cost USD - 41213.41883294712
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,17725.563767713254,LB 75-Hydraulic-Offload - Equipment rental cost USD - 17725.563767713254
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,507637.78916569124,LR1600/2-SL3F-Top - Equipment rental cost USD - 507637.78916569124
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1344.0,LB 258-Hydraulic-Base - Fuel cost USD - 1344.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1716.0,LB 75-Hydraulic-Offload - Fuel cost USD - 1716.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,15210.0,LR1600/2-SL3F-Top - Fuel cost USD - 15210.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,146074.07894801768,LB 258-Hydraulic-Base - Labor cost USD without management - 146074.07894801768
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,268002.38268639066,LB 75-Hydraulic-Offload - Labor cost USD without management - 268002.38268639066
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1174974.859167296,LR1600/2-SL3F-Top - Labor cost USD without management - 1174974.859167296
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,81220.0,LB 258-Hydraulic-Base - Mobilization cost USD - 81220.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,498354.0,LR1600/2-SL3F-Top - Mobilization cost USD - 498354.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,125214.07894801768,LB 258-Hydraulic-Base - Subtotal for hourly labor (non-management) USD - 125214.07894801768
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,229262.38268639066,LB 75-Hydraulic-Offload - Subtotal for hourly labor (non-management) USD - 229262.38268639066
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1012266.8591672961,LR1600/2-SL3F-Top - Subtotal for hourly labor (non-management) USD - 1012266.8591672961
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,20860.0,LB 258-Hydraulic-Base - Subtotal for per diem labor (non-management) USD - 20860.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,38740.0,LB 75-Hydraulic-Offload - Subtotal for per diem labor (non-management) USD - 38740.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,162708.0,LR1600/2-SL3F-Top - Subtotal for per diem labor (non-management) USD - 162708.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,269851.4977809648,LB 258-Hydraulic-Base - Total cost USD - 269851.4977809648
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,319603.9464541039,LB 75-Hydraulic-Offload - Total cost USD - 319603.9464541039
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2196176.648332987,LR1600/2-SL3F-Top - Total cost USD - 2196176.648332987
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,121.576,LB 258-Hydraulic-Base - Operation time all turbines hrs - 121.576
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,126.576,LB 75-Hydraulic-Offload - Operation time all turbines hrs - 126.576
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,492.02,LR1600/2-SL3F-Top - Operation time all turbines hrs - 492.02
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,138.30006319780912,LB 258-Hydraulic-Base - Total time per op with weather - 138.30006319780912
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,126.61116976938038,LB 75-Hydraulic-Offload - Total time per op with weather - 126.61116976938038
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,777.3932452767094,LR1600/2-SL3F-Top - Total time per op with weather - 777.3932452767094
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.137560564567095,LB 258-Hydraulic-Base - Wind multiplier - 1.137560564567095
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.000277854959711,LB 75-Hydraulic-Offload - Wind multiplier - 1.000277854959711
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.5800033439224208,LR1600/2-SL3F-Top - Wind multiplier - 1.5800033439224208
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,12.157599999999999,LB 258-Hydraulic-Base - Operational construct days - 12.157599999999999
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,12.657599999999999,LB 75-Hydraulic-Offload - Operational construct days - 12.657599999999999
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,49.202,LR1600/2-SL3F-Top - Operational construct days - 49.202
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,12.157599999999999,LB 258-Hydraulic-Base - Time construct days - 12.157599999999999
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,45.0,LB 75-Hydraulic-Offload - Time construct days - 45.0
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,49.202,LR1600/2-SL3F-Top - Time construct days - 49.202
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.305001053296819,LB 258-Hydraulic-Base - Total time per turbine - 2.305001053296819
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.1101861628230063,LB 75-Hydraulic-Offload - Total time per turbine - 2.1101861628230063
+foundation_validation_clipper25,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,12.956554087945158,LR1600/2-SL3F-Top - Total time per turbine - 12.956554087945158
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,41213.41883294712,LB 258-Hydraulic-Base - Equipment rental cost USD - 41213.41883294712
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,17725.563767713254,LB 75-Hydraulic-Offload - Equipment rental cost USD - 17725.563767713254
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,507637.78916569124,LR1600/2-SL3F-Top - Equipment rental cost USD - 507637.78916569124
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1344.0,LB 258-Hydraulic-Base - Fuel cost USD - 1344.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1716.0,LB 75-Hydraulic-Offload - Fuel cost USD - 1716.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,15210.0,LR1600/2-SL3F-Top - Fuel cost USD - 15210.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,146074.07894801768,LB 258-Hydraulic-Base - Labor cost USD without management - 146074.07894801768
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,268002.38268639066,LB 75-Hydraulic-Offload - Labor cost USD without management - 268002.38268639066
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1174974.859167296,LR1600/2-SL3F-Top - Labor cost USD without management - 1174974.859167296
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,81220.0,LB 258-Hydraulic-Base - Mobilization cost USD - 81220.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,498354.0,LR1600/2-SL3F-Top - Mobilization cost USD - 498354.0
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,269851.4977809648,LB 258-Hydraulic-Base - Total cost USD - 269851.4977809648
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,319603.9464541039,LB 75-Hydraulic-Offload - Total cost USD - 319603.9464541039
+foundation_validation_clipper25,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,2196176.648332987,LR1600/2-SL3F-Top - Total cost USD - 2196176.648332987
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,566576.7717663517,Erection - Equipment rental - 566576.7717663517
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,18270.0,Erection - Fuel - 18270.0
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,3248247.9046683707,Erection - Labor - 3248247.9046683707
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,611734.0,Erection - Mobilization - 611734.0
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Other - 0.0
+foundation_validation_clipper25,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Materials - 0.0
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,146074.07894801768,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,268002.38268639066,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,1174974.859167296,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: mobilization,usd,81220,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: mobilization,usd,32160,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: mobilization,usd,498354,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.137560564567095,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.000277854959711,
+foundation_validation_clipper25,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.5800033439224208,
+foundation_validation_clipper25,ErectionCost,total_cost_summed_erection,usd,4444828.676434722,
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project manager - 1.0 - 119.0 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 119.0 - 149.0 - 15847.5804 - 143498.13333333333 - 159345.71373333334"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Site manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 15847.5804 - 135298.24 - 151145.8204"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Construction manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 15847.5804 - 135298.24 - 151145.8204"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project engineer - 1.0 - 93.5 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 93.5 - 149.0 - 15847.5804 - 112748.53333333333 - 128596.11373333333"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Safety or qc manager - 1.0 - 106.11764705882352 - 149 - (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 106.11764705882352 - 149.0 - 15847.5804 - 127963.73333333331 - 143811.3137333333"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Logistics manager - 1.0 - 99.9 - 149 - (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 99.9 - 149.0 - 15847.5804 - 120466.08 - 136313.6604"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Office admin - 1.0 - 44.56249999999999 - 149 - (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 44.56249999999999 - 149.0 - 15847.5804 - 53736.43333333332 - 69584.01373333333"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Tool room - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 15847.5804 - 103511.59466666666 - 119359.17506666666"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Electrician - 2.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 171.68 - 298.0 - 31695.1608 - 207023.1893333333 - 238718.35013333333"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - Electrician - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 15847.5804 - 103511.59466666666 - 119359.17506666666"
+foundation_validation_clipper25,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - QC/QA tech - 2.0 - 87.125 - 149 - (50% burden for QC/QC Manager) https://www.ziprecruiter.com/Salaries/How-Much-Does-a-Construction-Quality-Control-Manager-Make-an-Hour ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 174.25 - 298.0 - 31695.1608 - 210122.26666666663 - 241817.42746666665"
+foundation_validation_clipper25,ErectionCost,number of hours in weather window,hours,2700,
+foundation_validation_clipper25,ErectionCost,time_weighted_weather_multiplier,none,1.2841514477361597,
+foundation_validation_clipper25,ErectionCost,erection_construction_months,months,3.54532,
+foundation_validation_clipper25,ErectionCost,labor_cost_management,usd,1659196.5838666665,
+foundation_validation_clipper25,ErectionCost,labor_cost_non_management,usd,1589051.3208017042,
+foundation_validation_clipper25,ErectionCost,labor_cost_total,usd,3248247.9046683707,
+foundation_validation_clipper25,ManagementCost,insurance_usd,usd,160641.13159822693,
+foundation_validation_clipper25,ManagementCost,construction_permitting_usd,usd,373465.6330673621,
+foundation_validation_clipper25,ManagementCost,bonding_usd,usd,286859.1635682624,
+foundation_validation_clipper25,ManagementCost,project_management_usd,usd,1634173.0425603038,
+foundation_validation_clipper25,ManagementCost,markup_contingency_usd,usd,3734906.3096587756,
+foundation_validation_clipper25,ManagementCost,engineering_usd,usd,1750185.0,
+foundation_validation_clipper25,ManagementCost,site_facility_usd,usd,1090362.8020000001,
+foundation_validation_iea36_85,FoundationCost,wind_multiplier,,1.0,
+foundation_validation_iea36_85,FoundationCost,F_dead,kN,3843.3043478260875,
+foundation_validation_iea36_85,FoundationCost,F_horiz,kN,694.2287264932909,
+foundation_validation_iea36_85,FoundationCost,M_tot_kN,kN_m,107185.0,
+foundation_validation_iea36_85,FoundationCost,Radius_o,m,8.783531052461166,
+foundation_validation_iea36_85,FoundationCost,Radius_g,m,0.0,
+foundation_validation_iea36_85,FoundationCost,Radius_b,m,9.698926794548935,
+foundation_validation_iea36_85,FoundationCost,Radius,m,9.698926794548935,
+foundation_validation_iea36_85,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,412.2602317536167,
+foundation_validation_iea36_85,FoundationCost,steel_mass_short_ton_per_turbine,short_ton,46.94819519210188,
+foundation_validation_iea36_85,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,412.2602317536167,
+foundation_validation_iea36_85,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Rebar installation-1052-12.0-1.0
+foundation_validation_iea36_85,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Concrete placement-75-1.0-3.0
+foundation_validation_iea36_85,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Excavation-38-1.0-nan
+foundation_validation_iea36_85,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Backfill-23-1.0-1.0
+foundation_validation_iea36_85,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,ton (short),,0-Steel - rebar-4.69e+01
+foundation_validation_iea36_85,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic yards,,1-Concrete 5000 psi-5.31e+02
+foundation_validation_iea36_85,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,2-Excavated dirt-1.32e+03
+foundation_validation_iea36_85,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,3-Backfill-1.32e+03
+foundation_validation_iea36_85,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,193107.97496247326,Equipment rental <--> Foundation <--> 193108
+foundation_validation_iea36_85,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,2579041.3616208388,Labor <--> Foundation <--> 2579042
+foundation_validation_iea36_85,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,3554315.332819933,Materials <--> Foundation <--> 3554316
+foundation_validation_iea36_85,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,316323.2334701623,Mobilization <--> Foundation <--> 316324
+foundation_validation_iea36_85,SitePreparationCost,Total road volume,m^3,26348.0,
+foundation_validation_iea36_85,SitePreparationCost,Depth to subgrade,m,0.1,
+foundation_validation_iea36_85,SitePreparationCost,Crane path width,ft,13.7,
+foundation_validation_iea36_85,SitePreparationCost,Road length,m,19040.0,
+foundation_validation_iea36_85,SitePreparationCost,Road width,m,6.0,
+foundation_validation_iea36_85,SitePreparationCost,Road thickness,m,0.2,
+foundation_validation_iea36_85,SitePreparationCost,Material volume,cubic yards,47901.994574,
+foundation_validation_iea36_85,SitePreparationCost,Topsoil volume,cubic yards,34117.614160000005,
+foundation_validation_iea36_85,SitePreparationCost,Embankment volume crane,cubic yards,34117.614160000005,
+foundation_validation_iea36_85,SitePreparationCost,Embankment volume road,cubic yards,29884.0416,
+foundation_validation_iea36_85,SitePreparationCost,Rough grading area,ft^2,12.29667936,
+foundation_validation_iea36_85,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,381539.38678190997,Materials <--> Roads <--> 381540
+foundation_validation_iea36_85,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,205059.4899718932,Equipment rental <--> Roads <--> 205060
+foundation_validation_iea36_85,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,424299.83476814383,Labor <--> Roads <--> 424300
+foundation_validation_iea36_85,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,579461.184,Other <--> Roads <--> 579462
+foundation_validation_iea36_85,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,42224.055226107695,Mobilization <--> Roads <--> 42225
+foundation_validation_iea36_85,SubstationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4276716.977827961,Other <--> Substation <--> 4276717
+foundation_validation_iea36_85,GridConnectionCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4084775.152898776,Other <--> Transmission and Distribution <--> 4084776
+foundation_validation_iea36_85,Collection Cost,Total Number of Turbines,,28.0,
+foundation_validation_iea36_85,Collection Cost,Total trench length,km,33.91607805437114,
+foundation_validation_iea36_85,Collection Cost,Total cable length,km,33.91607805437114,
+foundation_validation_iea36_85,Collection Cost,Number of Turbines Per String in Full String,,16.0,
+foundation_validation_iea36_85,Collection Cost,Number of Full Strings,,1.0,
+foundation_validation_iea36_85,Collection Cost,Number of Turbines in Partial String,,12.0,
+foundation_validation_iea36_85,Collection Cost,Number of Partial Strings,,1.0,
+foundation_validation_iea36_85,Collection Cost,Total number of strings full + partial,,2.0,
+foundation_validation_iea36_85,Collection Cost,Trench Length to Substation (km),,20.396078054371138,
+foundation_validation_iea36_85,Collection Cost,Cable Length to Substation (km),,20.396078054371138,
+foundation_validation_iea36_85,Collection Cost,Array cable length for cable  AWG 1/0,km,2.08,
+foundation_validation_iea36_85,Collection Cost,Total cable length for cable  AWG 1/0,km,4.16,
+foundation_validation_iea36_85,Collection Cost,Total cable cost for cable  AWG 1/0,usd,81889.76377952757,
+foundation_validation_iea36_85,Collection Cost,Array cable length for cable  AWG 4/0,km,1.04,
+foundation_validation_iea36_85,Collection Cost,Total cable length for cable  AWG 4/0,km,2.08,
+foundation_validation_iea36_85,Collection Cost,Total cable cost for cable  AWG 4/0,usd,61417.322834645674,
+foundation_validation_iea36_85,Collection Cost,Array cable length for cable  MCM 500,km,2.08,
+foundation_validation_iea36_85,Collection Cost,Total cable length for cable  MCM 500,km,4.16,
+foundation_validation_iea36_85,Collection Cost,Total cable cost for cable  MCM 500,usd,177427.82152230974,
+foundation_validation_iea36_85,Collection Cost,Array cable length for cable  MCM1000,km,1.56,
+foundation_validation_iea36_85,Collection Cost,Total cable length for cable  MCM1000,km,2.08,
+foundation_validation_iea36_85,Collection Cost,Total cable cost for cable  MCM1000,usd,109186.35170603676,
+foundation_validation_iea36_85,Collection Cost,Array cable length for cable  MCM1250,km,1.04,
+foundation_validation_iea36_85,Collection Cost,Total cable length for cable  MCM1250,km,21.436078054371137,
+foundation_validation_iea36_85,Collection Cost,Total cable cost for cable  MCM1250,usd,1195581.781247734,
+foundation_validation_iea36_85,Collection Cost,"Number of turbines per cable type in full strings [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,"[5.0, 2.0, 4.0, 3.0, 2.0]"
+foundation_validation_iea36_85,Collection Cost,"Percent length of cable in partial string [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,[1.         1.         1.         0.33333333 0.        ]
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"0 <--> Project manager <--> 119.0 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 107100.0 <--> 120510.0"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"1 <--> Site manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"2 <--> Construction manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"3 <--> Project engineer <--> 93.5 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 84150.0 <--> 97560.0"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"4 <--> Safety or qc manager <--> 106.11764705882352 <--> 149 <--> (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 95505.88235294116 <--> 108915.88235294116"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"5 <--> Logistics manager <--> 99.9 <--> 149 <--> (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 89910.0 <--> 103320.0"
+foundation_validation_iea36_85,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"6 <--> Office admin <--> 44.56249999999999 <--> 149 <--> (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 40106.24999999999 <--> 53516.24999999999"
+foundation_validation_iea36_85,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,235589.12486134595,Equipment rental <--> Collection <--> 235590
+foundation_validation_iea36_85,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1152209.6863681432,Labor <--> Collection <--> 1152210
+foundation_validation_iea36_85,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1625503.0410902537,Materials <--> Collection <--> 1625504
+foundation_validation_iea36_85,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,150665.09261598715,Mobilization <--> Collection <--> 150666
+foundation_validation_iea36_85,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Equipment rental - Development - 0
+foundation_validation_iea36_85,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Labor - Development - 150000
+foundation_validation_iea36_85,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Materials - Development - 0
+foundation_validation_iea36_85,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Mobilization - Development - 0
+foundation_validation_iea36_85,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Other - Development - 0
+foundation_validation_iea36_85,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Base-M999-22EL-2
+foundation_validation_iea36_85,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Offload-LB 75-Hydraulic-2
+foundation_validation_iea36_85,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,3,Top-LR1500-SL3F-3
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Base-M999-22EL-1.0
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Offload-LB 75-Hydraulic-1.0
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Top-LR1500-SL3F-1.0
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,IEA 3.6-130 Bedplate - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,IEA 3.6-130 Drivetrain - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Hub - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 1 - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 2 - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 3 - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 1 - Base
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 2 - Base
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 3 - Top
+foundation_validation_iea36_85,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 4 - Top
+foundation_validation_iea36_85,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,M999 - 22EL - Base
+foundation_validation_iea36_85,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LB 75 - Hydraulic - Offload
+foundation_validation_iea36_85,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1500 - SL3F - Top
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,18729.90440662159,M999-22EL-Base - Equipment rental cost USD - 18729.90440662159
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,8261.182222222222,LB 75-Hydraulic-Offload - Equipment rental cost USD - 8261.182222222222
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,211658.40366039652,LR1500-SL3F-Top - Equipment rental cost USD - 211658.40366039652
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,912.0,M999-22EL-Base - Fuel cost USD - 912.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,792.0,LB 75-Hydraulic-Offload - Fuel cost USD - 792.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,7966.5,LR1500-SL3F-Top - Fuel cost USD - 7966.5
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,215696.26923292142,M999-22EL-Base - Labor cost USD without management - 215696.26923292142
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,124730.10332494814,LB 75-Hydraulic-Offload - Labor cost USD without management - 124730.10332494814
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,715994.2437580071,LR1500-SL3F-Top - Labor cost USD without management - 715994.2437580071
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,137418.0,M999-22EL-Base - Mobilization cost USD - 137418.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,368796.0,LR1500-SL3F-Top - Mobilization cost USD - 368796.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,185896.26923292142,M999-22EL-Base - Subtotal for hourly labor (non-management) USD - 185896.26923292142
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,106850.10332494814,LB 75-Hydraulic-Offload - Subtotal for hourly labor (non-management) USD - 106850.10332494814
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,617952.2437580071,LR1500-SL3F-Top - Subtotal for hourly labor (non-management) USD - 617952.2437580071
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,29800.0,M999-22EL-Base - Subtotal for per diem labor (non-management) USD - 29800.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,17880.0,LB 75-Hydraulic-Offload - Subtotal for per diem labor (non-management) USD - 17880.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,98042.0,LR1500-SL3F-Top - Subtotal for per diem labor (non-management) USD - 98042.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,372756.173639543,M999-22EL-Base - Total cost USD - 372756.173639543
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,165943.28554717035,LB 75-Hydraulic-Offload - Total cost USD - 165943.28554717035
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1304415.1474184035,LR1500-SL3F-Top - Total cost USD - 1304415.1474184035
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,64.68,M999-22EL-Base - Operation time all turbines hrs - 64.68
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,59.00844444444444,LB 75-Hydraulic-Offload - Operation time all turbines hrs - 59.00844444444444
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,302.51666666666665,LR1500-SL3F-Top - Operation time all turbines hrs - 302.51666666666665
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,81.43436698531127,M999-22EL-Base - Total time per op with weather - 81.43436698531127
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,59.00844444444444,LB 75-Hydraulic-Offload - Total time per op with weather - 59.00844444444444
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,474.57041179461106,LR1500-SL3F-Top - Total time per op with weather - 474.57041179461106
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.2590347400326416,M999-22EL-Base - Wind multiplier - 1.2590347400326416
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.0,LB 75-Hydraulic-Offload - Wind multiplier - 1.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.5687413755537802,LR1500-SL3F-Top - Wind multiplier - 1.5687413755537802
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6.468000000000001,M999-22EL-Base - Operational construct days - 6.468000000000001
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,5.900844444444444,LB 75-Hydraulic-Offload - Operational construct days - 5.900844444444444
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,30.251666666666665,LR1500-SL3F-Top - Operational construct days - 30.251666666666665
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6.468000000000001,M999-22EL-Base - Time construct days - 6.468000000000001
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,28.0,LB 75-Hydraulic-Offload - Time construct days - 28.0
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,30.251666666666665,LR1500-SL3F-Top - Time construct days - 30.251666666666665
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.9083702494754027,M999-22EL-Base - Total time per turbine - 2.9083702494754027
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.1074444444444445,LB 75-Hydraulic-Offload - Total time per turbine - 2.1074444444444445
+foundation_validation_iea36_85,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,16.948943278378966,LR1500-SL3F-Top - Total time per turbine - 16.948943278378966
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,18729.90440662159,M999-22EL-Base - Equipment rental cost USD - 18729.90440662159
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,8261.182222222222,LB 75-Hydraulic-Offload - Equipment rental cost USD - 8261.182222222222
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,211658.40366039652,LR1500-SL3F-Top - Equipment rental cost USD - 211658.40366039652
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,912.0,M999-22EL-Base - Fuel cost USD - 912.0
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,792.0,LB 75-Hydraulic-Offload - Fuel cost USD - 792.0
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,7966.5,LR1500-SL3F-Top - Fuel cost USD - 7966.5
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,215696.26923292142,M999-22EL-Base - Labor cost USD without management - 215696.26923292142
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,124730.10332494814,LB 75-Hydraulic-Offload - Labor cost USD without management - 124730.10332494814
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,715994.2437580071,LR1500-SL3F-Top - Labor cost USD without management - 715994.2437580071
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,137418.0,M999-22EL-Base - Mobilization cost USD - 137418.0
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,368796.0,LR1500-SL3F-Top - Mobilization cost USD - 368796.0
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,372756.173639543,M999-22EL-Base - Total cost USD - 372756.173639543
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,165943.28554717035,LB 75-Hydraulic-Offload - Total cost USD - 165943.28554717035
+foundation_validation_iea36_85,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1304415.1474184035,LR1500-SL3F-Top - Total cost USD - 1304415.1474184035
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,238649.49028924032,Erection - Equipment rental - 238649.49028924032
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,9670.5,Erection - Fuel - 9670.5
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,2065435.0458158767,Erection - Labor - 2065435.0458158767
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,538374.0,Erection - Mobilization - 538374.0
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Other - 0.0
+foundation_validation_iea36_85,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Materials - 0.0
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,215696.26923292142,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,124730.10332494814,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,715994.2437580071,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: mobilization,usd,137418,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: mobilization,usd,32160,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: mobilization,usd,368796,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.2590347400326416,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.0,
+foundation_validation_iea36_85,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.5687413755537802,
+foundation_validation_iea36_85,ErectionCost,total_cost_summed_erection,usd,2852129.036105117,
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project manager - 1.0 - 119.0 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 119.0 - 149.0 - 9643.230333333333 - 87258.73333333334 - 96901.96366666668"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Site manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 9643.230333333333 - 82272.52 - 91915.75033333333"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Construction manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 9643.230333333333 - 82272.52 - 91915.75033333333"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project engineer - 1.0 - 93.5 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 93.5 - 149.0 - 9643.230333333333 - 68560.43333333333 - 78203.66366666666"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Safety or qc manager - 1.0 - 106.11764705882352 - 149 - (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 106.11764705882352 - 149.0 - 9643.230333333333 - 77812.53333333333 - 87455.76366666667"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Logistics manager - 1.0 - 99.9 - 149 - (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 99.9 - 149.0 - 9643.230333333333 - 73253.34 - 82896.57033333334"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Office admin - 1.0 - 44.56249999999999 - 149 - (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 44.56249999999999 - 149.0 - 9643.230333333333 - 32676.195833333328 - 42319.42616666666"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Tool room - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 9643.230333333333 - 62943.61066666667 - 72586.841"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Electrician - 2.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 171.68 - 298.0 - 19286.460666666666 - 125887.22133333333 - 145173.682"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - Electrician - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 9643.230333333333 - 62943.61066666667 - 72586.841"
+foundation_validation_iea36_85,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - QC/QA tech - 2.0 - 87.125 - 149 - (50% burden for QC/QC Manager) https://www.ziprecruiter.com/Salaries/How-Much-Does-a-Construction-Quality-Control-Manager-Make-an-Hour ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 174.25 - 298.0 - 19286.460666666666 - 127771.71666666666 - 147058.17733333333"
+foundation_validation_iea36_85,ErectionCost,number of hours in weather window,hours,2700,
+foundation_validation_iea36_85,ErectionCost,time_weighted_weather_multiplier,none,1.291732207283601,
+foundation_validation_iea36_85,ErectionCost,erection_construction_months,months,2.157322222222222,
+foundation_validation_iea36_85,ErectionCost,labor_cost_management,usd,1009014.4295,
+foundation_validation_iea36_85,ErectionCost,labor_cost_non_management,usd,1056420.6163158766,
+foundation_validation_iea36_85,ErectionCost,labor_cost_total,usd,2065435.0458158767,
+foundation_validation_iea36_85,ManagementCost,insurance_usd,usd,125552.05580617866,
+foundation_validation_iea36_85,ManagementCost,construction_permitting_usd,usd,332855.75805746816,
+foundation_validation_iea36_85,ManagementCost,bonding_usd,usd,224200.09965389047,
+foundation_validation_iea36_85,ManagementCost,project_management_usd,usd,1543295.5995329998,
+foundation_validation_iea36_85,ManagementCost,markup_contingency_usd,usd,2919085.2974936534,
+foundation_validation_iea36_85,ManagementCost,engineering_usd,usd,1469753.0,
+foundation_validation_iea36_85,ManagementCost,site_facility_usd,usd,841483.0,
+foundation_validation_iea36_120,FoundationCost,wind_multiplier,,1.0,
+foundation_validation_iea36_120,FoundationCost,F_dead,kN,4993.739130434783,
+foundation_validation_iea36_120,FoundationCost,F_horiz,kN,980.4038557522332,
+foundation_validation_iea36_120,FoundationCost,M_tot_kN,kN_m,213600.0,
+foundation_validation_iea36_120,FoundationCost,Radius_o,m,11.164992037088359,
+foundation_validation_iea36_120,FoundationCost,Radius_g,m,0.0,
+foundation_validation_iea36_120,FoundationCost,Radius_b,m,12.146283368526415,
+foundation_validation_iea36_120,FoundationCost,Radius,m,12.146283368526415,
+foundation_validation_iea36_120,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,646.5630741320518,
+foundation_validation_iea36_120,FoundationCost,steel_mass_short_ton_per_turbine,short_ton,73.63060288215807,
+foundation_validation_iea36_120,FoundationCost,foundation_volume_concrete_m3_per_turbine,m^3,646.5630741320518,
+foundation_validation_iea36_120,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Rebar installation-1650-19.0-1.0
+foundation_validation_iea36_120,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Concrete placement-117-2.0-3.0
+foundation_validation_iea36_120,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Excavation-58-1.0-nan
+foundation_validation_iea36_120,FoundationCost,operation_data: Operation ID-Number of days-Number of crews-Number of workers,,,Backfill-35-1.0-1.0
+foundation_validation_iea36_120,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,ton (short),,0-Steel - rebar-7.36e+01
+foundation_validation_iea36_120,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic yards,,1-Concrete 5000 psi-8.33e+02
+foundation_validation_iea36_120,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,2-Excavated dirt-2.04e+03
+foundation_validation_iea36_120,FoundationCost,material_needs_per_turbine: Material type ID-Quantity of material,cubic_yards,,3-Backfill-2.04e+03
+foundation_validation_iea36_120,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,299863.9041246903,Equipment rental <--> Foundation <--> 299864
+foundation_validation_iea36_120,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,3672420.7586612115,Labor <--> Foundation <--> 3672421
+foundation_validation_iea36_120,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,5574365.100042376,Materials <--> Foundation <--> 5574366
+foundation_validation_iea36_120,FoundationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,477332.4881414139,Mobilization <--> Foundation <--> 477333
+foundation_validation_iea36_120,SitePreparationCost,Total road volume,m^3,26348.0,
+foundation_validation_iea36_120,SitePreparationCost,Depth to subgrade,m,0.1,
+foundation_validation_iea36_120,SitePreparationCost,Crane path width,ft,13.7,
+foundation_validation_iea36_120,SitePreparationCost,Road length,m,19040.0,
+foundation_validation_iea36_120,SitePreparationCost,Road width,m,6.0,
+foundation_validation_iea36_120,SitePreparationCost,Road thickness,m,0.2,
+foundation_validation_iea36_120,SitePreparationCost,Material volume,cubic yards,47901.994574,
+foundation_validation_iea36_120,SitePreparationCost,Topsoil volume,cubic yards,34117.614160000005,
+foundation_validation_iea36_120,SitePreparationCost,Embankment volume crane,cubic yards,34117.614160000005,
+foundation_validation_iea36_120,SitePreparationCost,Embankment volume road,cubic yards,29884.0416,
+foundation_validation_iea36_120,SitePreparationCost,Rough grading area,ft^2,12.29667936,
+foundation_validation_iea36_120,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,381539.38678190997,Materials <--> Roads <--> 381540
+foundation_validation_iea36_120,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,205059.4899718932,Equipment rental <--> Roads <--> 205060
+foundation_validation_iea36_120,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,424299.83476814383,Labor <--> Roads <--> 424300
+foundation_validation_iea36_120,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,579461.184,Other <--> Roads <--> 579462
+foundation_validation_iea36_120,SitePreparationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,42224.055226107695,Mobilization <--> Roads <--> 42225
+foundation_validation_iea36_120,SubstationCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4276716.977827961,Other <--> Substation <--> 4276717
+foundation_validation_iea36_120,GridConnectionCost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,4084775.152898776,Other <--> Transmission and Distribution <--> 4084776
+foundation_validation_iea36_120,Collection Cost,Total Number of Turbines,,28.0,
+foundation_validation_iea36_120,Collection Cost,Total trench length,km,33.91607805437114,
+foundation_validation_iea36_120,Collection Cost,Total cable length,km,33.91607805437114,
+foundation_validation_iea36_120,Collection Cost,Number of Turbines Per String in Full String,,16.0,
+foundation_validation_iea36_120,Collection Cost,Number of Full Strings,,1.0,
+foundation_validation_iea36_120,Collection Cost,Number of Turbines in Partial String,,12.0,
+foundation_validation_iea36_120,Collection Cost,Number of Partial Strings,,1.0,
+foundation_validation_iea36_120,Collection Cost,Total number of strings full + partial,,2.0,
+foundation_validation_iea36_120,Collection Cost,Trench Length to Substation (km),,20.396078054371138,
+foundation_validation_iea36_120,Collection Cost,Cable Length to Substation (km),,20.396078054371138,
+foundation_validation_iea36_120,Collection Cost,Array cable length for cable  AWG 1/0,km,2.08,
+foundation_validation_iea36_120,Collection Cost,Total cable length for cable  AWG 1/0,km,4.16,
+foundation_validation_iea36_120,Collection Cost,Total cable cost for cable  AWG 1/0,usd,81889.76377952757,
+foundation_validation_iea36_120,Collection Cost,Array cable length for cable  AWG 4/0,km,1.04,
+foundation_validation_iea36_120,Collection Cost,Total cable length for cable  AWG 4/0,km,2.08,
+foundation_validation_iea36_120,Collection Cost,Total cable cost for cable  AWG 4/0,usd,61417.322834645674,
+foundation_validation_iea36_120,Collection Cost,Array cable length for cable  MCM 500,km,2.08,
+foundation_validation_iea36_120,Collection Cost,Total cable length for cable  MCM 500,km,4.16,
+foundation_validation_iea36_120,Collection Cost,Total cable cost for cable  MCM 500,usd,177427.82152230974,
+foundation_validation_iea36_120,Collection Cost,Array cable length for cable  MCM1000,km,1.56,
+foundation_validation_iea36_120,Collection Cost,Total cable length for cable  MCM1000,km,2.08,
+foundation_validation_iea36_120,Collection Cost,Total cable cost for cable  MCM1000,usd,109186.35170603676,
+foundation_validation_iea36_120,Collection Cost,Array cable length for cable  MCM1250,km,1.04,
+foundation_validation_iea36_120,Collection Cost,Total cable length for cable  MCM1250,km,21.436078054371137,
+foundation_validation_iea36_120,Collection Cost,Total cable cost for cable  MCM1250,usd,1195581.781247734,
+foundation_validation_iea36_120,Collection Cost,"Number of turbines per cable type in full strings [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,"[5.0, 2.0, 4.0, 3.0, 2.0]"
+foundation_validation_iea36_120,Collection Cost,"Percent length of cable in partial string [AWG 1/0  ,  AWG 4/0  ,  MCM 500  ,  MCM1000  ,  MCM1250]",,,[1.         1.         1.         0.33333333 0.        ]
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"0 <--> Project manager <--> 119.0 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 107100.0 <--> 120510.0"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"1 <--> Site manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"2 <--> Construction manager <--> 112.2 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 100980.0 <--> 114390.0"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"3 <--> Project engineer <--> 93.5 <--> 149 <--> (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 84150.0 <--> 97560.0"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"4 <--> Safety or qc manager <--> 106.11764705882352 <--> 149 <--> (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 95505.88235294116 <--> 108915.88235294116"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"5 <--> Logistics manager <--> 99.9 <--> 149 <--> (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 89910.0 <--> 103320.0"
+foundation_validation_iea36_120,Collection Cost,Labor type ID <--> Hourly rate USD per hour <--> Per diem USD per day <--> Operation <--> Crew type <--> Crew name <--> Number of workers <--> Per Diem Total <--> Hourly costs total <--> Crew total cost ,,,"6 <--> Office admin <--> 44.56249999999999 <--> 149 <--> (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. <--> M0 <--> Management <--> Management - project size <--> 1 <--> 13410.0 <--> 40106.24999999999 <--> 53516.24999999999"
+foundation_validation_iea36_120,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,235589.12486134595,Equipment rental <--> Collection <--> 235590
+foundation_validation_iea36_120,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1152209.6863681432,Labor <--> Collection <--> 1152210
+foundation_validation_iea36_120,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,1625503.0410902537,Materials <--> Collection <--> 1625504
+foundation_validation_iea36_120,Collection Cost,Type of Cost <--> Phase of Construction <--> Cost in USD ,,150665.09261598715,Mobilization <--> Collection <--> 150666
+foundation_validation_iea36_120,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Equipment rental - Development - 0
+foundation_validation_iea36_120,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Labor - Development - 150000
+foundation_validation_iea36_120,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Materials - Development - 0
+foundation_validation_iea36_120,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Mobilization - Development - 0
+foundation_validation_iea36_120,DevelopmentCost,Type of Cost - Phase of Construction - Cost in USD,,Development,Other - Development - 0
+foundation_validation_iea36_120,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Offload-LB 75-Hydraulic-2
+foundation_validation_iea36_120,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,5,Top-LR1600/2-SL13DFB + Derrick -5
+foundation_validation_iea36_120,ErectionCost,_number_of_equip: Operation-Crane name-Boom system-Number of equipment,,2,Base-LR1500-SL3F-2
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Offload-LB 75-Hydraulic-1.0
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Top-LR1600/2-SL13DFB + Derrick -1.0
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: Operation-Crane name-Boom system-Operational construct days over time construct days,,1.0,Base-LR1500-SL3F-1.0
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,IEA 3.6-130 Bedplate - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,IEA 3.6-130 Drivetrain - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Hub - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 1 - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 2 - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Blade 3 - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 1 - Base
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 2 - Base
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 3 - Top
+foundation_validation_iea36_120,ErectionCost,component_name_topvbase: Operation - Top or Base,,,Tower section 4 - Top
+foundation_validation_iea36_120,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LB 75 - Hydraulic - Offload
+foundation_validation_iea36_120,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1600/2 - SL13DFB + Derrick  - Top
+foundation_validation_iea36_120,ErectionCost,crane_choice: Crew name - Boom system - Operation,,,LR1500 - SL3F - Base
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,8413.626666666667,LB 75-Hydraulic-Offload - Equipment rental cost USD - 8413.626666666667
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,399189.0798479088,LR1600/2-SL13DFB + Derrick -Top - Equipment rental cost USD - 399189.0798479088
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,38710.9908675799,LR1500-SL3F-Base - Equipment rental cost USD - 38710.9908675799
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,792.0,LB 75-Hydraulic-Offload - Fuel cost USD - 792.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,11895.0,LR1600/2-SL13DFB + Derrick -Top - Fuel cost USD - 11895.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1525.5,LR1500-SL3F-Base - Fuel cost USD - 1525.5
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,126701.81926124444,LB 75-Hydraulic-Offload - Labor cost USD without management - 126701.81926124444
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,923258.2053475286,LR1600/2-SL13DFB + Derrick -Top - Labor cost USD without management - 923258.2053475286
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,237609.17995053265,LR1500-SL3F-Base - Labor cost USD without management - 237609.17995053265
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,498354.0,LR1600/2-SL13DFB + Derrick -Top - Mobilization cost USD - 498354.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,368796.0,LR1500-SL3F-Base - Mobilization cost USD - 368796.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,108821.81926124444,LB 75-Hydraulic-Offload - Subtotal for hourly labor (non-management) USD - 108821.81926124444
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,796012.2053475286,LR1600/2-SL13DFB + Derrick -Top - Subtotal for hourly labor (non-management) USD - 796012.2053475286
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,204084.17995053265,LR1500-SL3F-Base - Subtotal for hourly labor (non-management) USD - 204084.17995053265
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,17880.0,LB 75-Hydraulic-Offload - Subtotal for per diem labor (non-management) USD - 17880.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,127246.0,LR1600/2-SL13DFB + Derrick -Top - Subtotal for per diem labor (non-management) USD - 127246.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,33525.0,LR1500-SL3F-Base - Subtotal for per diem labor (non-management) USD - 33525.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,168067.44592791112,LB 75-Hydraulic-Offload - Total cost USD - 168067.44592791112
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1832696.2851954373,LR1600/2-SL13DFB + Derrick -Top - Total cost USD - 1832696.2851954373
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,646641.6708181126,LR1500-SL3F-Base - Total cost USD - 646641.6708181126
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,60.09733333333333,LB 75-Hydraulic-Offload - Operation time all turbines hrs - 60.09733333333333
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,372.1666666666667,LR1600/2-SL13DFB + Derrick -Top - Operation time all turbines hrs - 372.1666666666667
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,65.26333333333334,LR1500-SL3F-Base - Operation time all turbines hrs - 65.26333333333334
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,60.09733333333333,LB 75-Hydraulic-Offload - Total time per op with weather - 60.09733333333333
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,611.3155893536123,LR1600/2-SL13DFB + Derrick -Top - Total time per op with weather - 611.3155893536123
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,89.40182648401826,LR1500-SL3F-Base - Total time per op with weather - 89.40182648401826
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.0,LB 75-Hydraulic-Offload - Wind multiplier - 1.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.6425855513307985,LR1600/2-SL13DFB + Derrick -Top - Wind multiplier - 1.6425855513307985
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,1.36986301369863,LR1500-SL3F-Base - Wind multiplier - 1.36986301369863
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6.009733333333333,LB 75-Hydraulic-Offload - Operational construct days - 6.009733333333333
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,37.21666666666667,LR1600/2-SL13DFB + Derrick -Top - Operational construct days - 37.21666666666667
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6.5263333333333335,LR1500-SL3F-Base - Operational construct days - 6.5263333333333335
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,28.0,LB 75-Hydraulic-Offload - Time construct days - 28.0
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,37.21666666666667,LR1600/2-SL13DFB + Derrick -Top - Time construct days - 37.21666666666667
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,6.5263333333333335,LR1500-SL3F-Base - Time construct days - 6.5263333333333335
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,2.146333333333333,LB 75-Hydraulic-Offload - Total time per turbine - 2.146333333333333
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,21.832699619771866,LR1600/2-SL13DFB + Derrick -Top - Total time per turbine - 21.832699619771866
+foundation_validation_iea36_120,ErectionCost,crane_data_output: crane_boom_operation_concat - variable - value,,3.1929223744292234,LR1500-SL3F-Base - Total time per turbine - 3.1929223744292234
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,8413.626666666667,LB 75-Hydraulic-Offload - Equipment rental cost USD - 8413.626666666667
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,399189.0798479088,LR1600/2-SL13DFB + Derrick -Top - Equipment rental cost USD - 399189.0798479088
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,38710.9908675799,LR1500-SL3F-Base - Equipment rental cost USD - 38710.9908675799
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,792.0,LB 75-Hydraulic-Offload - Fuel cost USD - 792.0
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,11895.0,LR1600/2-SL13DFB + Derrick -Top - Fuel cost USD - 11895.0
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1525.5,LR1500-SL3F-Base - Fuel cost USD - 1525.5
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,126701.81926124444,LB 75-Hydraulic-Offload - Labor cost USD without management - 126701.81926124444
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,923258.2053475286,LR1600/2-SL13DFB + Derrick -Top - Labor cost USD without management - 923258.2053475286
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,237609.17995053265,LR1500-SL3F-Base - Labor cost USD without management - 237609.17995053265
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,32160.0,LB 75-Hydraulic-Offload - Mobilization cost USD - 32160.0
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,498354.0,LR1600/2-SL13DFB + Derrick -Top - Mobilization cost USD - 498354.0
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,368796.0,LR1500-SL3F-Base - Mobilization cost USD - 368796.0
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,168067.44592791112,LB 75-Hydraulic-Offload - Total cost USD - 168067.44592791112
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,1832696.2851954373,LR1600/2-SL13DFB + Derrick -Top - Total cost USD - 1832696.2851954373
+foundation_validation_iea36_120,ErectionCost,crane_cost_details: Operation ID - Type of cost - Cost,,646641.6708181126,LR1500-SL3F-Base - Total cost USD - 646641.6708181126
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,446313.69738215534,Erection - Equipment rental - 446313.69738215534
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,14212.5,Erection - Fuel - 14212.5
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,2405791.649059306,Erection - Labor - 2405791.649059306
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,899310.0,Erection - Mobilization - 899310.0
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Other - 0.0
+foundation_validation_iea36_120,ErectionCost,total_erection_cost: Phase of construction - Type of cost - Cost USD,,0.0,Erection - Materials - 0.0
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,126701.81926124444,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,923258.2053475286,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: crew cost without management,usd,237609.17995053265,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: mobilization,usd,32160,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: mobilization,usd,498354,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: mobilization,usd,368796,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.0,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.6425855513307985,
+foundation_validation_iea36_120,ErectionCost,erection_selected_detailed_data: wind multiplier,,1.36986301369863,
+foundation_validation_iea36_120,ErectionCost,total_cost_summed_erection,usd,3765627.8464414612,
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project manager - 1.0 - 119.0 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-manager-sr-construction-hourly?type=base; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 119.0 - 149.0 - 10689.706999999999 - 96699.40000000001 - 107389.107"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Site manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 10689.706999999999 - 91173.72 - 101863.427"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Construction manager - 1.0 - 112.2 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/construction-manager-ii-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 112.2 - 149.0 - 10689.706999999999 - 91173.72 - 101863.427"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Project engineer - 1.0 - 93.5 - 149 - (50% burden) https://www.salary.com/tools/salary-calculator/project-engineer-iii-construction-hourly; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 93.5 - 149.0 - 10689.706999999999 - 75978.1 - 86667.807"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Safety or qc manager - 1.0 - 106.11764705882352 - 149 - (70% burden) https://www.salary.com/tools/salary-calculator/construction-site-safety-manager-hourly; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 106.11764705882352 - 149.0 - 10689.706999999999 - 86231.2 - 96920.90699999999"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Logistics manager - 1.0 - 99.9 - 149 - (50 % burden) https://www.salary.com/research/salary/benchmark/logistics-manager-hourly-wages; plus 35% for demanding specs, rigid inspec-tions, unreliable suppliers. - 99.9 - 149.0 - 10689.706999999999 - 81178.74 - 91868.447"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - project size - Office admin - 1.0 - 44.56249999999999 - 149 - (35% burden) https://www.salary.com/tools/salary-calculator/administrative-assistant-ii-hourly ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 44.56249999999999 - 149.0 - 10689.706999999999 - 36211.487499999996 - 46901.1945"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Tool room - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 10689.706999999999 - 69753.584 - 80443.291"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Management - Management - rate construction - Electrician - 2.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 171.68 - 298.0 - 21379.413999999997 - 139507.168 - 160886.582"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - Electrician - 1.0 - 85.84 - 149 - 2017 National Construction Estimator:  Page 307  ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 85.84 - 149.0 - 10689.706999999999 - 69753.584 - 80443.291"
+foundation_validation_iea36_120,ErectionCost,management_crews_cost: Crew type ID - Operation - Crew name - Labor type ID - Number of workers - Hourly rate USD per hour - Per diem USD per day - Notes/References - Hourly rate for all workers - Per diem all workers - per_diem_costs - hourly_costs - crew_level_total_costs,,,"Mechanical completion - Mechanical completion - QC/QA tech - 2.0 - 87.125 - 149 - (50% burden for QC/QC Manager) https://www.ziprecruiter.com/Salaries/How-Much-Does-a-Construction-Quality-Control-Manager-Make-an-Hour ; 25% for work on a ladder or a scaffold, in a crawl space, in a congested area or remote from the material storage point; plus 20% for demanding specs, rigid inspec-tions, unreliable suppliers. - 174.25 - 298.0 - 21379.413999999997 - 141595.55000000002 - 162974.964"
+foundation_validation_iea36_120,ErectionCost,number of hours in weather window,hours,2700,
+foundation_validation_iea36_120,ErectionCost,time_weighted_weather_multiplier,none,1.3669869058132926,
+foundation_validation_iea36_120,ErectionCost,erection_construction_months,months,2.391433333333333,
+foundation_validation_iea36_120,ErectionCost,labor_cost_management,usd,1118222.4445,
+foundation_validation_iea36_120,ErectionCost,labor_cost_non_management,usd,1287569.2045593057,
+foundation_validation_iea36_120,ErectionCost,labor_cost_total,usd,2405791.649059306,
+foundation_validation_iea36_120,ManagementCost,insurance_usd,usd,149602.33749340137,
+foundation_validation_iea36_120,ManagementCost,construction_permitting_usd,usd,400479.6450193938,
+foundation_validation_iea36_120,ManagementCost,bonding_usd,usd,267147.03123821673,
+foundation_validation_iea36_120,ManagementCost,project_management_usd,usd,1543295.5995329998,
+foundation_validation_iea36_120,ManagementCost,markup_contingency_usd,usd,3478254.346721581,
+foundation_validation_iea36_120,ManagementCost,engineering_usd,usd,1681353.0,
+foundation_validation_iea36_120,ManagementCost,site_facility_usd,usd,841483.0,
