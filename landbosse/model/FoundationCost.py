@@ -693,6 +693,7 @@ class FoundationCost(CostModule):
                 mobilization_cost = foundation_cost['Cost USD'].sum() / num_turbines * mobilization_multipler
 
         mob_cost = pd.DataFrame([['Mobilization', mobilization_cost, 'Foundation']], columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+
         foundation_cost = foundation_cost.append(mob_cost)
 
         # todo: we add a separate tab in the output file for costs (all costs will be the same format but it's a different format than other data)
