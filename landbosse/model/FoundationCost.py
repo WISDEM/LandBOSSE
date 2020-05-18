@@ -651,7 +651,7 @@ class FoundationCost(CostModule):
         foundation_cost = foundation_cost.append(material_costs)
 
         # calculate mobilization cost as percentage of total foundation cost and add to foundation_cost
-        mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.1, 'Foundation']],
+        mob_cost = pd.DataFrame([['Mobilization', foundation_cost['Cost USD'].sum() * 0.05, 'Foundation']],
                                 columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         foundation_cost = foundation_cost.append(mob_cost)
 
