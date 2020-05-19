@@ -27,4 +27,3 @@ script:
 branches:
   only:
     - develop
-    - issue_108_integrate_DW
