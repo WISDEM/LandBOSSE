@@ -73,7 +73,15 @@ class SubstationCost(CostModule):
 
         """
 
-        calculate_costs_output_dict['substation_cost_usd'] = 11652 * (calculate_costs_input_dict['interconnect_voltage_kV'] + calculate_costs_input_dict['project_size_megawatts']) + 11795 * (calculate_costs_input_dict['project_size_megawatts'] ** 0.3549) + 1526800
+        # Run in utility mode if number of turbines is > 10:
+        if calculate_costs_input_dict['num_turbines'] > 10:
+            calculate_costs_output_dict['substation_cost_usd'] = 11652 * (
+                        calculate_costs_input_dict['interconnect_voltage_kV'] + calculate_costs_input_dict[
+                    'project_size_megawatts']) + 11795 * (calculate_costs_input_dict[
+                                                              'project_size_megawatts'] ** 0.3549) + 1526800
+        # Run in distributed mode if number of turbines is <= 10:
+        else:
+            calculate_costs_output_dict['substation_cost_usd'] = 0
 
         calculate_costs_output_dict['substation_cost_output_df'] = pd.DataFrame([['Other', calculate_costs_output_dict['substation_cost_usd'], 'Substation']],
                                                  columns=['Type of cost', 'Cost USD', 'Phase of construction'])
