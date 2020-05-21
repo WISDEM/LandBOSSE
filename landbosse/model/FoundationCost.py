@@ -700,7 +700,7 @@ class FoundationCost(CostModule):
         calculate_costs_output_dict['foundation_equipment_rental_usd'] = equipment_cost_usd_with_weather_delays
         calculate_costs_output_dict['foundation_labor_usd'] = labor_cost_usd_with_management_plus_weather_delays
         calculate_costs_output_dict['foundation_material_usd'] = material_costs_sum
-        calculate_costs_output_dict['foundation_mobilization_usd'] = foundation_mob_cost
+        calculate_costs_output_dict['foundation_mobilization_usd'] = mobilization_cost
 
 
         # todo: we add a separate tab in the output file for costs (all costs will be the same format but it's a different format than other data)

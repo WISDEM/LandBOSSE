@@ -877,7 +877,7 @@ class ArraySystem(CostModule):
         calculate_costs_output_dict['collection_labor_usd'] = calculate_costs_output_dict[
             'Labor Cost USD with weather delays']
         calculate_costs_output_dict['collection_material_usd'] = self._total_cable_cost
-        calculate_costs_output_dict['collection_mobilization_usd'] = collection_mobilization_usd
+        calculate_costs_output_dict['collection_mobilization_usd'] = calculate_costs_output_dict['mob_cost']
 
 
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
