@@ -8,7 +8,6 @@ install:
 
 before_script: cd $TRAVIS_BUILD_DIR/landbosse/landbosse_api/API_test/
 
-
 # command to run tests
 script:
   - pytest API_test.py
@@ -25,9 +24,8 @@ env:
 # command to run tests
 script:
   - python $TRAVIS_BUILD_DIR/main.py --validate
-  - pytest
 
 branches:
   only:
     - develop
-    - pip_installable
+
