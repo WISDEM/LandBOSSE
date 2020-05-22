@@ -631,8 +631,8 @@ class NegativeInputError(Error):
 input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
-input_dict['num_turbines'] = 100
-input_dict['project_id'] = 'foundation_validation_ge15'
+# input_dict['num_turbines'] = 100
+# input_dict['project_id'] = 'foundation_validation_ge15'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
 # input_dict['turbine_rating_MW'] = 1.5
@@ -662,6 +662,6 @@ input_dict['project_id'] = 'foundation_validation_ge15'
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-BOS_results = run_landbosse(input_dict)
-print(BOS_results)
+# BOS_results = run_landbosse(input_dict)
+# print(BOS_results)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
