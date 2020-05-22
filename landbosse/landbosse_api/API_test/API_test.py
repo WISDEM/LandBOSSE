@@ -6,85 +6,112 @@ from unittest import TestCase
 class TestLandBOSSE_API(TestCase):
     def setUp(self):
         self.file_path = os.path.dirname(__file__) + '/project_data/az_rolling.srw'
-        self.api_inputs = dict()
-        self.api_inputs['interconnect_voltage_kV'] = 137
-        self.api_inputs['distance_to_interconnect_mi'] = 10
-        self.api_inputs['num_turbines'] = 100
-        self.api_inputs['turbine_spacing_rotor_diameters'] = 4
-        self.api_inputs['row_spacing_rotor_diameters'] = 10
-        self.api_inputs['turbine_rating_MW'] = 1.5
-        self.api_inputs['rotor_diameter_m'] = 77
-        self.api_inputs['hub_height_meters'] = 80
-        self.api_inputs['wind_shear_exponent'] = 0.20
-        self.api_inputs['depth'] = 2.36  # Foundation depth in m
-        self.api_inputs['rated_thrust_N'] = 589000
-        self.api_inputs['labor_cost_multiplier'] = 1
-        self.api_inputs['gust_velocity_m_per_s'] = 59.50
-        self.results = run_landbosse(self.api_inputs)
+        api_inputs = dict()
+        api_inputs['num_turbines'] = 100
+        api_inputs['project_id'] = 'foundation_validation_ge15'
+        self.results = run_landbosse(api_inputs)
         print(self.results)
 
 
     def test_total_BOS_cost(self):
-        self.assertEqual(self.results['total_bos_cost'], 44648532.791873954)
+        self.assertEqual(44208796.36106637, self.results['total_bos_cost'])
 
     def test_total_management_cost(self):
-        self.assertEqual(self.results['total_management_cost'], 10616123.290804042)
-        self.assertEqual(self.results['insurance_usd'], 190581.4932059915)
-        self.assertEqual(self.results['construction_permitting_usd'], 408225.2284832139)
-        self.assertEqual(self.results['project_management_usd'], 1871041.064287057)
-        self.assertEqual(self.results['bonding_usd'], 340324.0950106991)
-        self.assertEqual(self.results['markup_contingency_usd'], 4431019.717039302)
-        self.assertEqual(self.results['engineering_usd'], 2071325.0)
-        self.assertEqual(self.results['site_facility_usd'], 1303606.6927777778)
-        total_management_cost = self.results['insurance_usd'] + self.results['construction_permitting_usd'] + \
-                                self.results['project_management_usd'] + self.results['bonding_usd'] + self.results[
-                                    'markup_contingency_usd'] + self.results['engineering_usd'] + self.results[
-                                    'site_facility_usd']
-        self.assertEqual(self.results['total_management_cost'], total_management_cost)
+        delta = 0.002    # max % tolerance in expected and actual value
+        self.assertAlmostEqual(10570956.97,
+                               self.results['total_management_cost'],
+                               delta=int(delta * 10570956.97))
 
+        self.assertAlmostEqual(188371.90,
+                               self.results['insurance_usd'],
+                               delta=int(delta * 188371.90))
 
+        self.assertAlmostEqual(400723.14,
+                               self.results['construction_permitting_usd'],
+                               delta=int(delta * 400723.14))
+
+        self.assertAlmostEqual(1887763.492,
+                               self.results['project_management_usd'],
+                               delta=int(delta * 1887763.492))
+
+        self.assertAlmostEqual(336378.394,
+                               self.results['bonding_usd'],
+                               delta=int(delta * 336378.394))
+
+        self.assertAlmostEqual(4379646.689,
+                               self.results['markup_contingency_usd'],
+                               delta=int(delta * 4379646.689))
+
+        self.assertAlmostEqual(2071325,
+                               self.results['engineering_usd'],
+                               delta=int(delta * 2071325))
+
+        self.assertAlmostEqual(1306748.35,
+                               self.results['site_facility_usd'],
+                               delta=int(delta * 1306748.35))
+
+        total_management_cost = self.results['insurance_usd'] + \
+                                self.results['construction_permitting_usd'] + \
+                                self.results['project_management_usd'] + \
+                                self.results['bonding_usd'] + \
+                                self.results['markup_contingency_usd'] + \
+                                self.results['engineering_usd'] + \
+                                self.results['site_facility_usd']
+
+        self.assertAlmostEqual(self.results['total_management_cost'],
+                               total_management_cost,
+                               delta=int(delta * self.results['total_management_cost']))
 
     def test_siteprep_cost(self):
-        self.assertEqual(self.results['total_sitepreparation_cost'], 3195070.1679882305)
-        self.assertEqual(self.results['sitepreparation_equipment_rental_usd'], 403790.6149495621)
-        self.assertEqual(self.results['sitepreparation_labor_usd'], 603592.1087067176)
-        self.assertEqual(self.results['sitepreparation_material_usd'], 797751.5345973179)
-        self.assertEqual(self.results['sitepreparation_mobilization_usd'], 82635.14973463301)
+        self.assertEqual(self.results['total_sitepreparation_cost'], 3209538.616279147)
+        self.assertEqual(round(self.results['sitepreparation_equipment_rental_usd'], 2), 412013.84)
+        self.assertEqual(round(self.results['sitepreparation_labor_usd'], 4), 609463.1297)
+        self.assertEqual(round(self.results['sitepreparation_material_usd'], 4), 797751.5346)
+        self.assertEqual(round(self.results['sitepreparation_mobilization_usd'], 5), 83009.35197)
         self.assertEqual(self.results['sitepreparation_other_usd'], 1307300.76)
-        total_siteprep_cost = self.results['sitepreparation_equipment_rental_usd'] + self.results[
-            'sitepreparation_labor_usd'] + self.results['sitepreparation_material_usd'] + self.results[
-                                  'sitepreparation_mobilization_usd'] + self.results['sitepreparation_other_usd']
+
+        total_siteprep_cost = self.results['sitepreparation_equipment_rental_usd'] + \
+                              self.results['sitepreparation_labor_usd'] + \
+                              self.results['sitepreparation_material_usd'] + \
+                              self.results['sitepreparation_mobilization_usd'] + \
+                              self.results['sitepreparation_other_usd']
+
         self.assertEqual(self.results['total_sitepreparation_cost'], total_siteprep_cost)
 
-
     def test_foundation_cost(self):
-        self.assertEqual(self.results['total_foundation_cost'], 10411261.424160697)
-        self.assertEqual(self.results['foundation_equipment_rental_usd'], 304259.58127751213)
-        self.assertEqual(self.results['foundation_labor_usd'], 3649178.419738848)
-        self.assertEqual(self.results['foundation_material_usd'], 5511345.111857001)
-        self.assertEqual(self.results['foundation_mobilization_usd'], 946478.311287336)
-        total_foundation_cost = self.results['foundation_equipment_rental_usd'] + self.results['foundation_labor_usd'] + \
-                                self.results['foundation_material_usd'] + self.results['foundation_mobilization_usd']
+        self.assertEqual(self.results['total_foundation_cost'], 10036157.011254452)
+        self.assertEqual(self.results['foundation_equipment_rental_usd'], 307553.56983444514)
+        self.assertEqual(round(self.results['foundation_labor_usd'], 3), 3677659.987)
+        self.assertEqual(round(self.results['foundation_material_usd'], 3), 5573031.216)
+        self.assertEqual(round(self.results['foundation_mobilization_usd'], 4), 477912.2386)
+
+        total_foundation_cost = self.results['foundation_equipment_rental_usd'] + \
+                                self.results['foundation_labor_usd'] + \
+                                self.results['foundation_material_usd'] + \
+                                self.results['foundation_mobilization_usd']
+
         self.assertEqual(self.results['total_foundation_cost'], total_foundation_cost)
 
-
     def test_total_erection_cost(self):
-        self.assertEqual(self.results['total_erection_cost'], 5231110.226456955)
-        self.assertEqual(self.results['erection_equipment_rental_usd'], 443521.60298406926)
-        self.assertEqual(self.results['erection_labor_usd'], 4287043.623472886)
-        self.assertEqual(self.results['erection_material_usd'], 0)
-        self.assertEqual(self.results['erection_other_usd'], 0)
-        self.assertEqual(self.results['erection_fuel_usd'], 18369.0)
-        self.assertEqual(self.results['erection_mobilization_usd'], 482176)
-        total_erection_cost = self.results['erection_equipment_rental_usd'] + self.results['erection_labor_usd'] + \
-                              self.results['erection_material_usd'] + self.results['erection_other_usd'] + self.results[
-                                  'erection_fuel_usd'] + self.results['erection_mobilization_usd']
+        self.assertEqual(6811700.7960274285, self.results['total_erection_cost'])
+        self.assertEqual(748911.4927891536, self.results['erection_equipment_rental_usd'])
+        self.assertEqual(5134653.8032382745, self.results['erection_labor_usd'])
+        self.assertEqual(0, self.results['erection_material_usd'])
+        self.assertEqual(0, self.results['erection_other_usd'])
+        self.assertEqual(28825.5, self.results['erection_fuel_usd'])
+        self.assertEqual(899310, self.results['erection_mobilization_usd'])
+
+        total_erection_cost = self.results['erection_equipment_rental_usd'] + \
+                              self.results['erection_labor_usd'] + \
+                              self.results['erection_material_usd'] + \
+                              self.results['erection_other_usd'] + \
+                              self.results['erection_fuel_usd'] + \
+                              self.results['erection_mobilization_usd']
+
         self.assertEqual(self.results['total_erection_cost'], total_erection_cost)
 
-
     def test_total_gridconnection_cost(self):
-           self.assertEqual(self.results['total_gridconnection_cost'], 5617735.863912535)
-
+           self.assertEqual(4084775.152898776, self.results['total_gridconnection_cost'])
 
     def test_total_collection_cost(self):
            self.assertEqual(self.results['total_collection_cost'], 4869435.746468595)
@@ -93,9 +120,8 @@ class TestLandBOSSE_API(TestCase):
            self.assertEqual(self.results['collection_material_usd'], 2808055.140699299)
            self.assertEqual(self.results['collection_mobilization_usd'], 231877.89268898076)
 
-
     def test_total_substation_cost(self):
-           self.assertEqual(self.results['total_substation_cost'], 4940746.072082901)
+           self.assertEqual(4859182.072082901, self.results['total_substation_cost'])
 
     def test_read_weather_data(self):
         weather_data = read_weather_data(self.file_path)
@@ -103,4 +129,4 @@ class TestLandBOSSE_API(TestCase):
 
     def test_read_data(self):
         project_list = read_data()
-        self.assertEqual(len(project_list.columns), 43)
+        self.assertEqual(len(project_list.columns), 47)

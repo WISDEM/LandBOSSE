@@ -174,13 +174,13 @@ def run_landbosse(input_dict):
         if pd.isnull(project_parameters['Project ID with serial']):
             project_id_with_serial = project_parameters['Project ID']
         else:
-            project_id_with_serial = project_parameters[
-                                                    'Project ID with serial']
+            project_id_with_serial = project_parameters['Project ID with serial']
             # Read the project data sheets.
 
         project_data_basename = project_parameters['Project data file']
-        project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(
-            project_data_basename)
+
+        project_data_sheets = \
+            XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
 
         # make sure you call create_master_input_dictionary() as soon as
         # labor_cost_multiplier's value is changed.
@@ -193,7 +193,7 @@ def run_landbosse(input_dict):
     default_date_time = list()
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     # override default inputs with user modified inputs (on the SAM UI):
-    project_id_with_serial = 'SAM_Run'
+    project_id_with_serial = input_dict['project_id']
 
     try:
         for key, value in input_dict.items():
@@ -201,8 +201,7 @@ def run_landbosse(input_dict):
                 raise NegativeInputError
     except NegativeInputError:
         master_input_dict['error']['NegativeInputError'] = \
-                            'User entered a negative value for ' + key +\
-                            '. This is an invalid entry'
+            'User entered a negative value for ' + key + '. This is an invalid entry'
 
     # Loop to collect user provided inputs that will override defaults:
 
@@ -210,13 +209,15 @@ def run_landbosse(input_dict):
         if key == 'weather_file_path':  # weather_file_path is handled later in
             # this codebase. Skip storing it for now.
             pass
-        else:
+        elif key in master_input_dict:
             master_input_dict[key] = input_dict[key]
+        else:
+            exit(1)
 
     # update master input dict based on new labor cost multiplier:
     labor_cost_multiplier = master_input_dict['labor_cost_multiplier']
-    xlsx_reader.apply_labor_multiplier_to_project_data_dict(
-                                    project_data_sheets, labor_cost_multiplier)
+    xlsx_reader.apply_labor_multiplier_to_project_data_dict(project_data_sheets,
+                                                            labor_cost_multiplier)
 
     # Ensuring number of turbines is > 10:
     try:
@@ -232,13 +233,13 @@ def run_landbosse(input_dict):
 
     # Ensuring user is runnning landbosse for turbine in range of [1- 8] MW:
     try:
-        if input_dict['turbine_rating_MW'] > 8:
-            raise LargeTurbineSizeError
-        elif input_dict['turbine_rating_MW'] < 1:
-            raise SmallTurbineSizeError
-        else:
-            master_input_dict['turbine_rating_MW'] = input_dict[
-                                                        'turbine_rating_MW']
+        if 'turbine_rating_MW' in input_dict:
+            if input_dict['turbine_rating_MW'] > 8:
+                raise LargeTurbineSizeError
+            elif input_dict['turbine_rating_MW'] < 1:
+                raise SmallTurbineSizeError
+            else:
+                master_input_dict['turbine_rating_MW'] = input_dict['turbine_rating_MW']
     except LargeTurbineSizeError:
         master_input_dict['error']['LargeTurbineSizeError'] = \
                         'User selected turbine of rating greater than 8 MW. ' \
@@ -263,98 +264,107 @@ def run_landbosse(input_dict):
 
     # make sure weather data passed by SAM is hourly.
     try:
-        if 'weather_file_path' in input_dict:  # if user provides weather file, use it
-            weather_window_input_df = read_weather_data(
-                                           input_dict['weather_file_path'])
-        elif 'user_weather_DF' in input_dict:  # if user provides weather DF, use it
-            weather_window_input_df = input_dict['user_weather_DF']
-        else:   # if user doesn't provide weather data, use default file
-            weather_file_path = input_output_path + \
-                                '/project_data/az_rolling.srw'
-            weather_window_input_df = read_weather_data(weather_file_path)
+        if 'project_id' in input_dict and \
+                'foundation_validation_ge15' == input_dict['project_id']:
+            pass
+
+        else:
+            if 'weather_file_path' in input_dict:  # if user provides weather file, use it
+                weather_window_input_df = read_weather_data(input_dict['weather_file_path'])
+
+            elif 'user_weather_DF' in input_dict:  # if user provides weather DF, use it
+                weather_window_input_df = input_dict['user_weather_DF']
+
+            else:   # if user doesn't provide weather data, use default file
+                weather_file_path = input_output_path + \
+                                    '/project_data/az_rolling.srw'
+                weather_window_input_df = read_weather_data(weather_file_path)
 
 
-        weather_window_input_df = weather_window_input_df.reset_index(
-                                                                drop=True)
-        weather_window_input_df.insert(loc=0,
-                                       column='time',
-                                       value=default_date_time
-                                       )
-        column_names = weather_window_input_df.columns
-        renamed_columns = {
-            column_names[0]: 'Date UTC',
-            column_names[1]: 'Temp C',
-            column_names[2]: 'Pressure atm',
-            column_names[3]: 'Direction deg',
-            column_names[4]: 'Speed m per s'
-        }
-        weather_data = weather_window_input_df.rename(columns=renamed_columns)
-        weather_data = weather_data.reset_index(drop=True)
-        weather_data = weather_data[renamed_columns.values()]
-        master_input_dict['weather_window'] = read_weather_window(weather_data)
+            weather_window_input_df = weather_window_input_df.reset_index(
+                                                                    drop=True)
+            weather_window_input_df.insert(loc=0,
+                                           column='time',
+                                           value=default_date_time
+                                           )
+            column_names = weather_window_input_df.columns
+            renamed_columns = {
+                column_names[0]: 'Date UTC',
+                column_names[1]: 'Temp C',
+                column_names[2]: 'Pressure atm',
+                column_names[3]: 'Direction deg',
+                column_names[4]: 'Speed m per s'
+            }
+            weather_data = weather_window_input_df.rename(columns=renamed_columns)
+            weather_data = weather_data.reset_index(drop=True)
+            weather_data = weather_data[renamed_columns.values()]
+            master_input_dict['weather_window'] = read_weather_window(weather_data)
     except Exception as error:  # exception handling for landbosse_api
         master_input_dict['error']['Weather_Data'] = error
 
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+    if 'project_id' in input_dict and 'foundation_validation_ge15' == input_dict['project_id']:
+        pass
 
-    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-    # Refactoring Components DF based on user input
+    else:
+        # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+        # Refactoring Components DF based on user input
 
-    # print(master_input_dict['component_data'])
+        # print(master_input_dict['component_data'])
 
-    # nacelle
-    nacelle_mass_ton = nacelle_mass(master_input_dict['turbine_rating_MW'])
-    master_input_dict['component_data'] = edit_nacelle_info(
-                                        master_input_dict['component_data'],
-                                        nacelle_mass_ton,
-                                        master_input_dict['hub_height_meters']
-                                        )
+        # nacelle
+        nacelle_mass_ton = nacelle_mass(master_input_dict['turbine_rating_MW'])
+        master_input_dict['component_data'] = edit_nacelle_info(
+                                            master_input_dict['component_data'],
+                                            nacelle_mass_ton,
+                                            master_input_dict['hub_height_meters']
+                                            )
 
-    master_input_dict['component_data'] = master_input_dict[
-                                    'component_data'].reset_index(drop=True)
+        master_input_dict['component_data'] = master_input_dict[
+                                        'component_data'].reset_index(drop=True)
 
-    # hub
-    hub_mass_ton = hub_mass(master_input_dict['turbine_rating_MW'])
-    master_input_dict['component_data'] = edit_hub_info(
-                                        master_input_dict['component_data'],
-                                        hub_mass_ton,
-                                        master_input_dict['hub_height_meters']
-                                        )
+        # hub
+        hub_mass_ton = hub_mass(master_input_dict['turbine_rating_MW'])
+        master_input_dict['component_data'] = edit_hub_info(
+                                            master_input_dict['component_data'],
+                                            hub_mass_ton,
+                                            master_input_dict['hub_height_meters']
+                                            )
 
-    master_input_dict['component_data'] = master_input_dict[
-                                    'component_data'].reset_index(drop=True)
+        master_input_dict['component_data'] = master_input_dict[
+                                        'component_data'].reset_index(drop=True)
 
-    # combined 3 blades total mass in tons:
-    blade_mass = blade_mass_ton(master_input_dict['rotor_diameter_m'])
-    master_input_dict['component_data'] = edit_blade_info(
-                                        master_input_dict['component_data'],
-                                        blade_mass,
-                                        master_input_dict['hub_height_meters'],
-                                        master_input_dict['rotor_diameter_m']
-                                        )
+        # combined 3 blades total mass in tons:
+        blade_mass = blade_mass_ton(master_input_dict['rotor_diameter_m'])
+        master_input_dict['component_data'] = edit_blade_info(
+                                            master_input_dict['component_data'],
+                                            blade_mass,
+                                            master_input_dict['hub_height_meters'],
+                                            master_input_dict['rotor_diameter_m']
+                                            )
 
-    master_input_dict['component_data'] = master_input_dict[
-                                    'component_data'].reset_index(drop=True)
+        master_input_dict['component_data'] = master_input_dict[
+                                        'component_data'].reset_index(drop=True)
 
-    # tower
-    tower_mass_tonne = tower_mass(master_input_dict['turbine_rating_MW'],
-                                  master_input_dict['hub_height_meters']
-                                  )
+        # tower
+        tower_mass_tonne = tower_mass(master_input_dict['turbine_rating_MW'],
+                                      master_input_dict['hub_height_meters']
+                                      )
 
-    num_tower_sections, tower_section_height_m = tower_specs(
-                                        master_input_dict['hub_height_meters'],
-                                        tower_mass_tonne
-                                        )
+        num_tower_sections, tower_section_height_m = tower_specs(
+                                            master_input_dict['hub_height_meters'],
+                                            tower_mass_tonne
+                                            )
 
-    master_input_dict['component_data'] = edit_tower_sections(
-                                        master_input_dict['component_data'],
-                                        num_tower_sections,
-                                        tower_mass_tonne,
-                                        tower_section_height_m
-                                        )
+        master_input_dict['component_data'] = edit_tower_sections(
+                                            master_input_dict['component_data'],
+                                            num_tower_sections,
+                                            tower_mass_tonne,
+                                            tower_section_height_m
+                                            )
 
-    master_input_dict['component_data'] = master_input_dict[
-                                    'component_data'].reset_index(drop=True)
+        master_input_dict['component_data'] = master_input_dict[
+                                        'component_data'].reset_index(drop=True)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
     # Manager class (1) manages the distribution of inout data for all modules
@@ -369,106 +379,143 @@ def run_landbosse(input_dict):
         for key, value in master_input_dict['error'].items():
             msg = "Error in " + key + ": " + str(value)
             results['errors'].append(msg)
-    else:   # if project runs successfully, return a dictionary with results
-        # that are 3 layers deep (but 1-D)
-        results['total_bos_cost'] = output_dict['project_value_usd']
+    else:
+        # if project runs successfully, return a dictionary with results that are 3
+        # layers of results deep (but 1-D). The layers of results here refers to:
+        # 1) Total BOS cost
+        # 2) Total module cost (that is, foundation cost, collection cost etc.)
+        # 3) Breakdown of each module cost into:
+        #   a) Labor
+        #   b) Equipment rental
+        #   c) Materials
+        #   d) Mobilization
+        #   e) Other [only in some modules]
+        #   f) Fuel [only in some modules]
+
+        results['total_bos_cost'] = \
+            output_dict['project_value_usd']
 
         # management cost module results:
-        results['total_management_cost'] = output_dict[
-                                                    'total_management_cost']
+        results['total_management_cost'] = \
+            output_dict['total_management_cost']
 
-        results['insurance_usd'] = output_dict['insurance_usd']
-        results['construction_permitting_usd'] = output_dict[
-                                                'construction_permitting_usd']
+        results['insurance_usd'] = \
+            output_dict['insurance_usd']
 
-        results['project_management_usd'] = output_dict[
-                                                    'project_management_usd']
+        results['construction_permitting_usd'] = \
+            output_dict['construction_permitting_usd']
 
-        results['bonding_usd'] = output_dict['bonding_usd']
-        results['markup_contingency_usd'] = output_dict[
-                                                    'markup_contingency_usd']
+        results['project_management_usd'] = \
+            output_dict['project_management_usd']
 
-        results['engineering_usd'] = output_dict['engineering_usd']
-        results['site_facility_usd'] = output_dict['site_facility_usd']
-        results['total_management_cost'] = output_dict['total_management_cost']
+        results['bonding_usd'] = \
+            output_dict['bonding_usd']
+
+        results['markup_contingency_usd'] = \
+            output_dict['markup_contingency_usd']
+
+        results['engineering_usd'] = \
+            output_dict['engineering_usd']
+
+        results['site_facility_usd'] = \
+            output_dict['site_facility_usd']
+
+        results['total_management_cost'] = \
+            output_dict['total_management_cost']
 
         # development cost module results:
-        results['total_development_cost'] = output_dict[
-                                                    'summed_development_cost']
+        results['total_development_cost'] = \
+            output_dict['summed_development_cost']
+
         if 'Development labor cost USD' in output_dict:
-            results['development_equipment_rental_usd'] = master_input_dict[
-                                                'development_labor_cost_usd']
+            results['development_equipment_rental_usd'] = \
+                master_input_dict['development_labor_cost_usd']
+
         results['development_labor_usd'] = 0
         results['development_material_usd'] = 0
         results['development_mobilization_usd'] = 0
 
         # site prep cost module results:
-        results['total_sitepreparation_cost'] = output_dict[
-                                                'summed_sitepreparation_cost']
+        results['total_sitepreparation_cost'] = \
+            output_dict['summed_sitepreparation_cost']
 
-        results['sitepreparation_equipment_rental_usd'] = output_dict[
-                                        'sitepreparation_equipment_rental_usd']
+        results['sitepreparation_equipment_rental_usd'] = \
+            output_dict['sitepreparation_equipment_rental_usd']
 
-        results['sitepreparation_labor_usd'] = output_dict[
-                                                'sitepreparation_labor_usd']
+        results['sitepreparation_labor_usd'] = \
+            output_dict['sitepreparation_labor_usd']
 
-        results['sitepreparation_material_usd'] = output_dict[
-                                                'sitepreparation_material_usd']
+        results['sitepreparation_material_usd'] = \
+            output_dict['sitepreparation_material_usd']
 
-        results['sitepreparation_mobilization_usd'] = output_dict[
-                                            'sitepreparation_mobilization_usd']
+        results['sitepreparation_mobilization_usd'] = \
+            output_dict['sitepreparation_mobilization_usd']
 
-        results['sitepreparation_other_usd'] = output_dict[
-                                                'sitepreparation_other_usd']
+        results['sitepreparation_other_usd'] = \
+            output_dict['sitepreparation_other_usd']
 
-        results['total_foundation_cost'] = output_dict[
-                                                    'summed_foundation_cost']
+        # foundation cost module results:
+        results['total_foundation_cost'] = \
+            output_dict['summed_foundation_cost']
 
-        results['foundation_equipment_rental_usd'] = output_dict[
-                                            'foundation_equipment_rental_usd']
+        results['foundation_equipment_rental_usd'] = \
+            output_dict['foundation_equipment_rental_usd']
 
-        results['foundation_labor_usd'] = output_dict['foundation_labor_usd']
-        results['foundation_material_usd'] = output_dict[
-                                                    'foundation_material_usd']
+        results['foundation_labor_usd'] = \
+            output_dict['foundation_labor_usd']
 
-        results['foundation_mobilization_usd'] = output_dict[
-                                                'foundation_mobilization_usd']
+        results['foundation_material_usd'] = \
+            output_dict['foundation_material_usd']
+
+        results['foundation_mobilization_usd'] = \
+            output_dict['foundation_mobilization_usd']
 
         # erection cost module results:
-        results['total_erection_cost'] = output_dict[
-                                                'total_cost_summed_erection']
+        results['total_erection_cost'] = \
+            output_dict['total_cost_summed_erection']
 
-        results['erection_equipment_rental_usd'] = output_dict[
-                                            'erection_equipment_rental_usd']
+        results['erection_equipment_rental_usd'] = \
+            output_dict['erection_equipment_rental_usd']
 
-        results['erection_labor_usd'] = output_dict['erection_labor_usd']
-        results['erection_material_usd'] = output_dict[
-                                                    'erection_material_usd']
-        results['erection_other_usd'] = output_dict['erection_other_usd']
-        results['erection_mobilization_usd'] = output_dict[
-                                                'erection_mobilization_usd']
-        results['erection_fuel_usd'] = output_dict['erection_fuel_usd']
+        results['erection_labor_usd'] = \
+            output_dict['erection_labor_usd']
+
+        results['erection_material_usd'] = \
+            output_dict['erection_material_usd']
+
+        results['erection_other_usd'] = \
+            output_dict['erection_other_usd']
+
+        results['erection_mobilization_usd'] = \
+            output_dict['erection_mobilization_usd']
+
+        results['erection_fuel_usd'] = \
+            output_dict['erection_fuel_usd']
 
         # grid connection cost module results:
-        results['total_gridconnection_cost'] = output_dict['trans_dist_usd']
+        results['total_gridconnection_cost'] = \
+            output_dict['trans_dist_usd']
 
         # collection cost module results:
-        results['total_collection_cost'] = output_dict[
-                                                    'summed_collection_cost']
+        results['total_collection_cost'] = \
+            output_dict['summed_collection_cost']
 
-        results['collection_equipment_rental_usd'] = output_dict[
-                                            'collection_equipment_rental_usd']
+        results['collection_equipment_rental_usd'] = \
+            output_dict['collection_equipment_rental_usd']
 
-        results['collection_labor_usd'] = output_dict['collection_labor_usd']
-        results['collection_material_usd'] = output_dict[
-                                                    'collection_material_usd']
+        results['collection_labor_usd'] = \
+            output_dict['collection_labor_usd']
 
-        results['collection_mobilization_usd'] = output_dict[
-                                                'collection_mobilization_usd']
+        results['collection_material_usd'] = \
+            output_dict['collection_material_usd']
+
+        results['collection_mobilization_usd'] = \
+            output_dict['collection_mobilization_usd']
 
         # substation cost module results:
-        results['total_substation_cost'] = output_dict[
-                                                    'summed_substation_cost']
+        results['total_substation_cost'] = \
+            output_dict['summed_substation_cost']
+
     return results
 
 
@@ -506,12 +553,10 @@ def read_data():
     xlsx_reader = XlsxReader()
 
     # Join in the parametric variable modifications
-    parametric_value_list = xlsx_reader.create_parametric_value_list(
-                                                            parametric_list)
+    parametric_value_list = xlsx_reader.create_parametric_value_list(parametric_list)
     extended_project_list = xlsx_reader.\
         outer_join_projects_to_parametric_values(project_list,
-                                                 parametric_value_list
-                                                 )
+                                                 parametric_value_list)
 
     return extended_project_list
 
@@ -583,10 +628,11 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# input_dict = dict()
+input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
-# input_dict['num_turbines'] = 100
+input_dict['num_turbines'] = 100
+input_dict['project_id'] = 'foundation_validation_ge15'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
 # input_dict['turbine_rating_MW'] = 1.5
@@ -594,7 +640,7 @@ class NegativeInputError(Error):
 # input_dict['hub_height_meters'] = 80
 # input_dict['wind_shear_exponent'] = 0.20
 # input_dict['depth'] = 2.36  # Foundation depth in m
-# input_dict['rated_thrust_N'] =  589000
+# input_dict['rated_thrust_N'] = 589000
 # input_dict['labor_cost_multiplier'] = 1
 # input_dict['gust_velocity_m_per_s'] = 59.50
 
@@ -616,6 +662,6 @@ class NegativeInputError(Error):
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-# BOS_results = run_landbosse(input_dict)
-# print(BOS_results)
+BOS_results = run_landbosse(input_dict)
+print(BOS_results)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><

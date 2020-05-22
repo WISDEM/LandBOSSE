@@ -1192,7 +1192,7 @@ class ErectionCost(CostModule):
         self.output_dict['erection_material_usd'] = 0
         self.output_dict['erection_other_usd'] = 0
         self.output_dict['erection_mobilization_usd'] = selected_detailed_data['Mobilization cost USD'].sum()
-        self.output_dict['erection_fuel_usd'] =  selected_detailed_data['Fuel cost USD'].sum()
+        self.output_dict['erection_fuel_usd'] = selected_detailed_data['Fuel cost USD'].sum()
 
 
         total_cost_summed_erection = total_erection_cost.sum(numeric_only=True)[0]

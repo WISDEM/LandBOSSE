@@ -111,7 +111,7 @@ class Manager:
                 total_costs = total_costs.append(self.output_dict['total_substation_cost'], sort=False)
                 total_costs = total_costs.append(self.output_dict['total_foundation_cost'], sort=False)
                 total_costs = total_costs.append(self.output_dict['total_erection_cost'], sort=False)
-                total_costs = total_costs.append(self.output_dict['total_development_cost'],sort=False)
+                total_costs = total_costs.append(self.output_dict['total_development_cost'], sort=False)
 
                 self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
                 self.output_dict['project_value_usd'] = self.input_dict['project_value_usd']
@@ -119,7 +119,7 @@ class Manager:
 
                 management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
                 management_cost.run_module()
-
+                foo = total_costs.sum(numeric_only=True)[0]
                 self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0] + \
                                                        self.output_dict['total_management_cost']
 
