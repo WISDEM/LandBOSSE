@@ -15,17 +15,17 @@ script:
 branches:
   only:
     - pip_installable
-
-env:
-  global:
-    - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
-    - LANDBOSSE_OUTPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
-
-# command to run tests
-script:
-  - python $TRAVIS_BUILD_DIR/main.py --validate
-
-branches:
-  only:
-    - develop
+#
+#env:
+#  global:
+#    - LANDBOSSE_INPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
+#    - LANDBOSSE_OUTPUT_DIR: $TRAVIS_BUILD_DIR/project_input_template
+#
+## command to run tests
+#script:
+#  - python $TRAVIS_BUILD_DIR/main.py --validate
+#
+#branches:
+#  only:
+#    - develop
 
