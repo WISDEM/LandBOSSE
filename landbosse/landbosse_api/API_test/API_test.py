@@ -1,3 +1,4 @@
+import landbosse
 from landbosse.landbosse_api.run import *
 from unittest import TestCase
 import os
