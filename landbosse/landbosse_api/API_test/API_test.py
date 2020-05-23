@@ -1,6 +1,5 @@
-from landbosse.landbosse_api.run import *
+from landbosse.landbosse_api.run import run_landbosse
 from unittest import TestCase
-
 
 
 class TestLandBOSSE_API(TestCase):
