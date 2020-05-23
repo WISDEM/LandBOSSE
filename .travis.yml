@@ -15,11 +15,11 @@ install:
   - pip install sqlalchemy
   - pip install pytest
 
-before_script: cd $TRAVIS_BUILD_DIR/landbosse/landbosse_api/API_test/
+#before_script: cd $TRAVIS_BUILD_DIR/landbosse/landbosse_api/API_test/
 
 # command to run tests
 script:
-  - pytest API_test.py
+  - pytest $TRAVIS_BUILD_DIR/landbosse/landbosse_api/API_test/API_test.py
 
 branches:
   only:
