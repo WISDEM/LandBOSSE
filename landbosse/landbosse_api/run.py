@@ -632,11 +632,11 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-input_dict = dict()
+# input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
 # input_dict['num_turbines'] = 100
-input_dict['project_id'] = 'ge15_public_dist'
+# input_dict['project_id'] = 'ge15_public_dist'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
 # input_dict['turbine_rating_MW'] = 1.5
@@ -666,6 +666,6 @@ input_dict['project_id'] = 'ge15_public_dist'
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-BOS_results = run_landbosse(input_dict)
-print(BOS_results)
+# BOS_results = run_landbosse(input_dict)
+# print(BOS_results)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
