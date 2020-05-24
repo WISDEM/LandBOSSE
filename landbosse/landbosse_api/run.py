@@ -265,8 +265,7 @@ def run_landbosse(input_dict):
 
     # make sure weather data passed by SAM is hourly.
     try:
-        if 'project_id' in input_dict and \
-                'foundation_validation_ge15' == input_dict['project_id']:
+        if 'project_id' in input_dict:
             pass
 
         else:
@@ -303,16 +302,20 @@ def run_landbosse(input_dict):
     except Exception as error:  # exception handling for landbosse_api
         master_input_dict['error']['Weather_Data'] = error
 
-    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-    if 'project_id' in input_dict and 'foundation_validation_ge15' == input_dict['project_id']:
+    # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+    # If user provides 'project_id' in input_dict, it is because they want to use the
+    # default detailed data input file either shipped w/ LandBOSSE, or provided by the
+    # user. In this case, skip re-scaling of turbine components.
+    #
+    # ELSE, if user doesn't provide 'project_id', use the scaling relations to refactor
+    # Components DF based on user inputs.
+
+    if 'project_id' in input_dict:
+
         pass
 
+    # Else, use the scaling relations to refactor Components DF based on user inputs:
     else:
-        # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
-        # Refactoring Components DF based on user input
-
-        # print(master_input_dict['component_data'])
-
         # nacelle
         nacelle_mass_ton = nacelle_mass(master_input_dict['turbine_rating_MW'])
         master_input_dict['component_data'] = edit_nacelle_info(
@@ -629,11 +632,11 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# input_dict = dict()
+input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
 # input_dict['num_turbines'] = 100
-# input_dict['project_id'] = 'foundation_validation_ge15'
+input_dict['project_id'] = 'ge15_public_dist'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
 # input_dict['turbine_rating_MW'] = 1.5
@@ -663,6 +666,6 @@ class NegativeInputError(Error):
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-# BOS_results = run_landbosse(input_dict)
-# print(BOS_results)
+BOS_results = run_landbosse(input_dict)
+print(BOS_results)
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
