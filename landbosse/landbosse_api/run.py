@@ -222,15 +222,14 @@ def run_landbosse(input_dict):
     # Ensuring number of turbines is > 10:
     try:
         if 'num_turbines' in input_dict:
-            if input_dict['num_turbines'] > 10:
+            if input_dict['num_turbines'] > 0:
                 master_input_dict['num_turbines'] = input_dict['num_turbines']
             else:
                 raise TurbineNumberError
     except TurbineNumberError:
         master_input_dict['error']['TurbineNumberError'] = \
-            'User selected less than 10 turbines. LandBOSSE currently ' \
-            'provides BOS estimates for 10 or greater number of turbines ' \
-            'in a utility scale project.'
+            'User selected less than 1 turbine. LandBOSSE currently ' \
+            'provides BOS estimates for 1 or greater number of turbines.'
 
     # Ensuring user is runnning landbosse for turbine in range of [1- 8] MW:
     try:
