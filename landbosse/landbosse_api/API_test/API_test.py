@@ -1,7 +1,6 @@
-import landbosse
+import os
 from landbosse.landbosse_api.run import *
 from unittest import TestCase
-import os
 
 
 class TestLandBOSSE_API(TestCase):
@@ -13,7 +12,7 @@ class TestLandBOSSE_API(TestCase):
         self.results = run_landbosse(api_inputs)
         print(self.results)
 
-    def test_total_BOS_cost(self):
+    def test_total_BOS_cost(self):\
         self.assertEqual(44208796.36106637, self.results['total_bos_cost'])
 
     def test_total_management_cost(self):

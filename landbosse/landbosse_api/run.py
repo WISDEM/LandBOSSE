@@ -221,10 +221,11 @@ def run_landbosse(input_dict):
 
     # Ensuring number of turbines is > 10:
     try:
-        if input_dict['num_turbines'] > 10:
-            master_input_dict['num_turbines'] = input_dict['num_turbines']
-        else:
-            raise TurbineNumberError
+        if 'num_turbines' in input_dict:
+            if input_dict['num_turbines'] > 10:
+                master_input_dict['num_turbines'] = input_dict['num_turbines']
+            else:
+                raise TurbineNumberError
     except TurbineNumberError:
         master_input_dict['error']['TurbineNumberError'] = \
             'User selected less than 10 turbines. LandBOSSE currently ' \
@@ -628,7 +629,7 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-input_dict = dict()
+# input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
 # input_dict['num_turbines'] = 100
