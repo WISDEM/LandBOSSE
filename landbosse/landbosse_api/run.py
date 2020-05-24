@@ -162,7 +162,7 @@ def run_landbosse(input_dict):
     os.environ["LANDBOSSE_INPUT_DIR"] = input_output_path
     os.environ["LANDBOSSE_OUTPUT_DIR"] = input_output_path
 
-    extended_project_list_before_parameter_modifications = read_data()
+    extended_project_list_before_parameter_modifications = read_data(input_dict)
     xlsx_reader = XlsxReader()
 
     for _, project_parameters in \
@@ -206,11 +206,17 @@ def run_landbosse(input_dict):
     # Loop to collect user provided inputs that will override defaults:
 
     for key, _ in input_dict.items():
+
         if key == 'weather_file_path':  # weather_file_path is handled later in
             # this codebase. Skip storing it for now.
             pass
+
         elif key in master_input_dict:
             master_input_dict[key] = input_dict[key]
+
+        elif key == 'path_to_project_list' or key == 'name_of_project_list' :
+            pass
+
         else:
             exit(1)
 
@@ -527,11 +533,19 @@ def run_landbosse(input_dict):
 # and stores them as data frames. This method is called internally in
 # run_landbosse(), where the data read in is converted to a master input
 # dictionary.
-def read_data():
-    path_to_project_list = os.path.dirname(__file__)
-    sheets = XlsxDataframeCache.read_all_sheets_from_xlsx('project_list',
-                                                          path_to_project_list
-                                                          )
+def read_data(modified_path_dict):
+    if 'path_to_project_list' in modified_path_dict:
+        path_to_project_list = modified_path_dict['path_to_project_list']
+    else:
+        path_to_project_list = os.path.dirname(__file__)
+
+    if 'name_of_project_list' in modified_path_dict:
+        project_list = modified_path_dict['name_of_project_list']
+    else:
+        project_list = 'project_list'
+
+    sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_list,
+                                                          path_to_project_list)
 
     # If there is one sheet, make an empty dataframe as a placeholder.
     if len(sheets.values()) == 1:
@@ -647,6 +661,8 @@ class NegativeInputError(Error):
 # input_dict['rated_thrust_N'] = 589000
 # input_dict['labor_cost_multiplier'] = 1
 # input_dict['gust_velocity_m_per_s'] = 59.50
+# input_dict['path_to_project_list'] = '/Users/<username>/Desktop/...'
+# input_dict['name_of_project_list'] = 'project_list_alternative'
 
 
 # (Optional) Provide absolute file path of wind weather file (.txt, .srw, or
