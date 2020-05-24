@@ -1,5 +1,5 @@
 import os
-from landbosse.landbosse_api.run import *
+from ..run import *
 from unittest import TestCase
 
 
@@ -127,5 +127,6 @@ class TestLandBOSSE_API(TestCase):
         self.assertEqual(len(weather_data), 8760)
 
     def test_read_data(self):
-        project_list = read_data()
+        input_dictionary = dict()
+        project_list = read_data(input_dictionary)
         self.assertEqual(len(project_list.columns), 47)

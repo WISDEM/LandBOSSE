@@ -1,20 +1,20 @@
 import os
 import pandas as pd
 import numpy as np
-from landbosse.excelio import XlsxReader
-from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
-from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
-from landbosse.model import Manager
+from ..excelio import XlsxReader
+from ..excelio.WeatherWindowCSVReader import read_weather_window
+from ..excelio.XlsxDataframeCache import XlsxDataframeCache
+from ..model import Manager
 from datetime import datetime, timedelta
-from landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
-                                                    edit_nacelle_info, \
-                                                    hub_mass, \
-                                                    edit_hub_info, \
-                                                    blade_mass_ton, \
-                                                    edit_blade_info, \
-                                                    tower_mass, \
-                                                    tower_specs, \
-                                                    edit_tower_sections
+from ..landbosse_api.turbine_scaling import nacelle_mass, \
+                                            edit_nacelle_info, \
+                                            hub_mass, \
+                                            edit_hub_info, \
+                                            blade_mass_ton, \
+                                            edit_blade_info, \
+                                            tower_mass, \
+                                            tower_specs, \
+                                            edit_tower_sections
 
 
 def run_landbosse(input_dict):
