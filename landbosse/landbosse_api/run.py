@@ -376,6 +376,14 @@ def run_landbosse(input_dict):
                                         'component_data'].reset_index(drop=True)
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
+    # Ensure plant size is getting updated based on user provided num turbines and
+    # turbine rating
+    master_input_dict['project_size_megawatts'] = master_input_dict['num_turbines'] * \
+                                                  master_input_dict['turbine_rating_MW']
+
+    master_input_dict['plant_capacity_MW'] = master_input_dict['num_turbines'] * \
+                                                  master_input_dict['turbine_rating_MW']
+
     # Manager class (1) manages the distribution of inout data for all modules
     # and (2) executes landbosse
     mc = Manager(input_dict=master_input_dict, output_dict=output_dict)
