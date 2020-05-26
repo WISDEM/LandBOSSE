@@ -13,28 +13,30 @@ class TestSitePreparationCost(TestCase):
     def setUp(self):
         self.input_dict = dict()
         self.project_name = 'Project_1'
+        self.input_dict['road_distributed_wind'] = True #TODO add this to input file.
+
         #Inputs for calculate_road_properties():
         # self.input_dict['road_length'] = 108000   #TODO: Also add option to make road_length a user specified input.
-        self.input_dict['road_width_ft'] = 20  # feet 16
-        self.input_dict['road_thickness'] = 8  # inches
-        self.input_dict['crane_width'] = 12.2  # metres 10.7 + shoulder width 1.5 m
+        self.input_dict['road_width_ft'] = 10  # feet 10
+        self.input_dict['road_thickness'] = 2  # inches
+        self.input_dict['crane_width'] = 4.548  # metres 10.7 + shoulder width 1.5 m
         self.input_dict['num_access_roads'] = 5
-        self.input_dict['num_turbines'] = 100
+        self.input_dict['num_turbines'] = 1
         self.input_dict['rsmeans'] = pd.read_csv(os.path.join(landbosse_test_input_dir(), 'rsmeans_proprietary.csv'))
         crew_data = os.path.join(landbosse_test_input_dir(), 'crews.csv')
         self.input_dict['crew'] = pd.read_csv(crew_data)
         crew_cost_data = os.path.join(landbosse_test_input_dir(), 'crew_price_proprietary.csv')
         self.input_dict['crew_cost'] = pd.read_csv(crew_cost_data)
-        self.input_dict['duration_construction'] = 9 # months
-        self.input_dict['construct_duration'] = 9 # months
-        self.input_dict['fraction_new_roads'] = 0.33
+        self.input_dict['duration_construction'] = 0.1 # months
+        self.input_dict['construct_duration'] = 0.1 # months
+        self.input_dict['fraction_new_roads'] = 1
         self.input_dict['road_quality'] = 0.6
         self.input_dict['rsmeans_per_diem'] = 144
 
         self.input_dict['road_length_adder_m'] = 5000   # 5km
         self.input_dict['fraction_new_roads'] = 0.33
-        self.input_dict['road_quality'] = 0.6
-        self.input_dict['rsmeans_per_diem'] = 99
+        self.input_dict['road_quality'] = 0.3
+        self.input_dict['rsmeans_per_diem'] = 0
 
 
         # Weather window:
@@ -65,10 +67,12 @@ class TestSitePreparationCost(TestCase):
         #Inputs for calculate_costs():
         material_price_csv = os.path.join(landbosse_test_input_dir(), 'material_price_proprietary.csv')
         self.input_dict['material_price'] = pd.read_csv(material_price_csv)
+        self.input_dict['turbine_rating_MW'] = 0.02  # 20 kW Turbine
         self.input_dict['overtime_multiplier'] = 1.4 # multiplier for labor overtime rates due to working 60 hr/wk rather than 40 hr/wk
-        self.input_dict['rotor_diameter_m'] = 130
+        self.input_dict['rotor_diameter_m'] = 7
         self.input_dict['turbine_spacing_rotor_diameters'] = 5
         self.input_dict['critical_height_non_erection_wind_delays_m'] = 10
+        self.input_dict['site_prep_area_m2'] = 0
 
 
         self.output_dict = dict()
