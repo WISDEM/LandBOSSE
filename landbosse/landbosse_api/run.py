@@ -1,12 +1,12 @@
 import os
 import pandas as pd
 import numpy as np
-from ..excelio import XlsxReader
-from ..excelio.WeatherWindowCSVReader import read_weather_window
-from ..excelio.XlsxDataframeCache import XlsxDataframeCache
-from ..model import Manager
+from LandBOSSE.landbosse.excelio import XlsxReader
+from LandBOSSE.landbosse.excelio.WeatherWindowCSVReader import read_weather_window
+from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
+from LandBOSSE.landbosse.model import Manager
 from datetime import datetime, timedelta
-from ..landbosse_api.turbine_scaling import nacelle_mass, \
+from LandBOSSE.landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
                                             edit_nacelle_info, \
                                             hub_mass, \
                                             edit_hub_info, \
@@ -193,7 +193,8 @@ def run_landbosse(input_dict):
     default_date_time = list()
     # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
     # override default inputs with user modified inputs (on the SAM UI):
-    project_id_with_serial = input_dict['project_id']
+    if 'project_id' in input_dict:
+        project_id_with_serial = input_dict['project_id']
 
     try:
         for key, value in input_dict.items():
@@ -653,14 +654,14 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# input_dict = dict()
+input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 10
 # input_dict['num_turbines'] = 100
 # input_dict['project_id'] = 'ge15_public_dist'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
-# input_dict['turbine_rating_MW'] = 1.5
+input_dict['turbine_rating_MW'] = 2.5
 # input_dict['rotor_diameter_m'] = 77
 # input_dict['hub_height_meters'] = 80
 # input_dict['wind_shear_exponent'] = 0.20
