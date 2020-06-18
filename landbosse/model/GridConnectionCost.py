@@ -63,9 +63,15 @@ class GridConnectionCost(CostModule):
             either returns a 0 if the module ran successfully, or it returns the error
             raised that caused the failure.
         """
+        if 'grid_system_size_MW' not in calculate_costs_input_dict:
+            project_size = calculate_costs_input_dict['turbine_rating_MW'] * \
+                           calculate_costs_input_dict['num_turbines']
+        else:
+            project_size = calculate_costs_input_dict['grid_system_size_MW']
+
         # Switch between utility scale model and distributed model
         # Run utility version of GridConnectionCost for project size > 15 MW:
-        if (calculate_costs_input_dict['turbine_rating_MW'] * calculate_costs_input_dict['num_turbines']) > 15:
+        if project_size > 15:
             if calculate_costs_input_dict['distance_to_interconnect_mi'] == 0:
                 calculate_costs_output_dict['trans_dist_usd'] = 0
             else:
@@ -81,17 +87,12 @@ class GridConnectionCost(CostModule):
         # Run distributed wind version of GridConnectionCost for project size < 15 MW:
         else:
             # Code below is for newer version of LandBOSSE which incorporates distributed wind into the model:
-            calculate_costs_output_dict['tower_to_point_of_interconnection_usd_per_kw'] = 1736.7 * ((
-                                                                                                            calculate_costs_input_dict[
-                                                                                                                'num_turbines'] *
-                                                                                                            calculate_costs_input_dict[
-                                                                                                                'turbine_rating_MW'] * 1000) ** (
-                                                                                                        -0.272))
-            calculate_costs_output_dict['trans_dist_usd'] = calculate_costs_input_dict['num_turbines'] * \
-                                                                 calculate_costs_input_dict[
-                                                                     'turbine_rating_MW'] * 1000 * \
-                                                                 calculate_costs_output_dict[
-                                                                     'tower_to_point_of_interconnection_usd_per_kw']
+            calculate_costs_output_dict['tower_to_point_of_interconnection_usd_per_kw'] = \
+                1736.7 * ((project_size * 1000) ** (-0.272))
+
+            calculate_costs_output_dict['trans_dist_usd'] = project_size * 1000 * \
+                                                            calculate_costs_output_dict[
+                                                                'tower_to_point_of_interconnection_usd_per_kw']
 
 
         calculate_costs_output_dict['trans_dist_usd_df'] = pd.DataFrame([['Other', calculate_costs_output_dict['trans_dist_usd'], 'Transmission and Distribution']],

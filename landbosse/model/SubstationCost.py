@@ -72,6 +72,9 @@ class SubstationCost(CostModule):
             (in USD)
 
         """
+        if 'substation_rating_MW' in calculate_costs_input_dict:
+            calculate_costs_input_dict['project_size_megawatts'] = \
+                calculate_costs_input_dict['substation_rating_MW']
 
         # Run in utility mode if number of turbines is > 10:
         if calculate_costs_input_dict['project_size_megawatts'] > 15:

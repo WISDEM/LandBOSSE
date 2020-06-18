@@ -49,6 +49,7 @@ class DevelopmentCost(CostModule):
             ])
         else:
             total_development_cost = self.input_dict['development_df']
+
         self.output_dict['summed_development_cost'] = total_development_cost['Cost USD'].sum()
         self.output_dict['total_development_cost'] = total_development_cost
 

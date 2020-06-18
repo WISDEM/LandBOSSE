@@ -215,8 +215,20 @@ def run_landbosse(input_dict):
         elif key in master_input_dict:
             master_input_dict[key] = input_dict[key]
 
-        elif key == 'path_to_project_list' or key == 'name_of_project_list' :
+        elif key == 'path_to_project_list' or key == 'name_of_project_list':
             pass
+
+        # Allows user to override default development cost:
+        elif key == 'development_labor_cost_usd':
+            master_input_dict[key] = input_dict['development_labor_cost_usd']
+
+        # New functionality that lets a user run model with a user defined
+        # grid interconnection rating:
+        elif key == 'grid_system_size_MW':
+            master_input_dict['grid_system_size_MW'] = input_dict['grid_system_size_MW']
+
+        elif key == 'substation_rating_MW':
+            master_input_dict['substation_rating_MW'] = input_dict['substation_rating_MW']
 
         else:
             exit(1)
@@ -654,10 +666,10 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-input_dict = dict()
+# input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
-# input_dict['distance_to_interconnect_mi'] = 10
-# input_dict['num_turbines'] = 100
+# input_dict['distance_to_interconnect_mi'] = 0.31
+# input_dict['num_turbines'] = 1
 # input_dict['project_id'] = 'ge15_public_dist'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
