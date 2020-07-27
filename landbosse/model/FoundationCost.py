@@ -779,12 +779,6 @@ class FoundationCost(CostModule):
             'value': float(self.output_dict['Radius_m'])
         })
         result.append({
-            'unit': 'm^3',
-            'type': 'variable',
-            'variable_df_key_col_name': 'foundation_volume_concrete_m3_per_turbine',
-            'value': float(self.output_dict['foundation_volume_concrete_m3_per_turbine'])
-        })
-        result.append({
             'unit': 'short_ton',
             'type': 'variable',
             'variable_df_key_col_name': 'steel_mass_short_ton_per_turbine',
