@@ -38,6 +38,8 @@ However, if you are unfamiliar with `git` and GitHub you can simply download the
 
 ![Clone the GitHub repo](03_clone_the_repo.png)
 
+Click on "Download ZIP" to download the `.zip` file.
+
 ### Step 5: Get the source code ready
 
 Open the `.zip` file. Copy the single directory within it to the `landbosse` folder on the desktop. Rename the directory to `LandBOSSE-dev`
@@ -72,11 +74,14 @@ Your result will look like this when you are done:
 
 ![done pasting](13_done_pasting.png)
 
+Note: Depending on the version of LandBOSSE, you may have more files copied into the input folder. As long as you copy over all the input files into the destination folder, LandBOSSE will find its input files.
+
 ### Step 8: Install the LandBOSSE package
 
 The command should result in a message that begins Then install LandBOSSE itself:
 
 ```
+cd \Users\%USERNAME%\Desktop\landbosse\LandBOSSE-master
 pip install -e .
 ```
 
@@ -88,9 +93,10 @@ The file named `projects_list.xlsx` must keep the same name. The names of the pr
 
 ### Step 10: Run LandBOSSE
 
-From the `LandBOSSE` folder, type the following command:
+Navigate back to where you installed LandBOSSE (in case you have navigated away) and run LandBOSSE by typing the following two commands:
 
-``` 
+```
+cd \Users\%USERNAME%\Desktop\landbosse\LandBOSSE-master\
 python main.py -i \Users\%USERNAME%\Desktop\landbosse\input -o \Users\%USERNAME%\Desktop\landbosse\output
 ```
 
