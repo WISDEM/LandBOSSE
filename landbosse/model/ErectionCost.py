@@ -930,7 +930,7 @@ class ErectionCost(CostModule):
         mobilization_costs = project_data['crane_specs'].groupby(['Crane name', 'Boom system'])[
             'Mobilization cost USD'].max().reset_index()
 
-        mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] * 2 # for mobilization and demobilizaton
+        mobilization_costs['Mobilization cost USD'] = mobilization_costs['Mobilization cost USD'] #2 # for mobilization and demobilizaton
 
         # join top and base crane data with mobilization data
         topbase_same_crane_cost = pd.merge(possible_crane_topbase_sum, mobilization_costs,
