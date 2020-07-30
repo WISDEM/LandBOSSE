@@ -644,7 +644,9 @@ class ErectionCost(CostModule):
             breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
             p1, p2, p3, p4, p5 = map(Point, [(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+            # print(f"Erection points {p1} {p2} {p3} {p4} {p5}")
             polygon = Polygon(p1, p2, p3, p4, p5)
+            # print(f"Erection Polygon points {p1} {p2} {p3} {p4} {p5}")
             df = pd.DataFrame([[equipment_name,
                                 equipment_id,
                                 crane_name,
