@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
+from sympy import Point
+from sympy import Polygon
 from math import ceil
 
 from .CostModule import CostModule
@@ -643,7 +643,10 @@ class ErectionCost(CostModule):
             setup_time = max(crane['Setup time hr'])
             breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
-            polygon = Polygon([(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+            p1, p2, p3, p4, p5 = map(Point, [(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
+            # print(f"Erection points {p1} {p2} {p3} {p4} {p5}")
+            polygon = Polygon(p1, p2, p3, p4, p5)
+            # print(f"Erection Polygon points {p1} {p2} {p3} {p4} {p5}")
             df = pd.DataFrame([[equipment_name,
                                 equipment_id,
                                 crane_name,
@@ -726,7 +729,7 @@ class ErectionCost(CostModule):
                     point = Point(component_only['Mass tonne'] / 2, (component_only['Section height m'] + component_only['Offload hook height m']))
                 else:
                     point = Point(component_only['Mass tonne'], (component_only['Lift height m'] + component_only['Offload hook height m']))
-                crane['Lift boolean {component}'.format(component=component)] = polygon.contains(point)
+                crane['Lift boolean {component}'.format(component=component)] = polygon.encloses_point(point)
 
             # Transform the "Lift boolean" indexes in the series to a list of booleans
             # that signify if the crane can lift a component.
