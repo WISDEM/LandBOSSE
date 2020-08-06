@@ -361,7 +361,7 @@ class FoundationCost(CostModule):
             e = m_tot / v_1
             a_eff = v_1 / bearing_pressure
             return (2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - a_eff)
-        result = root_scalar(r_b, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-4, maxiter=50)
+        result = root_scalar(r_b, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-10, maxiter=50)
         r_bearing = result.root
 
         if not result.converged:
