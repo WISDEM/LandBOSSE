@@ -25,9 +25,8 @@ setuptools.setup(
     install_requires=[
         'pandas==0.25.2',
         'numpy',
-        'sympy',
+        'sympy==1.5.1',
         'scipy',
-        'shapely',
         'xlsxwriter',
         'xlrd',
         'psycopg2-binary',
