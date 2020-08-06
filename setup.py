@@ -23,9 +23,8 @@ setuptools.setup(
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
-        'pandas==0.25.2',
+        'pandas',
         'numpy',
-        'sympy==1.5.1',
         'scipy',
         'xlsxwriter',
         'xlrd',

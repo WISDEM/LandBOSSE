@@ -1,7 +1,5 @@
 import pandas as pd
 import numpy as np
-from sympy import Point
-from sympy import Polygon
 from math import ceil
 
 from .CostModule import CostModule
@@ -14,6 +12,40 @@ km_per_m = 0.001
 hr_per_min = 1/60
 m_per_ft = 0.3048
 
+
+class Point(object):
+    def __init__(self, x, y):
+        if type(x) == type(pd.Series()):
+            self.x = float(x.values[0])
+            self.y = float(y.values[0])
+        elif type(x) == type(np.array([])):
+            self.x = float(x[0])
+            self.y = float(y[0])
+        elif type(x) == type(int(0)):
+            self.x = float(x)
+            self.y = float(y)
+        elif type(x) == type(float(0.0)):
+            self.x = x
+            self.y = y
+        else:
+            raise ValueError(type(x))
+
+def ccw(A,B,C):
+    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
+
+# Return true if line segments AB and CD intersect
+def intersect(A,B,C,D):
+    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
+
+def point_in_polygon(pt, poly):
+    result = False
+    maxx = float(np.r_[pt.x, np.array([m.x for m in poly])].max())
+    for i in range(len(poly)-1):
+        if intersect(poly[i], poly[i+1], pt, Point(1.1*maxx, pt.y)):
+            result = not result
+    if intersect(poly[-1], poly[0], pt, Point(1.1*maxx, pt.y)):
+        result = not result
+    return result
 
 class ErectionCost(CostModule):
     """
@@ -643,10 +675,7 @@ class ErectionCost(CostModule):
             setup_time = max(crane['Setup time hr'])
             breakdown_time = max(crane['Breakdown time hr'])
             crew_type = crane.loc[0, 'Crew type ID'] # For every crane/boom combo the crew is the same, so we can just take first crew.
-            p1, p2, p3, p4, p5 = map(Point, [(0, 0), (0, max(y)), (min(x), max(y)), (max(x), min(y)), (max(x), 0)])
-            # print(f"Erection points {p1} {p2} {p3} {p4} {p5}")
-            polygon = Polygon(p1, p2, p3, p4, p5)
-            # print(f"Erection Polygon points {p1} {p2} {p3} {p4} {p5}")
+            polygon = [Point(0, 0), Point(0, max(y)), Point(min(x), max(y)), Point(max(x), min(y)), Point(max(x), 0)]
             df = pd.DataFrame([[equipment_name,
                                 equipment_id,
                                 crane_name,
@@ -729,7 +758,7 @@ class ErectionCost(CostModule):
                     point = Point(component_only['Mass tonne'] / 2, (component_only['Section height m'] + component_only['Offload hook height m']))
                 else:
                     point = Point(component_only['Mass tonne'], (component_only['Lift height m'] + component_only['Offload hook height m']))
-                crane['Lift boolean {component}'.format(component=component)] = polygon.encloses_point(point)
+                crane['Lift boolean {component}'.format(component=component)] = point_in_polygon(point, polygon)
 
             # Transform the "Lift boolean" indexes in the series to a list of booleans
             # that signify if the crane can lift a component.
