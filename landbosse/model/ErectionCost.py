@@ -833,9 +833,10 @@ class ErectionCost(CostModule):
 
         Returns
         -------
-        (pd.DataFrame, pd.DataFrame)
-            Two dataframes: First, utilizing the same crane for base and topping.
-            Second, utilizing separate cranes for base and topping
+        Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]
+            Two dataframes: First, utilizing the separate cranes for base and topping.
+            Second, utilizing same crane for base and topping,
+            Third is crew cost.
         """
         join_wind_operation = self.output_dict['join_wind_operation']
         overtime_multiplier = self.input_dict['overtime_multiplier']
@@ -893,6 +894,7 @@ class ErectionCost(CostModule):
         crew_cost_grouped = crew_cost.groupby(['Crew type ID', 'Operation']).sum().reset_index()
 
         # merge crane data with grouped crew costs
+
         possible_crane_cost = pd.merge(possible_crane_cost, crew_cost_grouped, on=['Crew type ID', 'Operation'])
 
         # calculate labor costs
