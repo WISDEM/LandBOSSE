@@ -23,11 +23,9 @@ setuptools.setup(
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
-        'pandas==0.25.2',
+        'pandas',
         'numpy',
-        'sympy',
         'scipy',
-        'shapely',
         'xlsxwriter',
         'xlrd',
         'psycopg2-binary',
