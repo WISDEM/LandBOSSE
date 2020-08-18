@@ -28,8 +28,6 @@ setuptools.setup(
         'scipy',
         'xlsxwriter',
         'xlrd',
-        'psycopg2-binary',
-        'sqlalchemy',
         'pytest'
     ],
     command_options={
