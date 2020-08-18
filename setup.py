@@ -25,13 +25,9 @@ setuptools.setup(
     install_requires=[
         'pandas==0.25.2',
         'numpy',
-        'sympy',
         'scipy',
-        'shapely',
         'xlsxwriter',
         'xlrd',
-        'psycopg2-binary',
-        'sqlalchemy',
         'pytest'
     ],
     command_options={
