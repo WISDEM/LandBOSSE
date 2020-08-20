@@ -1,12 +1,12 @@
 import os
 import pandas as pd
 import numpy as np
-from LandBOSSE.landbosse.excelio import XlsxReader
-from LandBOSSE.landbosse.excelio.WeatherWindowCSVReader import read_weather_window
-from LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
-from LandBOSSE.landbosse.model import Manager
+from hybridbosse.LandBOSSE.landbosse.excelio import XlsxReader
+from hybridbosse.LandBOSSE.landbosse.excelio.WeatherWindowCSVReader import read_weather_window
+from hybridbosse.LandBOSSE.landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
+from hybridbosse.LandBOSSE.landbosse.model import Manager
 from datetime import datetime, timedelta
-from LandBOSSE.landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
+from hybridbosse.LandBOSSE.landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
                                             edit_nacelle_info, \
                                             hub_mass, \
                                             edit_hub_info, \
