@@ -7,7 +7,7 @@ from ..excelio.WeatherWindowCSVReader import read_weather_window
 from ..excelio.XlsxDataframeCache import XlsxDataframeCache
 from ..model import Manager
 from datetime import datetime, timedelta
-from hybridbosse.LandBOSSE.landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
+from ..landbosse_api.turbine_scaling import nacelle_mass, \
                                             edit_nacelle_info, \
                                             hub_mass, \
                                             edit_hub_info, \

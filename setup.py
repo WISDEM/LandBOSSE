@@ -2,7 +2,7 @@ import os
 import setuptools
 
 name = 'landbosse'
-version = '2.3.0.1'
+version = '2.3.0.2'
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
