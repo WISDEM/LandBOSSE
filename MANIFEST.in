@@ -2,5 +2,5 @@ include README.md
 include CHANGELOG.md
 include LICENSE.txt
 include landbosse/landbosse_api/project_list.xlsx
-include landbosse/landbosse_api/project_data/project_data_defaults.xlsx
+include landbosse/landbosse_api/project_data/ge15_public.xlsx
 include landbosse/landbosse_api/project_data/az_rolling.srw
