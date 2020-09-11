@@ -16,7 +16,7 @@ setuptools.setup(
     author='NREL',
     author_email='Parangat.Bhaskar@nrel.gov',
     include_package_data=True,
-    python_requires='>=3.7',
+    python_requires='>=3.6',
     description='LandBOSSE',
     long_description=long_description,
     long_description_content_type='text/markdown',
