@@ -407,22 +407,24 @@ class FoundationCost(CostModule):
             # only compute the portion of the foundation that is composed of concrete (45% concrete; other portion is
             # backfill);
             #
-            # Compute the volume of a circular cone frustrum
+            # Compute the volume of a circular cone frustrum as the foundation foot
             # https://en.wikipedia.org/wiki/Frustum#Volume
+            #
+            # The foundation pedestal is a cylinder.
             #
             # TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
             #  does not reflect reality as OSHA requires benched sides over 3’)
-            
-            depth_of_pedastal = 1.0  # m
-            radius_of_pedastal = 4  # 4 meters for transportable towers
-            depth_of_foot = foundation_size_input_data['depth'] - depth_of_pedastal
-            radius_of_foot = float(foundation_size_output_data['Radius_m'])
-            volume_of_pedastal = np.pi * radius_of_pedastal ** 2 * depth_of_pedastal
-            volume_of_foot = \
-                0.333 * np.pi * (radius_of_foot**2 + radius_of_pedastal*radius_of_foot + radius_of_pedastal**2) * depth_of_foot
-            total_concrete_volume = volume_of_foot + volume_of_pedastal
+
+            pedastal_depth = 1.0  # m
+            pedastal_radius = 4.25  # 4.25 meters for transportable towers + flange
+            foot_depth = foundation_size_input_data['depth'] - pedastal_depth
+            foot_radius = float(foundation_size_output_data['Radius_m'])
+            pedastal_volume = np.pi * pedastal_radius ** 2 * pedastal_depth
+            foot_volume = \
+                ((foot_depth * np.pi) / 3) * (foot_radius**2 + pedastal_radius*foot_radius + pedastal_radius**2)
+            concrete_volume = foot_volume + pedastal_volume
             foundation_size_output_data['excavated_volume_m3'] = np.pi * (r + 0.5) ** 2 * foundation_size_input_data['depth']
-            foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = total_concrete_volume
+            foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = concrete_volume
 
         return foundation_size_output_data
 
