@@ -404,24 +404,15 @@ class FoundationCost(CostModule):
             foundation_size_output_data['excavated_volume_m3'] = r * r * foundation_size_input_data['depth']
             foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = foundation_size_output_data['excavated_volume_m3'] * 0.45
         else:
-            # foundation_size_output_data['excavated_volume_m3'] = np.pi * (r + 0.5) ** 2 * foundation_size_input_data['depth']
-            #
-            # # only compute the portion of the foundation that is composed of concrete (45% concrete; other portion is
-            # # backfill); TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
-            # #  does not reflect reality as OSHA requires benched sides over 3’)
-            # foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = np.pi * r ** 2 * \
-            #                                                                            foundation_size_input_data['depth'] * 0.45
-
             # only compute the portion of the foundation that is composed of concrete (45% concrete; other portion is
             # backfill);
             #
-            # Compute the geometry of the foot as a truncated cone
-            # https://keisan.casio.com/exec/system/1223372110
+            # Compute the volume of a circular cone frustrum
+            # https://en.wikipedia.org/wiki/Frustum#Volume
             #
             # TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
             #  does not reflect reality as OSHA requires benched sides over 3’)
-
-            fraction_concrete = 0.45
+            
             depth_of_pedastal = 1.0  # m
             radius_of_pedastal = 4  # 4 meters for transportable towers
             depth_of_foot = foundation_size_input_data['depth'] - depth_of_pedastal
