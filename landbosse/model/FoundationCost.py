@@ -411,7 +411,11 @@ class FoundationCost(CostModule):
             return foundation_specs["total_concrete_volume"]
 
         bounds = [[2.0, 5.0], [2.0, 50.0]]
-        foo = minimize(wrapper, x0=np.array([3.0, 10.0]), method="SLSQP", bounds=bounds, tol=0.1)
+        options = {
+            "disp": True
+        }
+        opt = minimize(wrapper, x0=np.array([3.0, 10.0]), method="SLSQP", bounds=bounds, tol=0.1, options=options)
+        print(f"Depth: {opt.x[0]} Radius: {opt.x[1]}")
 
         foundation_load_output_data['F_dead_kN_per_turbine']    =   f_dead / 1e3
         foundation_load_output_data['F_horiz_kN_per_turbine']   =   f_lat / 1e3
