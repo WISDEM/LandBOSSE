@@ -1,10 +1,10 @@
 import traceback
-import math
 
 import pandas as pd
 import numpy as np
 import math
 from scipy.optimize import root_scalar
+from scipy.optimize import minimize
 
 from .WeatherDelay import WeatherDelay as WD
 from .CostModule import CostModule
@@ -249,126 +249,169 @@ class FoundationCost(CostModule):
         ValueError
             Raises a value error if r_bearing is calculated to be a negative value.
         """
-        # set exposure constants
-        a = 9.5
-        z_g = 274.32
+        # Put some variables outside the closure to capture values
+        # between iterations.
+        f_dead = None
+        f_lat = None
+        m_tot = None
+        r_overturn = None
+        r_slipping = None
+        r_gapping = None
+        r_bearing = None
+        r_choosen = None
+        depth = None
 
-        # get section height
-        z = foundation_load_input_data['Section height m']
+        def wrapper(values):
+            # Pull the values out from the NUmPy array from the optimizer
+            depth_guess = values[0]
+            radius_guess = values[1]
 
-        # get cross-sectional area
-        a_f = foundation_load_input_data['Surface area sq m']
+            # Get an initial guess of foundation geometry
+            foundation_specs = self.pedestal_foot_and_excavation(
+                r_foot_bottom=radius_guess,
+                r_foot_top=2.9,
+                foot_slope_degrees=15.0,
+                pedestal_depth=1.25,
+                r_pedestal=2.9,
+            )
 
-        # get coefficient of drag
-        c_d = foundation_load_input_data['Coeff drag (installed)']
+            # set exposure constants
+            a = 9.5
+            z_g = 274.32
 
-        # get lever arm
-        l = foundation_load_input_data['Lever arm m']
+            # get section height
+            z = foundation_load_input_data['Section height m']
 
-        # get multipliers for tower and rotor
-        multiplier_rotor = foundation_load_input_data['Multplier drag rotor']
-        multiplier_tower = foundation_load_input_data['Multiplier tower drag']
+            # get cross-sectional area
+            a_f = foundation_load_input_data['Surface area sq m']
 
+            # get coefficient of drag
+            c_d = foundation_load_input_data['Coeff drag (installed)']
 
-        # calculate wind pressure
-        k_z = 2.01 * (z / z_g) ** (2 / a)  # exposure factor
-        k_d = 0.95  # wind directionality factor
-        k_zt = 1  # topographic factor
-        v = foundation_load_input_data['gust_velocity_m_per_s']
-        wind_pressure = 0.613 * k_z * k_zt * k_d * v ** 2
+            # get lever arm
+            l = foundation_load_input_data['Lever arm m']
 
-        # calculate wind loads on each tower component
-        g = 0.85  # gust factor
-        c_f = 0.6  # coefficient of force
-        f_t = (wind_pressure * g * c_f * a_f) * multiplier_tower
+            # get multipliers for tower and rotor
+            multiplier_rotor = foundation_load_input_data['Multplier drag rotor']
+            multiplier_tower = foundation_load_input_data['Multiplier tower drag']
 
-        # calculate drag rotor
-        rho = 1.225  # air density in kg/m^3
-        f_r = (0.5 * rho * c_d * a_f * v ** 2) * multiplier_rotor
+            # calculate wind pressure
+            k_z = 2.01 * (z / z_g) ** (2 / a)  # exposure factor
+            k_d = 0.95  # wind directionality factor
+            k_zt = 1  # topographic factor
+            v = foundation_load_input_data['gust_velocity_m_per_s']
+            wind_pressure = 0.613 * k_z * k_zt * k_d * v ** 2
 
-        f = (f_t + f_r)
+            # calculate wind loads on each tower component
+            g = 0.85  # gust factor
+            c_f = 0.6  # coefficient of force
+            f_t = (wind_pressure * g * c_f * a_f) * multiplier_tower
 
-        # calculate dead load in N
-        g = 9.8  # m / s ^ 2
-        f_dead = sum(foundation_load_input_data['Mass tonne']) * g * self._kg_per_tonne / 1.15  # scaling factor to adjust dead load for uplift
+            # calculate drag rotor
+            rho = 1.225  # air density in kg/m^3
+            f_r = (0.5 * rho * c_d * a_f * v ** 2) * multiplier_rotor
 
-        # calculate moment from each component at base of tower
-        m_overturn = f * l
+            f = (f_t + f_r)
 
-        # get total lateral load (N) and moment (N * m)
-        f_lat = f.sum()  # todo: add f_lat (drag force) to output csv
-        m_overturn = m_overturn.sum()
+            # calculate dead load in N
+            g = 9.8  # m / s ^ 2
+            f_dead = sum(foundation_load_input_data['Mass tonne']) * g * self._kg_per_tonne / 1.15  # scaling factor to adjust dead load for uplift
 
-        # compare to moment from rated thrust
-        rated_thrust = foundation_load_input_data['rated_thrust_N']
-        m_thrust = rated_thrust * max(l)
-        m_tot = max(m_thrust, m_overturn)
+            # calculate moment from each component at base of tower
+            m_overturn = f * l
 
-        # compare lateral load to rated thrust
-        f_horiz = max(f_lat, rated_thrust)
+            # get total lateral load (N) and moment (N * m)
+            f_lat = f.sum()  # todo: add f_lat (drag force) to output csv
+            m_overturn = m_overturn.sum()
 
-        # calculate foundation radius based on overturning moment
-        vol_fraction_fill = 0.55
-        vol_fraction_concrete = 1 - vol_fraction_fill
-        safety_overturn = 1.5
-        unit_weight_fill = 17.3e3  # in N / m^3
-        unit_weight_concrete = 23.6e3  # in N / m^3
-        bearing_pressure = foundation_load_input_data['bearing_pressure_n_m2']
-        p = [(np.pi * foundation_load_input_data['depth'] * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete)), 0, f_dead, - (safety_overturn * (m_tot + f_horiz * foundation_load_input_data['depth']))]
-        r_overturn = np.roots(p)
-        r_overturn = np.real(r_overturn[np.isreal(r_overturn)])[0]
+            # compare to moment from rated thrust
+            rated_thrust = foundation_load_input_data['rated_thrust_N']
+            m_thrust = rated_thrust * max(l)
+            m_tot = max(m_thrust, m_overturn)
 
-        # calculate foundation radius based on slipping
-        safety_slipping = 1.5
-        friction_angle_soil = 25
-        tangent_slip_angle = math.tan((friction_angle_soil * math.pi) / 180)
-        slipping_force_with_sf = (safety_slipping * f_lat)
-        # first check if slipping is already satisfied by dead weight
-        if slipping_force_with_sf < (f_dead * tangent_slip_angle):
-            r_slipping = 0
-        else:
-            # Calculate foundation radius based on slipping:
-            r_slipping = (((slipping_force_with_sf / tangent_slip_angle) - f_dead) /
-                          ((vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) * math.pi * foundation_load_input_data['depth'])) ** 0.5
+            # compare lateral load to rated thrust
+            f_horiz = max(f_lat, rated_thrust)
 
-        r_test_gapping = max(r_overturn, r_slipping)
+            # Make a guess of the initial proportion of concrete
+            # vol_fraction_fill = 0.55
+            # vol_fraction_concrete = 1 - vol_fraction_fill
+            vol_fraction_fill = foundation_specs["vol_fraction_fill"]
+            vol_fraction_concrete = 1 - vol_fraction_fill
 
-        # calculate foundation radius based on gapping
-        # check if gapping constrain is already satisfied - r / 3 < e
-        foundation_vol = np.pi * r_test_gapping ** 2 * foundation_load_input_data['depth']
-        v_1 = (foundation_vol * (
-                    vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
-        e = m_tot / v_1
-        if (r_test_gapping / 3) < e:
-            r_gapping = 0
-        else:
-            def r_g(x):
-                foundation_vol = np.pi * x** 2 * foundation_load_input_data['depth']
+            # calculate foundation radius based on overturning moment
+            safety_overturn = 1.5
+            unit_weight_fill = 17.3e3  # in N / m^3
+            unit_weight_concrete = 23.6e3  # in N / m^3
+            bearing_pressure = foundation_load_input_data['bearing_pressure_n_m2']
+            p = [(np.pi * depth_guess * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete)), 0, f_dead, - (safety_overturn * (m_tot + f_horiz * depth_guess))]
+            r_overturn = np.roots(p)
+            r_overturn = np.real(r_overturn[np.isreal(r_overturn)])[0]
+
+            # calculate foundation radius based on slipping
+            safety_slipping = 1.5
+            friction_angle_soil = 25
+            tangent_slip_angle = math.tan((friction_angle_soil * math.pi) / 180)
+            slipping_force_with_sf = (safety_slipping * f_lat)
+            # first check if slipping is already satisfied by dead weight
+            if slipping_force_with_sf < (f_dead * tangent_slip_angle):
+                r_slipping = 0
+            else:
+                # Calculate foundation radius based on slipping:
+                r_slipping = (((slipping_force_with_sf / tangent_slip_angle) - f_dead) /
+                              ((vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) * math.pi * depth_guess)) ** 0.5
+
+            r_test_gapping = max(r_overturn, r_slipping)
+
+            # calculate foundation radius based on gapping
+            # check if gapping constrain is already satisfied - r / 3 < e
+            foundation_vol = np.pi * r_test_gapping ** 2 * depth_guess
+            v_1 = (foundation_vol * (
+                        vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
+            e = m_tot / v_1
+            if (r_test_gapping / 3) < e:
+                r_gapping = 0
+            else:
+                def r_g(x):
+                    foundation_vol = np.pi * x** 2 * depth_guess
+                    v_1 = (foundation_vol * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
+                    e = m_tot / v_1
+                    return (e * 3 - x)
+                result = root_scalar(r_g, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-4, maxiter=50)
+                r_gapping = result.root
+                if not result.converged:
+                    raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_gapping solve failed, {result.flag}')
+
+            r_test_bearing = max(r_test_gapping, r_gapping)
+
+            # calculate foundation radius based on bearing pressure
+            def r_b(x):
+                foundation_vol = np.pi * r_test_bearing ** 2 * depth_guess
                 v_1 = (foundation_vol * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
                 e = m_tot / v_1
-                return (e * 3 - x)
-            result = root_scalar(r_g, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-4, maxiter=50)
-            r_gapping = result.root
+                a_eff = v_1 / bearing_pressure
+                return (2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - a_eff)
+            result = root_scalar(r_b, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-10, maxiter=50)
+            r_bearing = result.root
+
             if not result.converged:
-                raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_gapping solve failed, {result.flag}')
+                raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_bearing solve failed, {result.flag}')
 
-        r_test_bearing = max(r_test_gapping, r_gapping)
+            # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
+            r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
 
-        # calculate foundation radius based on bearing pressure
-        def r_b(x):
-            foundation_vol = np.pi * r_test_bearing ** 2 * foundation_load_input_data['depth']
-            v_1 = (foundation_vol * (vol_fraction_fill * unit_weight_fill + vol_fraction_concrete * unit_weight_concrete) + f_dead)
-            e = m_tot / v_1
-            a_eff = v_1 / bearing_pressure
-            return (2 * (x ** 2 - e * (x ** 2 - e ** 2) ** 0.5) - a_eff)
-        result = root_scalar(r_b, method='brentq', bracket=[0.9*r_overturn, 50], xtol=1e-10, maxiter=50)
-        r_bearing = result.root
+            # Get new foundation specs
+            foundation_specs = self.pedestal_foot_and_excavation(
+                r_foot_bottom=r_choosen,
+                r_foot_top=2.9,
+                foot_slope_degrees=15.0,
+                pedestal_depth=1.25,
+                r_pedestal=2.9,
+            )
 
-        if not result.converged:
-            raise ValueError(f'Warning {self.project_name} calculate_foundation_load r_bearing solve failed, {result.flag}')
+            return foundation_specs["total_concrete_volume"]
 
-        # pick the largest foundation radius based on all 4 foundation design criteria: moment, gapping, bearing, slipping
-        r_choosen = max(r_bearing, r_overturn, r_slipping, r_gapping)
+        bounds = [[2.0, 5.0], [2.0, 50.0]]
+        foo = minimize(wrapper, x0=np.array([3.0, 10.0]), method="SLSQP", bounds=bounds, tol=0.1)
 
         foundation_load_output_data['F_dead_kN_per_turbine']    =   f_dead / 1e3
         foundation_load_output_data['F_horiz_kN_per_turbine']   =   f_lat / 1e3
@@ -381,6 +424,30 @@ class FoundationCost(CostModule):
 
         return foundation_load_output_data
 
+    def pedestal_foot_and_excavation(self, r_foot_bottom, r_foot_top, foot_slope_degrees, pedestal_depth, r_pedestal):
+        foot_slope_radians = math.radians(foot_slope_degrees)
+        foot_depth = (r_foot_bottom - r_foot_top) * math.tan(foot_slope_radians)
+        foot_volume = ((foot_depth * math.pi) / 3) * (r_foot_bottom ** 2 + r_foot_bottom * r_foot_top * r_foot_top ** 2)
+        pedestal_volume = (math.pi * r_pedestal ** 2) * pedestal_depth
+        total_concrete_volume = foot_volume + pedestal_volume
+        total_depth = pedestal_depth + foot_depth
+        excavated_volume = (math.pi * r_foot_bottom ** 2) * total_depth
+        vol_fraction_fill = (excavated_volume - total_concrete_volume) / excavated_volume
+
+        return {
+            "r_foot_bottom": r_foot_bottom,
+            "r_foot_top": r_foot_top,
+            "foot_slope_degrees": foot_slope_degrees,
+            "pedestal_depth": pedestal_depth,
+            "r_pedestal": r_pedestal,
+            "pedestal_volume": pedestal_volume,
+            "total_concrete_volume": total_concrete_volume,
+            "foot_volume": foot_volume,
+            "foot_depth": foot_depth,
+            "total_depth": total_depth,
+            "excavated_volume": excavated_volume,
+            "vol_fraction_fill": vol_fraction_fill,
+        }
 
     def determine_foundation_size(self, foundation_size_input_data, foundation_size_output_data):
         """
@@ -404,13 +471,25 @@ class FoundationCost(CostModule):
             foundation_size_output_data['excavated_volume_m3'] = r * r * foundation_size_input_data['depth']
             foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = foundation_size_output_data['excavated_volume_m3'] * 0.45
         else:
-            foundation_size_output_data['excavated_volume_m3'] = np.pi * (r + 0.5) ** 2 * foundation_size_input_data['depth']
-
-            # only compute the portion of the foundation that is composed of concrete (45% concrete; other portion is
-            # backfill); TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
+            # Compute the volume of a circular cone frustrum as the foundation foot
+            # https://en.wikipedia.org/wiki/Frustum#Volume
+            #
+            # The foundation pedestal is a cylinder.
+            #
+            # TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
             #  does not reflect reality as OSHA requires benched sides over 3’)
-            foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = np.pi * r ** 2 * \
-                                                                                       foundation_size_input_data['depth'] * 0.45
+
+            pedastal_depth = 1.0  # m
+            pedastal_radius = 4.25  # 4.25 meters for transportable towers + flange
+            foot_depth = foundation_size_input_data['depth'] - pedastal_depth
+            foot_radius = float(foundation_size_output_data['Radius_m'])
+            pedastal_volume = np.pi * pedastal_radius ** 2 * pedastal_depth
+            foot_volume = \
+                ((foot_depth * np.pi) / 3) * (foot_radius ** 2 + pedastal_radius * foot_radius + pedastal_radius ** 2)
+            concrete_volume = foot_volume + pedastal_volume
+            foundation_size_output_data['excavated_volume_m3'] = np.pi * (r + 0.5) ** 2 * foundation_size_input_data[
+                'depth']
+            foundation_size_output_data['foundation_volume_concrete_m3_per_turbine'] = concrete_volume
 
         return foundation_size_output_data
 
