@@ -415,8 +415,8 @@ class FoundationCost(CostModule):
             # TODO: Add to sphinx -> (volume excavated = pi*(r_pick + .5m)^2 this assumes vertical sides which
             #  does not reflect reality as OSHA requires benched sides over 3’)
 
-            pedastal_depth = 1.0  # m
-            pedastal_radius = 4.25  # 4.25 meters for transportable towers + flange
+            pedastal_depth = 1.25  # Typical pedastal depth
+            pedastal_radius = 2.9  # Typical pedestal radius
             foot_depth = foundation_size_input_data['depth'] - pedastal_depth
             foot_radius = float(foundation_size_output_data['Radius_m'])
             pedastal_volume = np.pi * pedastal_radius ** 2 * pedastal_depth
