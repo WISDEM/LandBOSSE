@@ -1,0 +1,17 @@
+name: test
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python
+  - setuptools
+  - pytest
+  - xlrd
+  - xlsxwriter
+  - pandas
+  - numpy
+  - scipy
+  - openmdao
+  - pip
