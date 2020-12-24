@@ -27,7 +27,7 @@ setuptools.setup(
         'numpy',
         'scipy',
         'xlsxwriter',
-        'xlrd',
+        'openpyxl',
         'pytest'
     ],
     command_options={
