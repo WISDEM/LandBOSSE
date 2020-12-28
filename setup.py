@@ -20,14 +20,12 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     #packages=['landbosse'],
     packages=setuptools.find_packages(PACKAGE_PATH, "test"),
-    test_suite='nose.collector',
-    tests_require=['nose'],
     install_requires=[
-        'pandas',
+        'pandas==0.25.2',
         'numpy',
         'scipy',
         'xlsxwriter',
-        'xlrd',
+        'xlrd==1.2.0',
         'pytest'
     ],
     command_options={
