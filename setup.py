@@ -21,11 +21,11 @@ setuptools.setup(
     #packages=['landbosse'],
     packages=setuptools.find_packages(PACKAGE_PATH, "test"),
     install_requires=[
-        'pandas==0.25.2',
+        'pandas',
         'numpy',
         'scipy',
         'xlsxwriter',
-        'xlrd==1.2.0',
+        'openpyxl',
         'pytest'
     ],
     command_options={
