@@ -88,7 +88,7 @@ class GridSearchTree:
 
         # First, make an iterable of the range we are going to be using.
         if 'Value list' in row and not pd.isnull(row['Value list']):
-            values = [float(value) for value in row['Value list'].split(',')]
+            values = [float(value) for value in str(row['Value list']).split(',')]
         else:
             start = row['Min']
             end = row['Max']

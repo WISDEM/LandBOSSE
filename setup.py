@@ -20,8 +20,6 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     #packages=['landbosse'],
     packages=setuptools.find_packages(PACKAGE_PATH, "test"),
-    test_suite='nose.collector',
-    tests_require=['nose'],
     install_requires=[
         'pandas',
         'numpy',
