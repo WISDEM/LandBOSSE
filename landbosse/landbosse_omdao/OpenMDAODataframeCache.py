@@ -1,9 +1,21 @@
 import os
-import pandas as pd
 
-from .XlsxFileOperations import XlsxFileOperations
+import warnings
 
-class XlsxDataframeCache:
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+    import pandas as pd
+
+
+# The library path is where to find the default input data for LandBOSSE.
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../.."))
+if ROOT.endswith('wisdem'):
+    library_path = os.path.join(ROOT, "library", "landbosse")
+else:
+    library_path = os.path.join(ROOT, "project_input_template", "project_data")
+
+
+class OpenMDAODataframeCache:
     """
     This class does not need to be instantiated. This means that the
     cache is shared throughout all parts of the code that needs access
@@ -50,9 +62,9 @@ class XlsxDataframeCache:
             in the dictionary used to access all the sheets in the
             named .xlsx file.
 
-        xlsx_pathname : str
+        xlsx_path : str
             The path from which to read the .xlsx file. This parameter
-            has the default value of
+            has the default value of the library path variable above.
 
         Returns
         -------
@@ -65,12 +77,10 @@ class XlsxDataframeCache:
             original = cls._cache[xlsx_basename]
             return cls.copy_dataframes(original)
 
-        file_ops = XlsxFileOperations()
-
         if xlsx_path is None:
-            xlsx_filename = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{xlsx_basename}.xlsx')
+            xlsx_filename = os.path.join(library_path, f"{xlsx_basename}.xlsx")
         else:
-            xlsx_filename = os.path.join(xlsx_path, f'{xlsx_basename}.xlsx')
+            xlsx_filename = os.path.join(xlsx_path, f"{xlsx_basename}.xlsx")
 
         xlsx = pd.ExcelFile(xlsx_filename, engine='openpyxl')
         sheets_dict = {sheet_name: xlsx.parse(sheet_name) for sheet_name in xlsx.sheet_names}

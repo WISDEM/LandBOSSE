@@ -131,6 +131,9 @@ dmypy.json
 # VSCode
 .vscode/
 
+# Emacs
+*~
+
 # Ignore Pandas _libs files
 pandas/_libs/
 
