@@ -308,8 +308,8 @@ class ArraySystem(CostModule):
         Cable lengths are in meters in this method
         The code starts with outermost nodes, and adds them to their receiver downstream (receiver) nodes. 
         This process continues until the substation is reached and all nodes have been assigned an ampacity.
-        Giver nodes are the child nodes that are currently being considered.
-        Closed noeds are those that have contributed to all of their parent nodes.
+        Giver nodes are the parent nodes that are currently being considered.
+        Closed nodes are those that have contributed to all of their child nodes.
         Nodes go from []->receiver->giver->closed
         """
         # find outermost nodes
