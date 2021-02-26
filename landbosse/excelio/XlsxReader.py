@@ -594,7 +594,7 @@ class XlsxReader:
 
         number_of_access_roads = 0.0 if project_size_MW <= 20 else ceil(0.0052 * project_size_MW + 0.7917)
         number_of_highway_permits = ceil(0.2 * project_parameters['Number of turbines'])
-        if flag_use_user_homerun is 1:
+        if flag_use_user_homerun == 1:
              project_parameters['Combined Homerun Trench Length to Substation (km)'] = 0.1776 * project_size_MW - 2.551
 
         # 10 deliveries per week for 1.5 MW machines

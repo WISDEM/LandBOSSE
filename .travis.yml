@@ -4,10 +4,9 @@ python:
 
 # command to install dependencies
 install:
-  - pip install pandas==0.25.2
+  - pip install pandas
   - pip install numpy
-  - pip install sympy
-  - pip install shapely
+  - pip install scipy
   - pip install xlsxwriter
   - pip install xlrd
 #  - pip install psycopg2-binaryyam

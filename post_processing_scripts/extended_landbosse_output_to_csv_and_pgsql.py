@@ -33,7 +33,7 @@ print("Writing joined .csv files...")
 join_landbosse_output_costs.to_csv("extended_landbosse_costs.csv", index=False)
 join_landbosse_output_details.to_csv("extended_landbosse_details.csv", index=False)
 
-load_into_database_enabled = True
+load_into_database_enabled = False
 if load_into_database_enabled:
     print("Load into database...")
 

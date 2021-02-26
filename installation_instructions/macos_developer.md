@@ -131,8 +131,8 @@ The file named `projects_list.xlsx` must keep the same name. The names of the pr
 Suppose that you have created the directory structure on your desktop as mentioned above in step 2 "Create a folder structure". You can set the environment variables and execute LandBOSSE with a couple easy commands:
 
 ```
-cd ~/Desktop/landbosse
-LANDBOSSE_INPUT_DIR=~/Desktop/landbosse/input LANDBOSSE_OUTPUT_DIR=~/Desktop/landbosse/output python LandBOSSE/main.py
+cd ~/Desktop/landbosse/LandBOSSE
+python main.py -i ~/Desktop/landbosse/input -o ~/Desktop/landbosse/output 
 ```
 
 The file will be produced with a filename like:
