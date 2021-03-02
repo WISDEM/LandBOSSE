@@ -230,11 +230,6 @@ def run_landbosse(input_dict):
 
         elif key == 'substation_rating_MW':
             master_input_dict['substation_rating_MW'] = input_dict['substation_rating_MW']
-        elif key == 'Collection mode':
-            master_input_dict['Collection mode'] = input_dict['Collection mode']
-        elif key == 'Combined Homerun Trench Length to Substation (km)':
-            master_input_dict['Combined Homerun Trench Length to Substation (km)'] = \
-                input_dict['Combined Homerun Trench Length to Substation (km)']
         else:
             exit(1)
 
