@@ -371,6 +371,7 @@ class XlsxReader:
         incomplete_input_dict['labor_cost_multiplier'] = project_parameters['Labor cost multiplier']
         labor_cost_multiplier = incomplete_input_dict['labor_cost_multiplier']
         self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
+        print(project_parameters['Collection mode'])
         if project_parameters['Collection mode'] == 'manual':
             incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
             erection_input_worksheets = [
@@ -471,7 +472,7 @@ class XlsxReader:
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-        incomplete_input_dict['distance_to_grid_connection_km'] = project_parameters['Distance to interconnect (miles)']
+        incomplete_input_dict['distance_to_grid_connection_mi'] = project_parameters['Distance to interconnect (miles)']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
         incomplete_input_dict['crew_cost'] = incomplete_input_dict['project_data']['crew_price']
 
@@ -605,7 +606,6 @@ class XlsxReader:
         hub_height_m = project_parameters['Hub height m']
         flag_use_user_homerun = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
         nameplate = project_parameters['Turbine rating MW']
-
         distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
         new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'

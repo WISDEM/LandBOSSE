@@ -194,7 +194,7 @@ class Array(Cable):
 
         upstream_turb = addl_inputs['upstream_turb']
         self.turb_sequence = addl_inputs['turb_sequence']
-
+        self.max_turb_per_cable = np.floor(self.current_capacity / addl_inputs['turbine_capacity'])
         self.num_turb_per_cable = self.max_turb_per_cable - upstream_turb
 
         if upstream_turb == 0:
@@ -683,7 +683,7 @@ class ArraySystem(CostModule):
         self.cables = {}
         self.input_dict['cable_specs'] = self.input_dict['cable_specs_pd'].T.to_dict()
         n=0 #to keep tab of number of cables input by user.
-        while n<len(self.input_dict['cable_specs']):
+        while n < len(self.input_dict['cable_specs']):
             specs = self.input_dict['cable_specs'][n]
             # Create instance of each cable and assign to ArraySystem.cables
             cable = Array(specs, self.addl_specs)
@@ -714,8 +714,8 @@ class ArraySystem(CostModule):
             # This only gets used if number of strings is <= 1 :
             distributed_wind_distance_to_grid = (self.input_dict[
                 'turbine_spacing_rotor_diameters'] * self.input_dict['rotor_diameter_m']) / 1000
-            self.output_dict['distance_to_grid_connection_km'] = self.\
-                self.calc_cable_len_to_substation(distributed_wind_distance_to_grid,
+            self.output_dict['distance_to_grid_connection_km'] = \
+                self.calc_cable_len_to_substation(self, distributed_wind_distance_to_grid,
                                              self.input_dict['turbine_spacing_rotor_diameters'],
                                              self.input_dict['row_spacing_rotor_diameters'],
                                              self.output_dict['num_strings'])
