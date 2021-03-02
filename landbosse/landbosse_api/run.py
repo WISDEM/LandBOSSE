@@ -699,11 +699,11 @@ input_dict = dict()
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-input_dict['path_to_project_list'] = '/Users/ccampos/PycharmProjects/LandBOSSE/input/project_data'
-input_dict['name_of_project_list'] = 'project_list'
-BOS_results = run_landbosse(input_dict)
-print(BOS_results)
-print(input_dict)
+# input_dict['path_to_project_list'] = '/Users/ccampos/PycharmProjects/LandBOSSE/input/project_data'
+# input_dict['name_of_project_list'] = 'project_list'
+# BOS_results = run_landbosse(input_dict)
+# print(BOS_results)
+# print(input_dict)
 
 
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
