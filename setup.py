@@ -20,8 +20,9 @@ setuptools.setup(
     description='LandBOSSE',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'],
+    # packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'], # uncomment this line when uploading a new pip installable version
     # packages=setuptools.find_packages(PACKAGE_PATH, "test"),
+    packages=setuptools.find_packages(PACKAGE_PATH, "test"),
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
