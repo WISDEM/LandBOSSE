@@ -371,7 +371,13 @@ class XlsxReader:
         incomplete_input_dict['labor_cost_multiplier'] = project_parameters['Labor cost multiplier']
         labor_cost_multiplier = incomplete_input_dict['labor_cost_multiplier']
         self.apply_labor_multiplier_to_project_data_dict(project_data_dataframes, labor_cost_multiplier)
-        print(project_parameters['Collection mode'])
+        # Apply the Collection mode
+        if 'Collection mode' not in project_parameters:
+            incomplete_input_dict['collection_mode'] = 'auto'
+            project_parameters['Collection mode'] = 'auto'
+        else:
+            incomplete_input_dict['collection_mode'] = project_parameters['Collection mode']
+
         if project_parameters['Collection mode'] == 'manual':
             incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
             erection_input_worksheets = [
@@ -472,7 +478,9 @@ class XlsxReader:
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-        incomplete_input_dict['distance_to_grid_connection_mi'] = project_parameters['Distance to interconnect (miles)']
+        incomplete_input_dict['distance_to_grid_connection_km'] = project_parameters[
+            'Combined Homerun Trench Length to Substation (km)']
+        #incomplete_input_dict['distance_to_grid_connection_mi'] = project_parameters['Distance to interconnect (miles)']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
         incomplete_input_dict['crew_cost'] = incomplete_input_dict['project_data']['crew_price']
 
@@ -485,14 +493,15 @@ class XlsxReader:
 
         incomplete_input_dict['line_frequency_hz'] = project_parameters['Line Frequency (Hz)']
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
-        #incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)'] asd
+        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_home_run_trench'] = project_parameters[
             'Flag for user-defined home run trench length (0 = no; 1 = yes)']
         incomplete_input_dict['trench_len_to_substation_km'] = project_parameters[
             'Combined Homerun Trench Length to Substation (km)']
 
         # Add inputs for transmission & Substation modules:
-        incomplete_input_dict['distance_to_interconnect_mi'] = project_parameters['Distance to interconnect (miles)']
+
+        incomplete_input_dict['distance_to_interconnect_km'] = project_parameters['Combined Homerun Trench Length to Substation (km)']
         incomplete_input_dict['interconnect_voltage_kV'] = project_parameters['Interconnect Voltage (kV)']
         new_switchyard = True
         if project_parameters['New Switchyard (y/n)'] == 'y':
@@ -511,7 +520,7 @@ class XlsxReader:
         incomplete_input_dict['num_access_roads'] = project_parameters['Number of access roads']
         incomplete_input_dict['overtime_multiplier'] = project_parameters['Overtime multiplier']
         incomplete_input_dict['allow_same_flag'] = True if project_parameters['Allow same flag'] == 'y' else False
-        incomplete_input_dict['collection_mode'] = project_parameters['Collection mode']
+
 
         override_total_mgmt_cost_col_name = 'Override total management cost for distributed (0 does not override)'
         if override_total_mgmt_cost_col_name in project_parameters and project_parameters[override_total_mgmt_cost_col_name] > 0:

@@ -194,7 +194,7 @@ class Array(Cable):
 
         upstream_turb = addl_inputs['upstream_turb']
         self.turb_sequence = addl_inputs['turb_sequence']
-        self.max_turb_per_cable = np.floor(self.current_capacity / addl_inputs['turbine_capacity'])
+        self.max_turb_per_cable = np.floor(self.current_capacity / addl_inputs['turbine_power'])
         self.num_turb_per_cable = self.max_turb_per_cable - upstream_turb
 
         if upstream_turb == 0:
@@ -323,7 +323,7 @@ class ArraySystem(CostModule):
         # sort cables by current capacity
         self.input_dict['cable_specs_pd'].sort_values(by=['Current Capacity (A)'], inplace=True)
         self.input_dict['cable_specs_pd'] = self.input_dict['cable_specs_pd'].reset_index(drop=True)
-        self.turbine_capacity = self.input_dict['turbine_rating_MW'] * 1e3 / self.collection_V
+        self.turbine_power = self.input_dict['turbine_rating_MW'] #* 1e3 / self.collection_V
 
     def calc_required_segment_capacity(self):
         """
@@ -357,7 +357,7 @@ class ArraySystem(CostModule):
                     giver = np.setdiff1d(giver, closed)  # removed closed nodes from giver
 
         self.C[0] = self.n_segments  # substation handles all turbines
-        self.C *= self.turbine_capacity  # scale capacity by turbine current
+        self.C *= self.turbine_power  # scale capacity by turbine current
 
         """
         Create cable dictionary with cable start point, end point, length, capacity, and bool representing if the cable segment is the terminal
@@ -373,15 +373,15 @@ class ArraySystem(CostModule):
                 array_dict['cable' + str(k)]['End point'] = self.L[j, :]
                 array_dict['cable' + str(k)]['Length'] = ((self.L[i, 0] - self.L[j, 0]) ** 2 + (
                         self.L[i, 1] - self.L[j, 1]) ** 2) ** (1 / 2)
-                array_dict['cable' + str(k)]['Capacity'] = min(self.C[i], self.C[j])
+                array_dict['cable' + str(k)]['Power'] = min(self.C[i], self.C[j])
                 array_dict['cable' + str(k)]['Terminal?'] = False
                 k += 1  # iterate to make new cable
             remains[i] = False  # prevent duplicate cables
         # add terminal cable
         array_dict['cable' + str(k)] = dict()
         array_dict['cable' + str(k)]['Length'] = self.input_dict[
-                                                     'distance_to_grid_connection_mi'] * 5280 * self._km_to_LF
-        array_dict['cable' + str(k)]['Capacity'] = self.n_segments * self.turbine_capacity
+                                                     'distance_to_grid_connection_km'] * 5280 * self._km_to_LF
+        array_dict['cable' + str(k)]['Power'] = self.n_segments * self.turbine_power
         array_dict['cable' + str(k)]['Terminal?'] = True
         self.array_dict = array_dict
 
@@ -664,14 +664,14 @@ class ArraySystem(CostModule):
         self.addl_specs['rotor_diameter_m'] = self.input_dict['rotor_diameter_m']
         self.addl_specs['line_frequency_hz'] = self.input_dict['line_frequency_hz']
         self.addl_specs['mode'] = self.mode
-        self.addl_specs['turbine_capacity'] = self.turbine_capacity
+        self.addl_specs['turbine_power'] = self.turbine_power
 
 
 
         system = {
             'upstream_turb': self.addl_specs['upstream_turb'],
             'turb_sequence': self.addl_specs['turb_sequence'],
-            'turbine_rating_MW' : self.addl_specs['turbine_rating_MW'],
+            'turbine_rating_MW': self.addl_specs['turbine_rating_MW'],
             'turbine_spacing_rotor_diameters': self.addl_specs['turbine_spacing_rotor_diameters'],
             'rotor_diameter_m': self.addl_specs['rotor_diameter_m']
         }
@@ -796,25 +796,24 @@ class ArraySystem(CostModule):
          dissipated_power = 0    #W
          for segment in self.array_dict:
              for idx, (name, cable) in enumerate(self.cables.items()):
-                 if cable.current_capacity >= self.array_dict[segment]['Capacity']:
+                 if cable.current_capacity >= self.array_dict[segment]['Power']:
                      cable.total_length += self.array_dict[segment]['Length']
                      self.output_dict['total_cable_len_km'] += self.array_dict[segment]['Length']
                      # cable.total_mass = cable.total_length * cable.mass
                      cable.total_cost = (cable.total_length / self._km_to_LF) * cable.cost
                      self._total_cable_cost += (self.array_dict[segment]['Length'] / self._km_to_LF) * cable.cost  # Keep running tally of total cable cost used in wind farm.
-                     dissipated_power += 3 * self.array_dict[segment]['Capacity']**2 * abs(cable.ac_resistance)*self.array_dict[segment]['Length']/1000    #TODO P=3*I^2*R. IF 3 phase. Divide by 1000 to go from ohm/km->ohm/m
+                     dissipated_power += 3 * self.array_dict[segment]['Power']**2 * abs(cable.ac_resistance)*self.array_dict[segment]['Length']/1000    #TODO P=3*I^2*R. IF 3 phase. Divide by 1000 to go from ohm/km->ohm/m
                      break  # only assign one cable to each segment
 
          # add substation to transmission interconnect cable
-         terminal_capacity = self.n_segments * self.turbine_capacity
 
          self.output_dict['dissipated_power'] = dissipated_power
          # print('TOTAL CABLE COST = $' + str(self._total_cable_cost))  # TODO remove after figuring out layout optimizer
          # print('Dissipated power [W] = ' + str(dissipated_power)) #TODO remove after layout optimizer figured out
          self.output_dict['total_cable_cost'] = self._total_cable_cost
-         self.output_dict['distance_to_grid_connection_km'] = self.input_dict['distance_to_grid_connection_mi']*5280*self._km_to_LF
-
-         self.output_dict['cable_len_to_grid_connection_km'] = self.output_dict['distance_to_grid_connection_km']
+         # self.output_dict['distance_to_grid_connection_km'] = self.input_dict['distance_to_grid_connection_mi']*5280*self._km_to_LF
+         #
+         # self.output_dict['cable_len_to_grid_connection_km'] = self.output_dict['distance_to_grid_connection_km']
 
     def calculate_trench_properties(self, trench_properties_input, trench_properties_output):
         """
