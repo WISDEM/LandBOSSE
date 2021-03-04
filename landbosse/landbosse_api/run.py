@@ -7,7 +7,6 @@ from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
 from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
 from landbosse.model import Manager
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 from landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
                                             edit_nacelle_info, \
                                             hub_mass, \
@@ -231,11 +230,6 @@ def run_landbosse(input_dict):
 
         elif key == 'substation_rating_MW':
             master_input_dict['substation_rating_MW'] = input_dict['substation_rating_MW']
-        elif key == 'Collection mode':
-            master_input_dict['Collection mode'] = input_dict['Collection mode']
-        elif key == 'Combined Homerun Trench Length to Substation (km)':
-            master_input_dict['Combined Homerun Trench Length to Substation (km)'] = \
-                input_dict['Combined Homerun Trench Length to Substation (km)']
         else:
             exit(1)
 
@@ -705,79 +699,13 @@ input_dict = dict()
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
-# input_dict['Combined Homerun Trench Length to Substation (km)'] = 1000
-input_dict['path_to_project_list'] = '/Users/ccampos/PycharmProjects/LandBOSSE/input/project_data'
-input_dict['name_of_project_list'] = 'project_list'
-BOS_results = run_landbosse(input_dict)
-print(BOS_results)
-print(input_dict)
-
 # input_dict['path_to_project_list'] = '/Users/ccampos/PycharmProjects/LandBOSSE/input/project_data'
+# input_dict['name_of_project_list'] = 'project_list'
 # BOS_results = run_landbosse(input_dict)
 # print(BOS_results)
 # print(input_dict)
-# plot_graph(BOS_results['total_bos_cost'], BOS_results['total_bos_cost'])
+
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
 
 
-# def plot_graph(in_dict):
-#
-#     result = [list() for _ in range(0, 2)]
-#     turbines = [x for x in range(0, 5)]
-#
-#     turbine_rating = in_dict['turbine_rating_MW']
-#     for lcm in lcms:
-#         hybrids_scenario_dict['labor_cost_multiplier'] = lcm
-#
-#         hybrid_results, wind_only, solar_only, storage_only = run_hybrid_BOS(hybrids_scenario_dict)
-#         hybrid_results.update({'Labor Cost Multiplier ': str(lcm)})
-#         result[0].append(wind_only["total_bos_cost"])
-#         result[1].append(solar_only["total_bos_cost"])
-#         result[2].append(storage_only["total_bos_cost"])
-#         result[3].append(hybrid_results['hybrid']["hybrid_BOS_usd"])
-#
-#     wind_bos_cost = [x/1000000 for x in result[0]]
-#
-#     figure = plt.Figure()
-#     plot = figure.subplots()
-#     plot.plot(lcms, wind_bos_cost, label="Wind BOS Cost")
-#     plot.plot(lcms, solar_bos_cost, label="Solar BOS Cost")
-#     plot.plot(lcms, storage_bos_cost, label="Storage BOS Cost")
-#     plot.plot(lcms, hybrid_bos_cost, label="Total Hybrid BOS Cost")
-#     plot.set_xlabel("Labor Cost Multipliers")
-#     plot.set_ylabel("Cost (Million USD)")
-#     plot.set_title("Total BOS Cost (USD) Versus Labor Cost Multiplier")
-#     plot.grid(True)
-#     plot.legend()
-#
-#     text_str = "Storage Power(MW): {0}\nStorage Energy(MWh): {1}\nWind Power(MW): " \
-#                    "{2}\nSolar Power(MW){3}\nTotal Power(MW){4}".format(storage_initial_energy, storage_initial_power,
-#                                                                         solar_initial_power, wind_initial_power, total_power
-#                                                                         )
-#
-#     txt_settings = dict(boxstyle='square', facecolor='white', alpha=0.25)
-#
-#     plot.text(0.025, 0.70, text_str, transform=plot.transAxes, fontsize=8,
-#                   verticalalignment='top', bbox=txt_settings)
-#     figure.savefig('BOS_Cost_versus_LCM.png')
-#
-#     titles = ['Manual', 'Auto']
-#     costs = [homerun_cost_manual, homerun_cost_auto]
-#
-#     figure = plt.Figure()
-#     plot = figure.subplots()
-#     x = numpy.arange(1)
-#     width = 0.35
-#     plot.bar(x+width/2, [costs[0]], width, label='Homerun Cost (Manual)')
-#     plot.bar(x, [costs[1]], width, label='Homerun Cost (Auto)')
-#     plot.set_xlabel("Wind/Solar Size Ratio")
-#     plot.set_ylabel("Cost (Million USD)")
-#     plot.set_title("Total BOS Cost (USD) Versus Wind/Solar Size Ratio")
-#     plot.set_xticks(x)
-#     plot.set_xticklabels(x)
-#
-#     plot.grid(True)
-#     plot.legend()
-#
-#
-#     figure.savefig('Manual_Versus_Auto_Homerun_Costs.png')
