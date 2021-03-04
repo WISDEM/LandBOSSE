@@ -69,7 +69,6 @@ class Cable:
             output documentation.
 
         """
-
         self.current_capacity = cable_specs['Current Capacity (A)']
         self.rated_voltage    = cable_specs['Rated Voltage (V)']
         self.ac_resistance    = cable_specs['AC Resistance (Ohms/km)']
@@ -194,7 +193,7 @@ class Array(Cable):
 
         upstream_turb = addl_inputs['upstream_turb']
         self.turb_sequence = addl_inputs['turb_sequence']
-        self.max_turb_per_cable = np.floor(self.current_capacity / addl_inputs['turbine_power'])
+        self.max_turb_per_cable = np.floor(self.cable_power / addl_inputs['turbine_power'])
         self.num_turb_per_cable = self.max_turb_per_cable - upstream_turb
 
         if upstream_turb == 0:
@@ -317,12 +316,12 @@ class ArraySystem(CostModule):
         self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
-            rated_voltage_kV = property['Rated Voltage (V)'] * 1000
-            if rated_voltage_kV > self.collection_V:
-                self.collection_V = rated_voltage_kV
+            rated_voltage_V = property['Rated Voltage (V)'] * 1000
+            if rated_voltage_V > self.collection_V:
+                self.collection_V = rated_voltage_V
 
         # sort cables by current capacity
-        self.input_dict['cable_specs_pd'].sort_values(by=['Current Capacity (A)'], inplace=True)
+        self.input_dict['cable_specs_pd'].sort_values(by=['Current Capacity (A)', 'Rated Voltage (V)'], inplace=True)
         self.input_dict['cable_specs_pd'] = self.input_dict['cable_specs_pd'].reset_index(drop=True)
         self.turbine_power = self.input_dict['turbine_rating_MW']#/ self.collection_V
 
@@ -381,7 +380,7 @@ class ArraySystem(CostModule):
         # add terminal cable
         array_dict['cable' + str(k)] = dict()
         array_dict['cable' + str(k)]['Length'] = self.input_dict[
-                                                     'distance_to_grid_connection_km'] * 5280 * self._km_to_LF
+                                                     'trench_len_to_substation_km'] * 5280 * self._km_to_LF
         array_dict['cable' + str(k)]['Power Capacity'] = self.n_segments * self.turbine_power
         array_dict['cable' + str(k)]['Terminal?'] = True
         self.array_dict = array_dict
