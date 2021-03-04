@@ -316,7 +316,7 @@ class ArraySystem(CostModule):
         self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
-            rated_voltage_V = property['Rated Voltage (V)'] * 1000
+            rated_voltage_V = property['Rated Voltage (V)'] * 1000 #Rated Voltage is in kV
             if rated_voltage_V > self.collection_V:
                 self.collection_V = rated_voltage_V
 
