@@ -554,6 +554,7 @@ class ArraySystem(CostModule):
             string_to_substation_length.append(distance_to_grid)
 
         # Sum up total length to substation
+        print(np.sum(string_to_substation_length))
         len_to_substation = np.sum(string_to_substation_length) * self.input_dict['rotor_diameter_m']/1000  # [km]
 
         return len_to_substation
@@ -720,7 +721,7 @@ class ArraySystem(CostModule):
                                              self.input_dict['row_spacing_rotor_diameters'],
                                              self.output_dict['num_strings'])
         else:
-            self.output_dict['distance_to_grid_connection_km'] = 1.609*self.input_dict['distance_to_grid_connection_mi']
+            self.output_dict['distance_to_grid_connection_km'] = 1.609*self.input_dict['distance_to_interconnect_mi']
 
         self.output_dict['cable_len_to_grid_connection_km'] = self.output_dict[
             'distance_to_grid_connection_km']  # assumes 3 conductors and fiber and neutral
