@@ -636,6 +636,7 @@ class XlsxReader:
         project_parameters['Development labor cost USD'] = development_labor_cost_usd
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
+        project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
         project_parameters['Road length adder (m)'] = road_length_adder_m
         project_parameters['Breakpoint between base and topping (percent)'] = breakpoint_between_base_and_topping
