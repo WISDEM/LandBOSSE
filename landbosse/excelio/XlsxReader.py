@@ -477,7 +477,7 @@ class XlsxReader:
         incomplete_input_dict['line_frequency_hz'] = project_parameters['Line Frequency (Hz)']
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
-        #incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
+        incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
         #incomplete_input_dict['distance_to_grid_connection_km'] = project_parameters[
         #    'Combined Homerun Trench Length to Substation (km)']
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
