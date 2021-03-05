@@ -479,7 +479,10 @@ class XlsxReader:
         incomplete_input_dict['plant_capacity_MW'] = project_parameters['Turbine rating MW'] * project_parameters['Number of turbines']
         incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
         incomplete_input_dict['user_defined_distance_to_grid_connection'] = project_parameters['Flag for user-defined home run trench length (0 = no; 1 = yes)']
-        incomplete_input_dict['distance_to_interconnect_mi'] = project_parameters['Distance to interconnect (miles)']
+
+        incomplete_input_dict['distance_to_grid_connection_km'] = project_parameters[
+            'Combined Homerun Trench Length to Substation (km)']
+
         incomplete_input_dict['crew'] = incomplete_input_dict['project_data']['crew']
         incomplete_input_dict['crew_cost'] = incomplete_input_dict['project_data']['crew_price']
 
@@ -497,10 +500,9 @@ class XlsxReader:
             'Flag for user-defined home run trench length (0 = no; 1 = yes)']
         incomplete_input_dict['trench_len_to_substation_km'] = project_parameters[
             'Combined Homerun Trench Length to Substation (km)']
-
+        incomplete_input_dict['distance_to_interconnect_mi'] = project_parameters['Distance to interconnect (miles)']
         # Add inputs for transmission & Substation modules:
 
-        #incomplete_input_dict['distance_to_interconnect_km'] = project_parameters['Combined Homerun Trench Length to Substation (km)']
         incomplete_input_dict['interconnect_voltage_kV'] = project_parameters['Interconnect Voltage (kV)']
         new_switchyard = True
         if project_parameters['New Switchyard (y/n)'] == 'y':
@@ -638,6 +640,7 @@ class XlsxReader:
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
+        project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
         project_parameters['Road length adder (m)'] = road_length_adder_m
         project_parameters['Breakpoint between base and topping (percent)'] = breakpoint_between_base_and_topping

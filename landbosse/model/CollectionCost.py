@@ -298,9 +298,9 @@ class ArraySystem(CostModule):
             self.n_segments = dim[1] - 1  # #turbines = # cable segments = # nodes - 1
             self.output_dict['total_turb'] = self.n_segments
             self.C = np.zeros(self.n_segments + 1)  # init capacity vector: cable capacity needed at each turbine
-        self.calc_current_properties()
+        self.calc_cable_power()
 
-    def calc_current_properties(self):
+    def calc_cable_power(self):
         """
         Find collection system voltage [kV] and turbine capacity [MW]. Sort cables by current capacity.
 
@@ -316,7 +316,7 @@ class ArraySystem(CostModule):
         self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
-            rated_voltage_V = property['Rated Voltage (V)'] * 1000
+            rated_voltage_V = property['Rated Voltage (V)'] * 1000 #Rated Voltage is in kV
             if rated_voltage_V > self.collection_V:
                 self.collection_V = rated_voltage_V
 
@@ -721,7 +721,8 @@ class ArraySystem(CostModule):
                                              self.input_dict['row_spacing_rotor_diameters'],
                                              self.output_dict['num_strings'])
         else:
-            self.output_dict['distance_to_grid_connection_km'] = 1.609*self.input_dict['distance_to_interconnect_mi']
+
+            self.output_dict['distance_to_grid_connection_km'] = self.input_dict['distance_to_grid_connection_km']
 
         self.output_dict['cable_len_to_grid_connection_km'] = self.output_dict[
             'distance_to_grid_connection_km']  # assumes 3 conductors and fiber and neutral
