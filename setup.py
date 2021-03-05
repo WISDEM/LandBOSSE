@@ -20,15 +20,17 @@ setuptools.setup(
     description='LandBOSSE',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'],
+    # packages=['landbosse', 'landbosse.model','landbosse.excelio','landbosse.tests', 'landbosse.landbosse_api'], # uncomment this line when uploading a new pip installable version
     # packages=setuptools.find_packages(PACKAGE_PATH, "test"),
+    packages=setuptools.find_packages(PACKAGE_PATH, "test"),
     test_suite='nose.collector',
     tests_require=['nose'],
     install_requires=[
         'pandas==1.0.3',
         'numpy==1.17.2',
         'sympy==1.4',
-        'scipy==1.3.1',
+        # 'scipy==1.3.1', # use this line when uploading a new version of pip_installable
+        'scipy',
         'xlsxwriter==1.2.1',
         'xlrd==1.2.0',
         'pytest==5.3.5'

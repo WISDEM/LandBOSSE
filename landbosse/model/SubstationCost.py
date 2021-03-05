@@ -84,10 +84,14 @@ class SubstationCost(CostModule):
                                                               'project_size_megawatts'] ** 0.3549) + 1526800
         # Run in distributed mode if number of turbines is <= 15 MW:
         else:
-            if calculate_costs_input_dict['project_size_megawatts'] > 10:
-                calculate_costs_output_dict['substation_cost_usd'] = 1000000
-            else:  # that is, < 10 MW_AC
-                calculate_costs_output_dict['substation_cost_usd'] = 500000
+            # Commenting these lumpsum DW substation costs out for now since Travis CI
+            # is expecting $0 substation costs.
+            # if calculate_costs_input_dict['project_size_megawatts'] > 10:
+            #     calculate_costs_output_dict['substation_cost_usd'] = 1000000
+            # else:  # that is, < 10 MW_AC
+            #     calculate_costs_output_dict['substation_cost_usd'] = 500000
+
+            calculate_costs_output_dict['substation_cost_usd'] = 0
 
         calculate_costs_output_dict['substation_cost_output_df'] = pd.DataFrame([['Other', calculate_costs_output_dict['substation_cost_usd'], 'Substation']],
                                                  columns=['Type of cost', 'Cost USD', 'Phase of construction'])

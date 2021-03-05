@@ -25,6 +25,12 @@ class TestDevelopmentCost(TestCase):
         self.project_name = 'project 1'
         self.output_dict = dict()
 
+        self.input_dict['turbine_rating_MW'] = 1.5
+        self.input_dict['num_turbines'] = 15
+        self.input_dict['project_size_megawatts'] = self.input_dict[
+                     'num_turbines'] * self.input_dict['turbine_rating_MW']  # MW
+        self.input_dict['rotor_diameter_m'] = 75
+
 
     def test_DevelopmentCostModule(self):
         """
