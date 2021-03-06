@@ -69,6 +69,7 @@ class Cable:
             output documentation.
 
         """
+
         self.current_capacity = cable_specs['Current Capacity (A)']
         self.rated_voltage    = cable_specs['Rated Voltage (V)']
         self.ac_resistance    = cable_specs['AC Resistance (Ohms/km)']
@@ -193,7 +194,8 @@ class Array(Cable):
 
         upstream_turb = addl_inputs['upstream_turb']
         self.turb_sequence = addl_inputs['turb_sequence']
-        self.max_turb_per_cable = np.floor(self.cable_power / addl_inputs['turbine_power'])
+
+        self.max_turb_per_cable = np.floor(self.cable_power / addl_inputs['turbine_rating_MW'])
         self.num_turb_per_cable = self.max_turb_per_cable - upstream_turb
 
         if upstream_turb == 0:
@@ -286,19 +288,20 @@ class ArraySystem(CostModule):
         self.turbines_on_cable = []
         self._cable_length_km = dict()
         self.check_terminal = 0
-
         # auto mode: the user defines wind turbine spacing based on rotor diameter. The code creates a grid.
         # manual mode: the user defines turbine xy coordinates
+
         self.mode = input_dict['collection_mode']
         if self.mode == 'manual':
             self.collection_layout = self.input_dict['collection_layout'].values
             self.L = self.collection_layout[:, :2]  # location of nodes [m]
-            self.A = self.collection_layout[:, 2:]  # adjacency matrix for collection system. Zeroth element is substation
+            self.A = self.collection_layout[:,
+                     2:]  # adjacency matrix for collection system. Zeroth element is substation
             dim = self.A.shape
             self.n_segments = dim[1] - 1  # #turbines = # cable segments = # nodes - 1
             self.output_dict['total_turb'] = self.n_segments
             self.C = np.zeros(self.n_segments + 1)  # init capacity vector: cable capacity needed at each turbine
-            self.calc_current_properties()
+        self.calc_current_properties()
 
     def calc_current_properties(self):
         """
@@ -316,14 +319,14 @@ class ArraySystem(CostModule):
         self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
-            rated_voltage_V = property['Rated Voltage (V)'] #Rated Voltage is in kV
+            rated_voltage_V = property['Rated Voltage (V)']  # Rated Voltage is in kV
             if rated_voltage_V > self.collection_V:
                 self.collection_V = rated_voltage_V
 
-        # sort cables by current capacity
+        # sort cables by Power capacity
         self.input_dict['cable_specs_pd'].sort_values(by=['Current Capacity (A)', 'Rated Voltage (V)'], inplace=True)
         self.input_dict['cable_specs_pd'] = self.input_dict['cable_specs_pd'].reset_index(drop=True)
-        self.turbine_power = self.input_dict['turbine_rating_MW']#/ self.collection_V
+        self.turbine_power = self.input_dict['turbine_rating_MW']
 
     def calc_required_segment_capacity(self):
         """
@@ -554,8 +557,7 @@ class ArraySystem(CostModule):
             string_to_substation_length.append(distance_to_grid)
 
         # Sum up total length to substation
-        print(np.sum(string_to_substation_length))
-        len_to_substation = np.sum(string_to_substation_length) * self.input_dict['rotor_diameter_m']/1000  # [km]
+        len_to_substation = np.sum(string_to_substation_length)
 
         return len_to_substation
 
@@ -611,11 +613,10 @@ class ArraySystem(CostModule):
 
             # If total turbines in project are less than cumulative turbines
             # up till and including that cable.
-
             if total_turbines <= turbines_per_cable[count]:
-
                 terminal_string = cable.turb_sequence - 1  # Flag this cable as it is
                 # also the actual terminal cable
+
                 if (cable.turb_sequence - 1) == 0:  # That is, if cable # 1 can hold
                     # more turbines than specified by user, it is the terminal cable
 
@@ -638,7 +639,7 @@ class ArraySystem(CostModule):
                 return total_cable_len, terminal_string
             else:
                 total_cable_len = num_full_strings * cable.array_cable_len + num_partial_strings * (
-                            cable.array_cable_len * perc_partial_string)
+                    cable.array_cable_len * perc_partial_string)
 
         else:  # Switch for utility scale landbosse
             if cable.turb_sequence == len(cable_specs):
@@ -665,14 +666,14 @@ class ArraySystem(CostModule):
         self.addl_specs['rotor_diameter_m'] = self.input_dict['rotor_diameter_m']
         self.addl_specs['line_frequency_hz'] = self.input_dict['line_frequency_hz']
         self.addl_specs['mode'] = self.mode
-        self.addl_specs['turbine_power'] = self.turbine_power
+        #self.addl_specs['turbine_power'] = self.turbine_power
 
 
 
         system = {
             'upstream_turb': self.addl_specs['upstream_turb'],
             'turb_sequence': self.addl_specs['turb_sequence'],
-            'turbine_rating_MW': self.addl_specs['turbine_rating_MW'],
+            'turbine_rating_MW' : self.addl_specs['turbine_rating_MW'],
             'turbine_spacing_rotor_diameters': self.addl_specs['turbine_spacing_rotor_diameters'],
             'rotor_diameter_m': self.addl_specs['rotor_diameter_m']
         }
@@ -684,7 +685,7 @@ class ArraySystem(CostModule):
         self.cables = {}
         self.input_dict['cable_specs'] = self.input_dict['cable_specs_pd'].T.to_dict()
         n=0 #to keep tab of number of cables input by user.
-        while n < len(self.input_dict['cable_specs']):
+        while n<len(self.input_dict['cable_specs']):
             specs = self.input_dict['cable_specs'][n]
             # Create instance of each cable and assign to ArraySystem.cables
             cable = Array(specs, self.addl_specs)
@@ -715,8 +716,8 @@ class ArraySystem(CostModule):
             # This only gets used if number of strings is <= 1 :
             distributed_wind_distance_to_grid = (self.input_dict[
                 'turbine_spacing_rotor_diameters'] * self.input_dict['rotor_diameter_m']) / 1000
-            self.output_dict['distance_to_grid_connection_km'] = \
-                self.calc_cable_len_to_substation(self, distributed_wind_distance_to_grid,
+            self.output_dict['distance_to_grid_connection_km'] = self.\
+                calc_cable_len_to_substation(self, distributed_wind_distance_to_grid,
                                              self.input_dict['turbine_spacing_rotor_diameters'],
                                              self.input_dict['row_spacing_rotor_diameters'],
                                              self.output_dict['num_strings'])
@@ -766,55 +767,56 @@ class ArraySystem(CostModule):
 
     def create_manual_ArraySystem(self):
 
-         # data used in parent classes:
-         self.addl_specs = dict()
-         self.addl_specs['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
-         self.addl_specs['depth'] = self.input_dict['depth']
-         self.addl_specs['line_frequency_hz'] = self.input_dict['line_frequency_hz']
-         self.addl_specs['mode'] = self.mode
+        # data used in parent classes:
+        self.addl_specs = dict()
+        self.addl_specs['turbine_rating_MW'] = self.input_dict['turbine_rating_MW']
+        self.addl_specs['depth'] = self.input_dict['depth']
+        self.addl_specs['line_frequency_hz'] = self.input_dict['line_frequency_hz']
+        self.addl_specs['mode'] = self.mode
 
-         # calculate cable segment requirements
-         self.calc_required_segment_capacity()
+        # calculate cable segment requirements
+        self.calc_required_segment_capacity()
 
-         # Loops through all user defined cable types, composing them
-         # in ArraySystem
+        # Loops through all user defined cable types, composing them
+        # in ArraySystem
 
-         self.cables = {}
-         self.input_dict['cable_specs'] = self.input_dict['cable_specs_pd'].T.to_dict()
-         n = 0  # to keep tab of number of cables input by user.
-         while n < len(self.input_dict['cable_specs']):
-             specs = self.input_dict['cable_specs'][n]
-             # Create instance of each cable and assign to ArraySystem.cables
-             cable = Cable(specs, self.addl_specs)
-             n += 1
+        self.cables = {}
+        self.input_dict['cable_specs'] = self.input_dict['cable_specs_pd'].T.to_dict()
+        n = 0  # to keep tab of number of cables input by user.
+        while n < len(self.input_dict['cable_specs']):
+            specs = self.input_dict['cable_specs'][n]
+            # Create instance of each cable and assign to ArraySystem.cables
+            cable = Cable(specs, self.addl_specs)
+            n += 1
 
-             # self.cables[name] stores value which is a new instantiation of object of type Cable.
-             self.cables[specs['Array Cable']] = cable
-             self.output_dict['cables'] = self.cables
+            # self.cables[name] stores value which is a new instantiation of object of type Cable.
+            self.cables[specs['Array Cable']] = cable
+            self.output_dict['cables'] = self.cables
 
-         # Calculate total length and cost of each cable type
-         # Calculate total cable cost and power dissipated in the collection system:
-         dissipated_power = 0    #W
-         for segment in self.array_dict:
-             for idx, (name, cable) in enumerate(self.cables.items()):
-                 if cable.current_capacity >= self.array_dict[segment]['Power Capacity']:
-                     cable.total_length += self.array_dict[segment]['Length']
-                     self.output_dict['total_cable_len_km'] += self.array_dict[segment]['Length']
-                     # cable.total_mass = cable.total_length * cable.mass
-                     cable.total_cost = (cable.total_length / self._km_to_LF) * cable.cost
-                     self._total_cable_cost += (self.array_dict[segment]['Length'] / self._km_to_LF) * cable.cost  # Keep running tally of total cable cost used in wind farm.
-                     dissipated_power += 3 * (self.array_dict[segment]['Power Capacity']*1e6/self.collection_V*1000)**2 * abs(cable.ac_resistance)*self.array_dict[segment]['Length']/1000    #TODO P=3*I^2*R. IF 3 phase. Divide by 1000 to go from ohm/km->ohm/m
-                     break  # only assign one cable to each segment
+        # Calculate total length and cost of each cable type
+        # Calculate total cable cost and power dissipated in the collection system:
+        dissipated_power = 0  # W
+        for segment in self.array_dict:
+            for idx, (name, cable) in enumerate(self.cables.items()):
+                if cable.current_capacity >= self.array_dict[segment]['Power Capacity']:
+                    cable.total_length += self.array_dict[segment]['Length']
+                    self.output_dict['total_cable_len_km'] += self.array_dict[segment]['Length']
+                    # cable.total_mass = cable.total_length * cable.mass
+                    cable.total_cost = (cable.total_length / self._km_to_LF) * cable.cost
+                    self._total_cable_cost += (self.array_dict[segment][
+                                                   'Length'] / self._km_to_LF) * cable.cost  # Keep running tally of total cable cost used in wind farm.
+                    dissipated_power += 3 * (
+                                self.array_dict[segment]['Power Capacity'] * 1e6 / self.collection_V * 1000) ** 2 * abs(
+                        cable.ac_resistance) * self.array_dict[segment][
+                                            'Length'] / 1000  # TODO P=3*I^2*R. IF 3 phase. Divide by 1000 to go from ohm/km->ohm/m
+                    break  # only assign one cable to each segment
 
-         # add substation to transmission interconnect cable
+        # add substation to transmission interconnect cable
 
-         self.output_dict['dissipated_power'] = dissipated_power
-         # print('TOTAL CABLE COST = $' + str(self._total_cable_cost))  # TODO remove after figuring out layout optimizer
-         # print('Dissipated power [W] = ' + str(dissipated_power)) #TODO remove after layout optimizer figured out
-         self.output_dict['total_cable_cost'] = self._total_cable_cost
-         # self.output_dict['distance_to_grid_connection_km'] = self.input_dict['distance_to_grid_connection_mi']*5280*self._km_to_LF
-         #
-         # self.output_dict['cable_len_to_grid_connection_km'] = self.output_dict['distance_to_grid_connection_km']
+        self.output_dict['dissipated_power'] = dissipated_power
+        # print('TOTAL CABLE COST = $' + str(self._total_cable_cost))  # TODO remove after figuring out layout optimizer
+        # print('Dissipated power [W] = ' + str(dissipated_power)) #TODO remove after layout optimizer figured out
+        self.output_dict['total_cable_cost'] = self._total_cable_cost
 
     def calculate_trench_properties(self, trench_properties_input, trench_properties_output):
         """
@@ -1076,37 +1078,36 @@ class ArraySystem(CostModule):
         })
 
         if self.mode == 'auto':
-            result.append({
-                'unit': '',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Number of Turbines Per String in Full String',
-                'value': float(self.output_dict['total_turb_per_string'])
-            })
-            result.append({
-                'unit': '',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Number of Full Strings',
-                'value': float(self.output_dict['num_full_strings'])
-            })
-            result.append({
-                'unit': '',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Number of Turbines in Partial String',
-                'value': float(self.output_dict['num_leftover_turb'])
-            })
-            result.append({
-                'unit': '',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Number of Partial Strings',
-                'value': float(self.output_dict['num_partial_strings'])
-            })
-            result.append({
-                'unit': '',
-                'type': 'variable',
-                'variable_df_key_col_name': 'Total number of strings full + partial',
-                'value': float(self.output_dict['num_full_strings'] + self.output_dict['num_partial_strings'])
-            })
-
+             result.append({
+                 'unit': '',
+                 'type': 'variable',
+                 'variable_df_key_col_name': 'Number of Turbines Per String in Full String',
+                 'value': float(self.output_dict['total_turb_per_string'])
+             })
+             result.append({
+                 'unit': '',
+                 'type': 'variable',
+                 'variable_df_key_col_name': 'Number of Full Strings',
+                 'value': float(self.output_dict['num_full_strings'])
+             })
+             result.append({
+                 'unit': '',
+                 'type': 'variable',
+                 'variable_df_key_col_name': 'Number of Turbines in Partial String',
+                 'value': float(self.output_dict['num_leftover_turb'])
+             })
+             result.append({
+                 'unit': '',
+                 'type': 'variable',
+                 'variable_df_key_col_name': 'Number of Partial Strings',
+                 'value': float(self.output_dict['num_partial_strings'])
+             })
+             result.append({
+                 'unit': '',
+                 'type': 'variable',
+                 'variable_df_key_col_name': 'Total number of strings full + partial',
+                 'value': float(self.output_dict['num_full_strings'] + self.output_dict['num_partial_strings'])
+             })
 
         cables = ''
         n = 1  # to keep tab of number of cables input by user.
@@ -1142,30 +1143,30 @@ class ArraySystem(CostModule):
             n += 1
 
         if self.mode == 'auto':
-             result.append({
-                 'unit': '',
-                 'type': 'list',
-                 'variable_df_key_col_name': 'Percent length of cable in partial string [' + cables + ']',
-                 'value': str(self.output_dict['perc_partial_string'])
-             })
-             result.append({
-                  'unit': '',
-                  'type': 'list',
-                  'variable_df_key_col_name': 'Number of turbines per cable type in full strings [' + cables + ']',
-                  'value': str(self.output_dict['num_turb_per_cable'])
-             })
-             result.append({
-                 'unit': '',
-                 'type': 'variable',
-                 'variable_df_key_col_name': 'Trench Length to Substation (km)',
-                 'value': float(self.output_dict['distance_to_grid_connection_km'])
-             })
-             result.append({
-                 'unit': '',
-                 'type': 'variable',
-                 'variable_df_key_col_name': 'Cable Length to Substation (km)',
-                 'value': float(self.output_dict['cable_len_to_grid_connection_km'])
-             })
+            result.append({
+                'unit': '',
+                'type': 'list',
+                'variable_df_key_col_name': 'Percent length of cable in partial string [' + cables + ']',
+                'value': str(self.output_dict['perc_partial_string'])
+            })
+            result.append({
+                'unit': '',
+                'type': 'list',
+                'variable_df_key_col_name': 'Number of turbines per cable type in full strings [' + cables + ']',
+                'value': str(self.output_dict['num_turb_per_cable'])
+            })
+            result.append({
+                'unit': '',
+                'type': 'variable',
+                'variable_df_key_col_name': 'Trench Length to Substation (km)',
+                'value': float(self.output_dict['distance_to_grid_connection_km'])
+            })
+            result.append({
+                'unit': '',
+                'type': 'variable',
+                'variable_df_key_col_name': 'Cable Length to Substation (km)',
+                'value': float(self.output_dict['cable_len_to_grid_connection_km'])
+            })
 
         if self.input_dict['turbine_rating_MW'] > 0.1:
             for row in self.output_dict['management_crew'].itertuples():
@@ -1202,6 +1203,7 @@ class ArraySystem(CostModule):
         Runs the CollectionCost module and populates the IO dictionaries with calculated values.
 
         """
+
         operational_hrs_per_day = self.input_dict['hour_day'][self.input_dict['time_construct']]
         self.input_dict['operational_hrs_per_day'] = operational_hrs_per_day
 

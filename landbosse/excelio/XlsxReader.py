@@ -459,7 +459,6 @@ class XlsxReader:
             project_parameters['Breakpoint between base and topping (percent)']
         incomplete_input_dict['fuel_usd_per_gal'] = project_parameters['Fuel cost USD per gal']
         incomplete_input_dict['rate_of_deliveries'] = project_parameters['Rate of deliveries (turbines per week)']
-        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameters['Turbine spacing (times rotor diameter)']
         incomplete_input_dict['depth'] = project_parameters['Foundation depth m']
         incomplete_input_dict['rated_thrust_N'] = project_parameters['Rated Thrust (N)']
         incomplete_input_dict['bearing_pressure_n_m2'] = project_parameters['Bearing Pressure (n/m2)']
