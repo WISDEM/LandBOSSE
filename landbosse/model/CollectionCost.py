@@ -290,7 +290,10 @@ class ArraySystem(CostModule):
         self.check_terminal = 0
         # auto mode: the user defines wind turbine spacing based on rotor diameter. The code creates a grid.
         # manual mode: the user defines turbine xy coordinates
-        self.mode = input_dict['collection_mode']
+        if 'collection_mode' not in input_dict:
+            self.mode = 'auto'
+        else:
+            self.mode = input_dict['collection_mode']
         if self.mode == 'manual':
             self.collection_layout = self.input_dict['collection_layout'].values
             self.L = self.collection_layout[:, :2]  # location of nodes [m]
