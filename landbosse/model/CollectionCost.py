@@ -116,7 +116,7 @@ class Cable:
         """
 
         # TODO: Verify eqn is correct
-        self.cable_power = (np.sqrt(3) * self.rated_voltage*1000 * self.current_capacity * self.power_factor / 1000)
+        self.cable_power = (np.sqrt(3) * self.rated_voltage * self.current_capacity * self.power_factor / 1000)
 
 
 class Array(Cable):
@@ -298,7 +298,7 @@ class ArraySystem(CostModule):
             self.n_segments = dim[1] - 1  # #turbines = # cable segments = # nodes - 1
             self.output_dict['total_turb'] = self.n_segments
             self.C = np.zeros(self.n_segments + 1)  # init capacity vector: cable capacity needed at each turbine
-        self.calc_current_properties()
+            self.calc_current_properties()
 
     def calc_current_properties(self):
         """
@@ -316,7 +316,7 @@ class ArraySystem(CostModule):
         self.collection_V = 9999
 
         for cable, property in self.input_dict['cable_specs_pd'].head().iterrows():
-            rated_voltage_V = property['Rated Voltage (V)'] * 1000 #Rated Voltage is in kV
+            rated_voltage_V = property['Rated Voltage (V)'] #Rated Voltage is in kV
             if rated_voltage_V > self.collection_V:
                 self.collection_V = rated_voltage_V
 
