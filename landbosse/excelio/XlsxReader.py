@@ -416,7 +416,11 @@ class XlsxReader:
 
         # Add the erection project data to the incomplete_input_dict
         incomplete_input_dict['project_data'] = erection_project_data_dict
-
+        
+        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
+        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameter['Turbine spacing (times rotor diameter)']
+        
+        
         # Get the first set of data
         incomplete_input_dict['rsmeans'] = project_data_dataframes['rsmeans']
         incomplete_input_dict['site_facility_building_area_df'] = project_data_dataframes['site_facility_building_area']
