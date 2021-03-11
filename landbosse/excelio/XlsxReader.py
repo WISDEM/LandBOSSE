@@ -391,10 +391,6 @@ class XlsxReader:
                 'collection_layout'
             ]
         else:
-            incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters[
-                'Row spacing (times rotor diameter)']
-            incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameters[
-                'Turbine spacing (times rotor diameter)']
             erection_input_worksheets = [
                 'crane_specs',
                 'equip',
