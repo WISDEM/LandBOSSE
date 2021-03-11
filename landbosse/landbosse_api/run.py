@@ -1,13 +1,13 @@
 import os
 import pandas as pd
 import numpy as np
-from ..excelio import XlsxReader
-from ..excelio import XlsxReader
-from ..excelio.WeatherWindowCSVReader import read_weather_window
-from ..excelio.XlsxDataframeCache import XlsxDataframeCache
-from ..model import Manager
+from landbosse.excelio import XlsxReader
+from landbosse.excelio import XlsxReader
+from landbosse.excelio.WeatherWindowCSVReader import read_weather_window
+from landbosse.excelio.XlsxDataframeCache import XlsxDataframeCache
+from landbosse.model import Manager
 from datetime import datetime, timedelta
-from ..landbosse_api.turbine_scaling import nacelle_mass, \
+from landbosse.landbosse_api.turbine_scaling import nacelle_mass, \
                                             edit_nacelle_info, \
                                             hub_mass, \
                                             edit_hub_info, \
@@ -230,7 +230,6 @@ def run_landbosse(input_dict):
 
         elif key == 'substation_rating_MW':
             master_input_dict['substation_rating_MW'] = input_dict['substation_rating_MW']
-
         else:
             exit(1)
 
@@ -238,7 +237,6 @@ def run_landbosse(input_dict):
     labor_cost_multiplier = master_input_dict['labor_cost_multiplier']
     xlsx_reader.apply_labor_multiplier_to_project_data_dict(project_data_sheets,
                                                             labor_cost_multiplier)
-
     # Ensuring number of turbines is > 10:
     try:
         if 'num_turbines' in input_dict:
@@ -667,10 +665,10 @@ class NegativeInputError(Error):
 # Default inputs on the SAM UI. Commented out since SAM will pass these values
 # down to LandBOSSE.
 # TODO: Un-comment these out if running this script directly.
-# input_dict = dict()
+input_dict = dict()
 # input_dict['interconnect_voltage_kV'] = 137
 # input_dict['distance_to_interconnect_mi'] = 0.31
-# input_dict['num_turbines'] = 1
+# input_dict['num_turbines'] = 14
 # input_dict['project_id'] = 'ge15_public_dist'
 # input_dict['turbine_spacing_rotor_diameters'] = 4
 # input_dict['row_spacing_rotor_diameters'] = 10
@@ -682,8 +680,6 @@ class NegativeInputError(Error):
 # input_dict['rated_thrust_N'] = 589000
 # input_dict['labor_cost_multiplier'] = 1
 # input_dict['gust_velocity_m_per_s'] = 59.50
-# input_dict['path_to_project_list'] = '/Users/<username>/Desktop/...'
-# input_dict['name_of_project_list'] = 'project_list_alternative'
 
 
 # (Optional) Provide absolute file path of wind weather file (.txt, .srw, or
@@ -703,6 +699,13 @@ class NegativeInputError(Error):
 #                                                               180*np.ones((8760, 1)),
 #                                                               9*np.ones((8760, 1)))))
 #
+# input_dict['path_to_project_list'] = '/Users/ccampos/PycharmProjects/LandBOSSE/input/project_data'
+# input_dict['name_of_project_list'] = 'project_list'
 # BOS_results = run_landbosse(input_dict)
 # print(BOS_results)
+# print(input_dict)
+
+
 # <><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><
+
+
