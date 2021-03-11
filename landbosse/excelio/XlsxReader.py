@@ -377,7 +377,10 @@ class XlsxReader:
             project_parameters['Collection mode'] = 'auto'
         else:
             incomplete_input_dict['collection_mode'] = project_parameters['Collection mode']
-
+            
+        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
+        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameter['Turbine spacing (times rotor diameter)']
+        
         if project_parameters['Collection mode'] == 'manual':
             incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
             erection_input_worksheets = [
@@ -412,9 +415,6 @@ class XlsxReader:
 
         # Add the erection project data to the incomplete_input_dict
         incomplete_input_dict['project_data'] = erection_project_data_dict
-        
-        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
-        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameter['Turbine spacing (times rotor diameter)']
         
         
         # Get the first set of data
