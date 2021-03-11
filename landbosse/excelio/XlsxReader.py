@@ -377,9 +377,6 @@ class XlsxReader:
             project_parameters['Collection mode'] = 'auto'
         else:
             incomplete_input_dict['collection_mode'] = project_parameters['Collection mode']
-            
-        incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
-        incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameter['Turbine spacing (times rotor diameter)']
         
         if project_parameters['Collection mode'] == 'manual':
             incomplete_input_dict['collection_layout'] = project_data_dataframes['collection_layout']
@@ -394,6 +391,8 @@ class XlsxReader:
                 'collection_layout'
             ]
         else:
+            incomplete_input_dict['row_spacing_rotor_diameters'] = project_parameters['Row spacing (times rotor diameter)']
+            incomplete_input_dict['turbine_spacing_rotor_diameters'] = project_parameter['Turbine spacing (times rotor diameter)']
             erection_input_worksheets = [
                 'crane_specs',
                 'equip',
