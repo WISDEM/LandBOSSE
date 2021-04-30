@@ -486,8 +486,8 @@ class ArraySystem(CostModule):
 
         Returns
         -------
-        total_cable_len : int or float
-            Total length of individual cable type
+        float, int
+            total_cable_len, terminal string flag
         """
 
         # If terminal cable has already been accounted for, skip any
@@ -646,6 +646,9 @@ class ArraySystem(CostModule):
                                                                                 self.output_dict['perc_partial_string'][
                                                                                     idx],
                                                                                 )
+            # Multiply the total cable length by 3 for carrying 3-phase electricity
+            total_cable_len *= 3
+
             count += 1
             # self._total_turbine_counter = turbine_tally
             self._cable_length_km[name] = total_cable_len
