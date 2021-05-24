@@ -647,7 +647,7 @@ class ArraySystem(CostModule):
                                                                                     idx],
                                                                                 )
             # Multiply the total cable length by 3 for carrying 3-phase electricity
-            total_cable_len *= 3
+            # total_cable_len *= 3
 
             count += 1
             # self._total_turbine_counter = turbine_tally
