@@ -503,6 +503,7 @@ class FoundationCost(CostModule):
         boolean_dictionary = {True: foundation_construction_time * 30, False: np.NAN}
         operation_data['time_construct_bool'] = operation_data['time_construct_bool'].map(boolean_dictionary)
         operation_data['Time construct days'] = operation_data[['time_construct_bool', 'Number of days']].min(axis=1)
+        duration_construction = operation_data['Time construct days'].max(skipna=True)
         num_days = operation_data['Time construct days'].max()
 
         construction_time_output_data['operation_data_id_days_crews_workers'] = operation_data_id_days_crews_workers
@@ -517,6 +518,9 @@ class FoundationCost(CostModule):
             management_crew = management_crew.assign(hourly_costs_total=management_crew['Hourly rate USD per hour'] * self.input_dict['hour_day'][self.input_dict['time_construct']] * num_days)
             management_crew = management_crew.assign(total_crew_cost_before_wind_delay=management_crew['per_diem_total'] + management_crew['hourly_costs_total'])
             self.output_dict['management_crew'] = management_crew
+
+            # The management crew is staying for the entire construction duration.
+
             self.output_dict['managament_crew_cost_before_wind_delay'] = management_crew['total_crew_cost_before_wind_delay'].sum()
         else:
             self.output_dict['managament_crew_cost_before_wind_delay'] = 0
