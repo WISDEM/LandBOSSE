@@ -6,6 +6,6 @@ All the project files should have a name the matches the "Project ID" in `projec
 
 ## Versions of `project_list.xlsx`
 
-There are two version of `project_list.xlsx` in this folder. The first version is `project_list.xlsx`, which has all the inputs of LandBOSSE computed manually and is used for model validation. The second is `project_list_computed_inputs.xlsx`, which has formulas for the home run trench length and project construction duration, each as a function of number of turbines.
+There are two version of `project_list.xlsx` in this folder. The first version is `project_list.xlsx`, which has all the inputs of LandBOSSE computed manually and is used for model validation. The second is `project_list_simplified.xlsx`, which has formulas for the home run trench length and project construction duration, each as a function of number of turbines.
 
 In your custom inputs folder, make a copy of whichever spreadsheet best suits your needs. The second version may be easier to use for first-time users of LandBOSSE.
