@@ -10,6 +10,7 @@ from .CollectionCost import Cable, Array, ArraySystem
 from .ErectionCost import ErectionCost
 from .DevelopmentCost import DevelopmentCost
 
+import pandas as pd
 
 class Manager:
     """
@@ -91,14 +92,14 @@ class Manager:
                 road_cost.loc[index, 'Cost USD'] = other['Cost USD'] - amount_shorter_than_input_construction_time * 55500
                 self.output_dict['total_road_cost'] = road_cost
 
-            total_costs = self.output_dict['total_collection_cost']
-            total_costs = total_costs.append(self.output_dict['total_road_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_transdist_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_substation_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_foundation_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_erection_cost'], sort=False)
-            total_costs = total_costs.append(self.output_dict['total_development_cost'], sort=False)
-
+            total_costs = pd.concat( (self.output_dict['total_collection_cost'],
+                                      self.output_dict['total_road_cost'],
+                                      self.output_dict['total_transdist_cost'],
+                                      self.output_dict['total_substation_cost'],
+                                      self.output_dict['total_foundation_cost'], 
+                                      self.output_dict['total_erection_cost'], 
+                                      self.output_dict['total_development_cost'], 
+                                      ) )
             self.input_dict['project_value_usd'] = total_costs.sum(numeric_only=True)[0]
             self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost'].sum(numeric_only=True)[0]
 
