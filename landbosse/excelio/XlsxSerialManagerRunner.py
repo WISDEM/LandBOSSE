@@ -127,4 +127,4 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         final_result['extended_project_list'] = pd.DataFrame(extended_project_list_after_parameter_modifications)
 
         # Return the runs for all the projects.
-        return final_result
+        return output_dict
