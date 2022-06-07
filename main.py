@@ -50,14 +50,10 @@ if __name__ == '__main__':
     # to determine if the scaling study is enabled.
     # Switch to either validation or non validation producing code.
     input_path, output_path, validation_enabled, enable_scaling_study = file_ops.get_input_output_paths_from_argv_or_env()
-
+    print(enable_scaling_study)
     # final_result aggregates all the results from all the projects.
     final_result = manager_runner.run_from_project_list_xlsx(projects_xlsx, enable_scaling_study)
     # print(final_result)
-    with open('/Users/pbhaskar/Desktop/dict.csv', 'w') as csv_file:  
-        writer = csv.writer(csv_file)
-        for key, value in final_result.items():
-            writer.writerow([key, value])
 
     # returns an exit code of either 0 (successful validation), or 1 (validation failed).
     #

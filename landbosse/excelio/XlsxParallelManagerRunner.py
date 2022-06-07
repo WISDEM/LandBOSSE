@@ -114,7 +114,7 @@ class XlsxParallelManagerRunner(XlsxManagerRunner):
 
         # Get the output dictionary ready
         runs_dict = {project_id_with_serial: result for project_id_with_serial, result in executor_result}
-
+        
         # Assemble the dictionary with content for the details, details with inputs,
         #  cost_by_module_type_operation and cost_by_module_type_operation_with_input tabs
         final_result = dict()
@@ -188,5 +188,5 @@ def run_single_project(task_dict):
     mc.execute_landbosse(project_name=project_id_with_serial)
 
     print(f'End {project_id_with_serial}')
-
+    print(output_dict)
     return project_id_with_serial, output_dict
