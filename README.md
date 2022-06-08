@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/WISDEM/LandBOSSE.svg?branch=issue_136_add_tests)](https://travis-ci.com/WISDEM/LandBOSSE)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/WISDEM/LandBOSSE/jupyter_nbs)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/WISDEM/LandBOSSE/jupyter_nbs/landbosse_notebook.ipynb)
 
 # LandBOSSE
 
