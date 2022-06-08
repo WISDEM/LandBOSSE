@@ -867,6 +867,12 @@ class ArraySystem(CostModule):
                                          columns=['Type of cost', 'Cost USD', 'Phase of construction'])
         collection_cost = pd.concat((collection_cost, mobilization_cost))
 
+        calculate_costs_output_dict['jp_collectioncost_total'] = \
+            calculate_costs_output_dict['mob_cost'] + \
+                calculate_costs_output_dict['Equipment Cost USD with weather delays'] + \
+                    calculate_costs_output_dict['Labor Cost USD with weather delays'] + \
+                        self._total_cable_cost
+
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
 
         return collection_cost
