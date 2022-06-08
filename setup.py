@@ -26,6 +26,7 @@ setuptools.setup(
         'scipy',
         'xlsxwriter',
         'openpyxl',
+        'matplotlib'
         'pytest'
     ],
     command_options={
