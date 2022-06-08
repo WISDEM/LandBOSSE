@@ -477,7 +477,6 @@ class XlsxReader:
         else:
             new_switchyard = False
         incomplete_input_dict['new_switchyard'] = new_switchyard
-        print('new switchard: ', new_switchyard)
 
         incomplete_input_dict['critical_speed_non_erection_wind_delays_m_per_s'] = project_parameters['Non-Erection Wind Delay Critical Speed (m/s)']
         incomplete_input_dict['critical_height_non_erection_wind_delays_m'] = project_parameters['Non-Erection Wind Delay Critical Height (m)']
