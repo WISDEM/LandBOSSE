@@ -52,7 +52,7 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
         """
         # Load the project list
         extended_project_list_before_parameter_modifications = self.read_project_and_parametric_list_from_xlsx()
-        print('>>> Project and parametric lists loaded')
+        print('')
 
         # For file operations
         file_ops = XlsxFileOperations()
@@ -88,9 +88,10 @@ class XlsxSerialManagerRunner(XlsxManagerRunner):
             project_data_xlsx = os.path.join(file_ops.landbosse_input_dir(), 'project_data', f'{project_data_basename}.xlsx')
 
             # Log each project
-            print(f'<><><><><><><><><><><><><><><><><><> {project_id_with_serial} <><><><><><><><><><><><><><><><><><>')
+            # print(f'Project ID: {project_id_with_serial}')
             print('>>> project_id: {}'.format(project_id_with_serial))
             print('>>> Project data: {}'.format(project_data_xlsx))
+            print('')
 
             # Read the project data sheets.
             project_data_sheets = XlsxDataframeCache.read_all_sheets_from_xlsx(project_data_basename)
