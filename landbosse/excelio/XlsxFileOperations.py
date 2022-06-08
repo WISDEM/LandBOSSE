@@ -157,7 +157,7 @@ class XlsxFileOperations:
         if os.path.exists(output_path) and not os.path.isdir(output_path):
             raise FileExistsError(f'Cannot overwrite {output_path} with LandBOSSE data.')
         elif not os.path.exists(output_path):
-            os.mkdir(output_path)
+            # os.mkdir(output_path)
             return output_path
         else:
             return output_path
