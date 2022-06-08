@@ -694,6 +694,8 @@ class FoundationCost(CostModule):
 
         self.output_dict['labor_equip_data'] = labor_equip_data
 
+        self.output_dict['jp_foundationcost_total'] = mobilization_cost + equipment_cost_usd_with_weather_delays + labor_cost_usd_with_management_plus_weather_delays + material_costs_sum
+
         return total_foundation_cost
 
     def outputs_for_detailed_tab(self, input_dict, output_dict):

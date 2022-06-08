@@ -87,7 +87,7 @@ class SubstationCost(CostModule):
                                                  columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         calculate_costs_output_dict['total_substation_cost'] = calculate_costs_output_dict['substation_cost_output_df']
-
+        self.output_dict['jp_substationcost_total'] = calculate_costs_output_dict['substation_cost_usd']
         return calculate_costs_output_dict['substation_cost_output_df']
 
     def outputs_for_detailed_tab(self, input_dict, output_dict):

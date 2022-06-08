@@ -681,6 +681,12 @@ class SitePreparationCost(CostModule):
         total_road_cost = road_cost
         calculate_cost_output_dict['total_road_cost'] = total_road_cost
         calculate_cost_output_dict['siteprep_construction_months'] = siteprep_construction_months
+        self.output_dict['jp_sitepreperationcost_total'] = \
+            mobilization_costs_new_plus_old_roads + \
+                material_cost_of_old_and_new_roads + \
+                    float(equip_for_new_and_old_roads_cost_usd) + \
+                        float(labor_for_new_and_old_roads_cost_usd) + \
+                            cost_adder
         return total_road_cost
 
 

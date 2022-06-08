@@ -416,6 +416,7 @@ class XlsxReader:
         if 'Development labor cost USD' in project_parameters:
             incomplete_input_dict['development_labor_cost_usd'] = project_parameters['Development labor cost USD']
 
+
         # These columns come from the columns in the project definition .xlsx
         incomplete_input_dict['project_id'] = project_parameters['Project ID']
         incomplete_input_dict['crane_breakdown_fraction'] = project_parameters['Crane breakdown fraction']
@@ -476,6 +477,7 @@ class XlsxReader:
         else:
             new_switchyard = False
         incomplete_input_dict['new_switchyard'] = new_switchyard
+        print('new switchard: ', new_switchyard)
 
         incomplete_input_dict['critical_speed_non_erection_wind_delays_m_per_s'] = project_parameters['Non-Erection Wind Delay Critical Speed (m/s)']
         incomplete_input_dict['critical_height_non_erection_wind_delays_m'] = project_parameters['Non-Erection Wind Delay Critical Height (m)']
@@ -584,7 +586,7 @@ class XlsxReader:
 
         distance_to_interconnect_mi = 0.0 if project_size_MW <= 20 else (0.009375 * project_size_MW + 0.625)
         interconnect_voltage_kV = 0.4398 * project_size_MW + 60.204
-        new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
+        # new_switchyard_y_n = 'n' if project_size_MW <= 40 else 'y'
         road_length_adder_m = 1e3 if project_size_MW <= 20 else (13.542 * project_size_MW + 1458.3)
 
         # if greater than 20 MW, then breakpoint between base and topping at 35 meters
@@ -606,7 +608,7 @@ class XlsxReader:
         project_parameters['Project size MW'] = project_size_MW
         project_parameters['Distance to interconnect (miles)'] = distance_to_interconnect_mi
         project_parameters['Interconnect Voltage (kV)'] = interconnect_voltage_kV
-        project_parameters['New Switchyard (y/n)'] = new_switchyard_y_n
+        # project_parameters['New Switchyard (y/n)'] = new_switchyard
         project_parameters['Road length adder (m)'] = road_length_adder_m
         project_parameters['Breakpoint between base and topping (percent)'] = breakpoint_between_base_and_topping
         project_parameters['Number of access roads'] = number_of_access_roads

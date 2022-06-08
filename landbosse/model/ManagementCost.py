@@ -413,6 +413,8 @@ class ManagementCost:
         total += self.output_dict['markup_contingency_usd']
         total += self.output_dict['engineering_usd']
         total += self.output_dict['site_facility_usd']
+        print(total)
+        self.output_dict['jp_managementcost_total'] = total
         return total
 
     def outputs_for_detailed_tab(self):
@@ -570,6 +572,7 @@ class ManagementCost:
                 self.output_dict['total_management_cost'] = self.total_management_cost()
             self.output_dict['management_cost_csv'] = self.outputs_for_detailed_tab()
             self.output_dict['mangement_module_type_operation'] = self.outputs_for_module_type_operation()
+            print(self.output_dict['total_management_cost'])
             return 0, 0    # module ran successfully
         except Exception as error:
             traceback.print_exc()

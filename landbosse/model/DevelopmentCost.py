@@ -46,6 +46,7 @@ class DevelopmentCost(CostModule):
             ])
         else:
             total_development_cost = self.input_dict['development_df']
+            self.output_dict['jp_developmentcost_total'] = total_development_cost.iloc[1]['Cost USD']
 
         self.output_dict['total_development_cost'] = total_development_cost
 

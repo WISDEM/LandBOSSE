@@ -1231,6 +1231,12 @@ class ErectionCost(CostModule):
         self.output_dict['crane_cost_details'] = crane_cost_details
         self.output_dict['total_cost_summed_erection'] = total_cost_summed_erection
 
+        self.output_dict['jp_erectioncost_total'] = \
+            selected_detailed_data['Equipment rental cost USD'].sum() + \
+            selected_detailed_data['Fuel cost USD'].sum() + \
+            self.output_dict['labor_cost_total'] + \
+            selected_detailed_data['Mobilization cost USD'].sum()
+
         # Put some diagnostic data on selected_detailed_data. This is the number of crews needed
         # To complete the construction withing the construction duration.
 

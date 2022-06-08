@@ -93,11 +93,11 @@ class GridConnectionCost(CostModule):
                                                                  calculate_costs_output_dict[
                                                                      'tower_to_point_of_interconnection_usd_per_kw']
 
-
         calculate_costs_output_dict['trans_dist_usd_df'] = pd.DataFrame([['Other', calculate_costs_output_dict['trans_dist_usd'], 'Transmission and Distribution']],
                      columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
         calculate_costs_output_dict['total_transdist_cost'] = calculate_costs_output_dict['trans_dist_usd_df']
+        self.output_dict['jp_gridconnectioncost_total'] = calculate_costs_output_dict['trans_dist_usd']
 
         return calculate_costs_output_dict['trans_dist_usd_df']
 
