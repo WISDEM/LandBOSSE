@@ -1,10 +1,9 @@
-import pandas as pd
 import numpy as np
 import math
 from .WeatherDelay import WeatherDelay as WD
 import traceback
 from .CostModule import CostModule
-
+import pandas as pd
 
 class SitePreparationCost(CostModule):
     """
@@ -420,7 +419,7 @@ class SitePreparationCost(CostModule):
 
         # if greater than 4 hour delay, then shut down for full day (10 hours)
         wind_delay[(wind_delay > 4)] = 10
-        weather_delay_output_data['wind_delay_time'] = float(wind_delay.sum())
+        weather_delay_output_data['wind_delay_time'] = float(wind_delay.sum().iloc[0])
 
         return weather_delay_output_data
 
@@ -541,7 +540,7 @@ class SitePreparationCost(CostModule):
         if calculate_cost_input_dict['road_distributed_wind'] and \
                 calculate_cost_input_dict['turbine_rating_MW'] >= 0.1:
 
-            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum()) + \
+            labor_for_new_roads_cost_usd = labor_data['Cost USD'].sum() + \
                                            calculate_cost_output_dict['managament_crew_cost_before_wind_delay']
 
             labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
@@ -551,7 +550,7 @@ class SitePreparationCost(CostModule):
         elif calculate_cost_input_dict['road_distributed_wind'] and \
                 calculate_cost_input_dict['turbine_rating_MW'] < 0.1:  # small DW
 
-            labor_for_new_roads_cost_usd = (labor_data['Cost USD'].sum())
+            labor_for_new_roads_cost_usd = labor_data['Cost USD'].sum()
             labor_for_new_and_old_roads_cost_usd = self.new_and_existing_total_road_cost(labor_for_new_roads_cost_usd)
 
             labor_costs = pd.DataFrame([['Labor', float(labor_for_new_and_old_roads_cost_usd), 'Small DW Roads']],

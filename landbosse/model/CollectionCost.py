@@ -677,7 +677,7 @@ class ArraySystem(CostModule):
 
         # if greater than 4 hour delay, then shut down for full day (10 hours)
         wind_delay[(wind_delay > 4)] = 10
-        weather_delay_output_data['wind_delay_time'] = float(wind_delay.sum())
+        weather_delay_output_data['wind_delay_time'] = float(wind_delay.sum().iloc[0])
 
         return weather_delay_output_data
 
