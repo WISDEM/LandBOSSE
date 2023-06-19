@@ -851,7 +851,7 @@ class ErectionCost(CostModule):
 
             # if greater than 4 hour delay, then shut down for full day (10 hours)
             wind_delay[(wind_delay > 4)] = 10
-            wind_delay_time = float(wind_delay.sum().iloc[0])
+            wind_delay_time = float(wind_delay.sum())
 
             # store weather delay for operation, component, crane, and boom combination
             crane_specs.loc[i, 'Wind delay percent'] = wind_delay_time / len(weather_window)

@@ -105,7 +105,7 @@ class Manager:
                                       self.output_dict['total_erection_cost'], 
                                       self.output_dict['total_development_cost'], 
                                       ), sort=True)
-            self.input_dict['project_value_usd'] = float(total_costs['Cost USD'].sum().iloc[0])
+            self.input_dict['project_value_usd'] = float(total_costs['Cost USD'].sum())
             self.input_dict['foundation_cost_usd'] = self.output_dict['total_foundation_cost']['Cost USD'].sum()
 
             management_cost = ManagementCost(input_dict=self.input_dict, output_dict=self.output_dict, project_name=project_name)
