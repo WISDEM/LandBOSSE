@@ -2,7 +2,7 @@ import traceback
 
 import pandas as pd
 import scipy.interpolate
-from wisdem.landbosse.model.CostModule import CostModule
+from .CostModule import CostModule
 import numpy as np
 
 class TransportCost(CostModule):

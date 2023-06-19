@@ -4,10 +4,10 @@ from math import ceil
 import numpy as np
 import openmdao.api as om
 
-from wisdem.landbosse.model.Manager import Manager
-from wisdem.landbosse.model.DefaultMasterInputDict import DefaultMasterInputDict
-from wisdem.landbosse.landbosse_omdao.OpenMDAODataframeCache import OpenMDAODataframeCache
-from wisdem.landbosse.landbosse_omdao.WeatherWindowCSVReader import read_weather_window
+from landbosse.model.Manager import Manager
+from landbosse.model.DefaultMasterInputDict import DefaultMasterInputDict
+from landbosse.landbosse_omdao.OpenMDAODataframeCache import OpenMDAODataframeCache
+from landbosse.landbosse_omdao.WeatherWindowCSVReader import read_weather_window
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
