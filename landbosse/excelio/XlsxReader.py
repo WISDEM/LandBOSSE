@@ -280,7 +280,7 @@ class XlsxReader:
         cell_spec_re = re.compile('^.*/.*/.*$')
 
         # Go through each project parameter
-        for index, value in project_parameters.iteritems():
+        for index, value in project_parameters.items():
 
             # If the column specifies a cell to change in the dataframe
             # or project list, inspect it to ensure it points somewhere
