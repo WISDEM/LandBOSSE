@@ -360,7 +360,7 @@ class SitePreparationCost(CostModule):
         for unit in list_units:
             unit_quantity = pd.DataFrame([[unit, material_quantity_dict[unit]]],
                                          columns=['Units', 'Quantity of material'])
-            material_needs = material_needs.append(unit_quantity)
+            material_needs = pd.concat((material_needs, unit_quantity))
 
         estimate_construction_time_output['material_needs'] = material_needs
 
@@ -656,10 +656,7 @@ class SitePreparationCost(CostModule):
             max_time_construct_days / 6))  # assumes working only 6 days per week
         siteprep_construction_months = calendar_construct_days / 30.0
 
-        road_cost = road_cost.append(material_costs)
-        road_cost = road_cost.append(equipment_costs)
-        road_cost = road_cost.append(labor_costs)
-        road_cost = road_cost.append(additional_costs)
+        road_cost = pd.concat((road_cost,material_costs,equipment_costs,labor_costs,additional_costs))
 
         # set mobilization cost equal to 5% of total road cost for utility scale model and function of
         # of turbine size for distributed wind:
@@ -680,7 +677,7 @@ class SitePreparationCost(CostModule):
                 mobilization_costs = pd.DataFrame([['Mobilization', mobilization_costs_new_plus_old_roads, 'Small DW Roads']],
                                                   columns=['Type of cost', 'Cost USD', 'Phase of construction'])
 
-        road_cost = road_cost.append(mobilization_costs)
+        road_cost = pd.concat((road_cost, mobilization_costs))
         total_road_cost = road_cost
         calculate_cost_output_dict['total_road_cost'] = total_road_cost
 
