@@ -99,8 +99,13 @@ def read_weather_window(weather_data, local_timezone='America/Denver'):
     weather_data = weather_data.reset_index(drop=True)
     weather_data = weather_data[renamed_columns.values()]
 
-    # Parse the datetime data and localize it to UTC
-    weather_data['Date UTC'] = pd.to_datetime(weather_data['Date UTC']).dt.tz_localize('UTC')
+    # Parse the datetime data and localize it to UTC. If the timestamp does not contain 
+    # a timestamp, assume it is in UTC and process with tz_localize. If it contains a 
+    # timestamp, assume it is in UTC and use tz_convert.
+    try:
+        weather_data['Date UTC'] = pd.to_datetime(weather_data['Date UTC']).dt.tz_localize('UTC')
+    except TypeError as err:
+        weather_data['Date UTC'] = pd.to_datetime(weather_data['Date UTC']).dt.tz_convert('UTC')
 
     # Convert UTC to local time
     weather_data['Date'] = weather_data['Date UTC'].dt.tz_convert(local_timezone)
