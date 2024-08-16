@@ -827,25 +827,25 @@ class ArraySystem(CostModule):
         calculate_costs_output_dict['Labor Cost USD without weather delays'] =((calculate_costs_output_dict['Days taken for trenching (labor)'] * calculate_costs_output_dict['Labor cost of trenching per day (usd/day)']) + (calculate_costs_output_dict['Total per diem costs (USD)'] + calculate_costs_output_dict['managament_crew_cost_before_wind_delay']))
         calculate_costs_output_dict['Labor Cost USD with weather delays'] = calculate_costs_output_dict['Labor Cost USD without weather delays'] * calculate_costs_output_dict['wind_multiplier']
 
+        cost_columns = ['Type of cost', 'Cost USD', 'Phase of construction']
+
         if calculate_costs_input_dict['turbine_rating_MW'] >= 0.1:
             trenching_labor_cost_df = pd.DataFrame(
                 [['Labor', calculate_costs_output_dict['Labor Cost USD with weather delays'], 'Collection']],
-                columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+                columns=cost_columns)
 
         # switch for small DW
         else:
             trenching_labor_cost_df = pd.DataFrame(
                 [['Labor', calculate_costs_output_dict['Labor Cost USD with weather delays'], 'Small DW Collection']],
-                columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+                columns=cost_columns)
 
         #Calculate cable cost:
         cable_cost_usd_per_LF_df = pd.DataFrame([['Materials',self._total_cable_cost, 'Collection']],
-                                               columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
+                                               columns = cost_columns)
 
         # Combine all calculated cost items into the 'collection_cost' dataframe:
-        collection_cost = pd.DataFrame([],columns = ['Type of cost', 'Cost USD', 'Phase of construction'])
-        collection_cost = pd.concat( (collection_cost,
-                                      trenching_equipment_rental_cost_df,
+        collection_cost = pd.concat( (trenching_equipment_rental_cost_df,
                                       trenching_labor_cost_df,
                                       cable_cost_usd_per_LF_df) )
 
@@ -864,7 +864,7 @@ class ArraySystem(CostModule):
                 calculate_costs_output_dict['mob_cost'] = 0.0
 
         mobilization_cost = pd.DataFrame([['Mobilization', calculate_costs_output_dict['mob_cost'], 'Collection']],
-                                         columns=['Type of cost', 'Cost USD', 'Phase of construction'])
+                                         columns=cost_columns)
         collection_cost = pd.concat((collection_cost, mobilization_cost))
 
         calculate_costs_output_dict['total_collection_cost'] = collection_cost
