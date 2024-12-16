@@ -73,8 +73,8 @@ class Cable:
         self.current_capacity = cable_specs["Current Capacity (A)"]
         self.rated_voltage = cable_specs["Rated Voltage (V)"]
         self.ac_resistance = cable_specs["AC Resistance (Ohms/km)"]
-        self.inductance = cable_specs["Inductance (mH/km)"]
-        self.capacitance = cable_specs["Capacitance (nF/km)"]
+        self.inductance = cable_specs["Inductance (mH/km)"] * 1e-3
+        self.capacitance = cable_specs["Capacitance (nF/km)"] * 1e-9
         self.cost = cable_specs["Cost (USD/LF)"]
         self.line_frequency_hz = addl_specs["line_frequency_hz"]
 
@@ -389,7 +389,18 @@ class ArraySystem(CostModule):
                 turb_per_partial_string.append(0.0)
             num_remaining -= max_turb
 
-        perc_partial_string = np.divide(turb_per_partial_string, [np.inf if n == 0 else n for n in num_turb_per_cable])
+        perc_partial_string = np.divide(turb_per_partial_string, num_turb_per_cable)
+
+        # Check to make sure there aren't any zeros in num_turbines_per_cable, which is used as the denominator
+        # in the division above (this happens when not all of the cable types in the input sheet need to be used).
+        # If there is a zero, then print a warning and change NaN to 0 in perc_partial_string.
+        if 0.0 in num_turb_per_cable:
+            print(
+                f'Warning: {self.project_name} CollectionCost module generates number of turbines per string that '
+                f'includes a zero entry. Please confirm that there not all cable types need to be used for the number of turbines that are being run.'
+                f' num_turbines={self.input_dict["num_turbines"]} rating_MW={self.input_dict["turbine_rating_MW"]}'
+                f' num_turb_per_cable: {num_turb_per_cable}')
+            perc_partial_string = np.nan_to_num(perc_partial_string)
 
         self.output_dict["turb_per_partial_string"] = turb_per_partial_string
 
