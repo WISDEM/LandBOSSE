@@ -181,6 +181,27 @@ class LandBOSSERunner:
         init=False,
     )
 
+    def __attrs_post_init__(self):
+        self.check_expected_configs_are_provided(self.input_config)
+
+    def check_expected_configs_are_provided(self, input_config: dict) -> None:
+        """Checks to ensure all inputs required by the model have been provided.
+
+        Args:
+            input_config (dict): input configuration dict
+        """
+
+        # Check for any missing inputs
+        missing_parameters = set(self.expected_config.keys()).difference(
+            input_config.keys()
+        )
+        if bool(missing_parameters):
+            msg_lines = "\n\t".join(
+                f"{mp:s}: {str(self.expected_config[mp]):s}" for mp in missing_parameters
+            )
+            msg = f"The following LandBOSSE parameters are missing:\n{msg_lines:s}"
+            raise ValueError(msg)
+
     def get_project_parameters(self) -> pd.Series:
         """Read inputs from the YAML file and convert into a format expected by LandBOSSE.
 
@@ -195,18 +216,6 @@ class LandBOSSERunner:
             Series containing input parameters for LandBOSSE with the required names
         """
         project_parameters_dict = self.input_config
-
-        # Check for any missing inputs
-        missing_parameters = set(self.expected_config.keys()).difference(
-            project_parameters_dict.keys()
-        )
-        if bool(missing_parameters):
-            msg = "\n".join(
-                f"\t{mp:s}: {str(self.expected_config[mp]):s}" for mp in missing_parameters
-            )
-            raise ValueError(
-                f"The following LandBOSSE parameters are missing:\n{msg:s}",
-            )
 
         # Convert parameters dict to pandas Series (LandBOSSE expects a Series)
         project_parameters = pd.Series(project_parameters_dict, name="value")
