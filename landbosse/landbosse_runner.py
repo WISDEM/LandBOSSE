@@ -83,7 +83,7 @@ class LandBOSSERunner:
         "allow_same_flag": "flag to indicate whether choosing same base and topping crane is "
         "allowed (true/false)",
         "override_total_management_cost_for_distributed": "For distributed wind project, override "
-        "the calculated management cost and use this value instead",
+        "the calculated management cost and use this value instead (0 means do not override)",
         "markup_contingency": "Markup contingency",
         "markup_warranty_management": "Markup warranty management",
         "markup_sales_and_use_tax": "Markup sales and use tax",
