@@ -302,13 +302,27 @@ class LandBOSSERunner:
             Weather dataframe with blank header.
         """
         NUM_HEADER_ROWS = 5
+        WEATHER_COLUMNS = [
+            "datetime",
+            "surface_temperature",
+            "surface_pressure",
+            "wind_direction",
+            "windspeed",
+            ]
 
         weather_window = weather_window.reset_index()
 
+        # Check required weather columns are present
+        missing_columns = set(WEATHER_COLUMNS).difference(weather_window.columns)
+        if bool(missing_columns):
+            missing_columns_msg = (
+                "The following columns are required but missing from the weather data: "
+                f"{', '.join(sorted(missing_columns))}"
+            )
+            raise ValueError(missing_columns_msg)
+
         # select columns required by LandBOSSE
-        weather_window = weather_window[
-            ["datetime", "surface_temperature", "surface_pressure", "wind_direction", "windspeed"]
-        ]
+        weather_window = weather_window[WEATHER_COLUMNS]
 
         # Combine the weather data with blank header rows
         weather_window = pd.concat(
