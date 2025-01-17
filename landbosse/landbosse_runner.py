@@ -259,9 +259,9 @@ class LandBOSSERunner:
         xlsx_reader.modify_project_data_and_project_list(data_sheets, project_parameters)
 
         # Apply cost and scaling modifications if needed.
-        enable_cost_and_scaling_modifications = project_parameters.pop(
+        enable_cost_and_scaling_modifications = project_parameters[
             "enable_cost_and_scaling_modifications"
-        )
+            ]
         if enable_cost_and_scaling_modifications:
             xlsx_reader.apply_cost_and_scaling_modifications_to_project_parameters(
                 project_parameters
@@ -344,8 +344,8 @@ class LandBOSSERunner:
         """
         NUM_BLADES = 3
 
-        component_param = project_parameters.pop("component")
-        component_template = data_sheets.pop("components")
+        component_param = project_parameters["component"]
+        component_template = data_sheets["components"]
 
         component_nacelle = pd.Series(component_param["nacelle"], name="Nacelle")
         component_nacelle["Component Name"] = "Nacelle"
