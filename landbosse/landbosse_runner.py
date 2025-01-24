@@ -46,6 +46,7 @@ class LandBOSSERunner:
         "diameters",
         "row_spacing_rotor_diameter": "Layout spacing between rows, in rotor diameters",
         "num_turbines": "Number of turbines",
+        "turbine_capex": "CapEx of turbine ($/kW)",
         "base_topping_breakpoint": "Height at which cranes change from 'Base' to 'Topping', "
         "represented as a fraction of hub height",
         "fuel_cost_usd_per_gal": "Cost of fuel per gallon ($/gal)",
@@ -113,7 +114,7 @@ class LandBOSSERunner:
                 "surface_area_m2": "List of tower section surface areas (m^2), from bottom to top. "
                 "Must be the same legnth as the other tower section attributes",
                 "height_m": "List of tower section heights (m), from bottom to top. Must be the "
-                "same legnth as the other tower section attributes",
+                "same length as the other tower section attributes",
             },
         },
     }
@@ -129,6 +130,7 @@ class LandBOSSERunner:
         "turbine_spacing_rotor_diameter": "Turbine spacing (times rotor diameter)",
         "row_spacing_rotor_diameter": "Row spacing (times rotor diameter)",
         "num_turbines": "Number of turbines",
+        "turbine_capex": "Turbine Capex (USD/kW)",
         "base_topping_breakpoint": "Breakpoint between base and topping (percent)",
         "fuel_cost_usd_per_gal": "Fuel cost USD per gal",
         "turbine_delivery_rate_per_week": "Rate of deliveries (turbines per week)",
