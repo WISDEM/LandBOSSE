@@ -435,7 +435,6 @@ class XlsxReader:
         incomplete_input_dict['bearing_pressure_n_m2'] = project_parameters['Bearing Pressure (n/m2)']
         incomplete_input_dict['gust_velocity_m_per_s'] = project_parameters['50-year Gust Velocity (m/s)']
         incomplete_input_dict['project_size_megawatts'] = project_parameters['Number of turbines'] * project_parameters['Turbine rating MW']
-        incomplete_input_dict['turbine_capex'] = project_parameters.get('Turbine Capex (USD/kW)', 0.0)
 
         if project_parameters['Calculate road cost for distributed wind? (y/n)'] == 'y':
             incomplete_input_dict['road_distributed_wind'] = True
