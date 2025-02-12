@@ -1,12 +1,12 @@
-import traceback
 import math
+import traceback
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from scipy.optimize import root_scalar
 
-from .WeatherDelay import WeatherDelay as WD
 from .CostModule import CostModule
+from .WeatherDelay import WeatherDelay as WD
 
 
 class FoundationCost(CostModule):
@@ -437,7 +437,7 @@ class FoundationCost(CostModule):
         # TODO: still updating/fine-tuning foundation size equations for small DW (Parangat - Feb 27, 2020)
         r = float(foundation_size_output_data["Radius_m"])
         if foundation_size_input_data["turbine_rating_MW"] < 0.1:
-            foundation_size_output_data["excavated_volume_m3"] = r * r * foundation_size_input_data["depth"]
+            foundation_size_output_data["excavated_volume_m3"] = r * r * foundation_size_input_data["depth"] * np.pi
             foundation_size_output_data["foundation_volume_concrete_m3_per_turbine"] = (
                 foundation_size_output_data["excavated_volume_m3"] * 0.45
             )
