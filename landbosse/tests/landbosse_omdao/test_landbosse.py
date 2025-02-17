@@ -1,6 +1,7 @@
+import openmdao.api as om
 import pandas as pd
 import pytest
-import openmdao.api as om
+
 from landbosse.landbosse_omdao.landbosse import LandBOSSE
 from landbosse.landbosse_omdao.OpenMDAODataframeCache import OpenMDAODataframeCache
 
@@ -18,7 +19,6 @@ def landbosse_costs_by_module_type_operation():
     # prob.model.list_inputs(units=True)
     landbosse_costs_by_module_type_operation = prob["landbosse_costs_by_module_type_operation"]
     return landbosse_costs_by_module_type_operation
-
 
 
 def compare_expected_to_actual(expected_df, actual_module_type_operation_list, validation_output_csv):
@@ -91,7 +91,6 @@ def compare_expected_to_actual(expected_df, actual_module_type_operation_list, v
         return False
     else:
         return True
-
 
 
 def test_landbosse(landbosse_costs_by_module_type_operation):

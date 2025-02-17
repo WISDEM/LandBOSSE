@@ -4,10 +4,10 @@ from math import ceil
 import numpy as np
 import openmdao.api as om
 
-from landbosse.model.Manager import Manager
-from landbosse.model.DefaultMasterInputDict import DefaultMasterInputDict
 from landbosse.landbosse_omdao.OpenMDAODataframeCache import OpenMDAODataframeCache
 from landbosse.landbosse_omdao.WeatherWindowCSVReader import read_weather_window
+from landbosse.model.DefaultMasterInputDict import DefaultMasterInputDict
+from landbosse.model.Manager import Manager
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
@@ -42,6 +42,7 @@ class LandBOSSE(om.Group):
         self.set_input_defaults("nacelle_mass", 50e3, units="kg")
         self.set_input_defaults("tower_mass", 240e3, units="kg")
         self.set_input_defaults("turbine_rating_MW", 1500.0, units="kW")
+        self.set_input_defaults("turbine_capex", 0.0, units="USD/kW")
 
         self.add_subsystem("landbosse", LandBOSSE_API(), promotes=["*"])
 
@@ -146,7 +147,7 @@ class LandBOSSE_API(om.ExplicitComponent):
             desc="Non-Erection Wind Delay Critical Height (m)",
             val=10,
         )
-        self.add_discrete_input("road_distributed_winnd", val=False)
+        self.add_discrete_input("road_distributed_wind", val=False)
         self.add_input("road_width_ft", units="ft", desc="Road width (ft)", val=20)
         self.add_input("road_thickness", desc="Road thickness (in)", val=8)
         self.add_input("crane_width", units="m", desc="Crane width (m)", val=12.2)
@@ -165,6 +166,7 @@ class LandBOSSE_API(om.ExplicitComponent):
 
         self.add_input("commissioning_pct", 0.01)
         self.add_input("decommissioning_pct", 0.15)
+        self.add_input("turbine_capex", 0.0, units="USD/kW")
 
     def setup_discrete_inputs_that_are_not_dataframes(self):
         """

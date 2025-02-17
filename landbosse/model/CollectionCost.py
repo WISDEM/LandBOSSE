@@ -13,8 +13,9 @@ This module consists of two classes:
 """
 
 import math
-import numpy as np
 import traceback
+
+import numpy as np
 import pandas as pd
 
 from .CostModule import CostModule
@@ -396,10 +397,11 @@ class ArraySystem(CostModule):
         # If there is a zero, then print a warning and change NaN to 0 in perc_partial_string.
         if 0.0 in num_turb_per_cable:
             print(
-                f'Warning: {self.project_name} CollectionCost module generates number of turbines per string that '
-                f'includes a zero entry. Please confirm that there not all cable types need to be used for the number of turbines that are being run.'
+                f"Warning: {self.project_name} CollectionCost module generates number of turbines per string that "
+                f"includes a zero entry. Please confirm that there not all cable types need to be used for the number of turbines that are being run."
                 f' num_turbines={self.input_dict["num_turbines"]} rating_MW={self.input_dict["turbine_rating_MW"]}'
-                f' num_turb_per_cable: {num_turb_per_cable}')
+                f" num_turb_per_cable: {num_turb_per_cable}"
+            )
             perc_partial_string = np.nan_to_num(perc_partial_string)
 
         self.output_dict["turb_per_partial_string"] = turb_per_partial_string
@@ -799,7 +801,7 @@ class ArraySystem(CostModule):
         operation_data["time_construct_bool"] = (
             operation_data["Number of days taken by single crew"] > collection_construction_time * 30
         )
-        boolean_dictionary = {True: collection_construction_time * 30, False: np.NAN}
+        boolean_dictionary = {True: collection_construction_time * 30, False: np.nan}
         operation_data["time_construct_bool"] = operation_data["time_construct_bool"].map(boolean_dictionary)
         operation_data["Time construct days"] = operation_data[
             ["time_construct_bool", "Number of days taken by single crew"]

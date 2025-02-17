@@ -4,19 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "landbosse"
-version = "2.5.0"
+version = "2.6.0"
 description = "Wind-Plant Integrated System Design & Engineering Model"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "Apache-2.0"}
+license = { text = "Apache-2.0" }
 keywords = ["wind", "turbine", "mdao", "design", "optimization"]
 authors = [
-  {name = "NREL WISDEM Team", email = "systems.engineering@nrel.gov" }
+  { name = "NREL WISDEM Team", email = "systems.engineering@nrel.gov" },
 ]
 maintainers = [
-  {name = "NREL WISDEM Team", email = "systems.engineering@nrel.gov" }
+  { name = "NREL WISDEM Team", email = "systems.engineering@nrel.gov" },
 ]
-classifiers = [  # Optional
+classifiers = [ # Optional
   # How mature is this project? Common values are
   #   3 - Alpha
   #   4 - Beta
@@ -65,7 +65,7 @@ docs = ["sphinx", "sphinx_rtd_theme"]
 # issues, where the source is hosted, where to say thanks to the package
 # maintainers, and where to support the project financially. The key is
 # what's used to render the link text on PyPI.
-[project.urls]  # Optional
+[project.urls] # Optional
 "Homepage" = "https://github.com/WISDEM/LandBOSSE"
 #"Documentation" = "https://wisdem.readthedocs.io"
 "Project" = "https://www.nrel.gov/wind/systems-engineering.html"
