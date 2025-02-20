@@ -5,6 +5,7 @@ from .ManagementCost import ManagementCost
 from .FoundationCost import FoundationCost
 from .SubstationCost import SubstationCost
 from .TransportCost import TransportCost
+from .TurbineCost import TurbineCost
 from .GridConnectionCost import GridConnectionCost
 from .SitePreparationCost import SitePreparationCost
 from .CollectionCost import ArraySystem
@@ -71,6 +72,13 @@ class Manager:
             development_cost = DevelopmentCost(input_dict=self.input_dict, output_dict=self.output_dict,
                                           project_name=project_name)
             development_cost.run_module()
+
+            turbine_cost = TurbineCost(
+                input_dict=self.input_dict,
+                output_dict=self.output_dict,
+                project_name=project_name,
+            )
+            turbine_cost.run_module()
 
             erection_cost_output_dict = dict()
             erection_cost = ErectionCost(
