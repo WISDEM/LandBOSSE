@@ -78,6 +78,4 @@
 
 + Tidy up of code to remove warnings
 
-+ Removed OpenMDAO implementation (it is present within WISDEM)
-
 + Update to continuous integration script
