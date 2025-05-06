@@ -11,6 +11,16 @@ Eberle, Annika, Owen Roberts, Alicia Key, Parangat Bhaskar, and Katherine Dykes.
 National Renewable Energy Laboratory. NREL/TP-6A20-72201.
 https://www.nrel.gov/docs/fy19osti/72201.pdf.
 
+
+## Part of the WETO Stack
+
+LandBOSSE is primarily developed with the support of the U.S. Department of Energy and is part of the [WETO Software Stack](https://nrel.github.io/WETOStack). For more information and other integrated modeling software, see:
+- [Portfolio Overview](https://nrel.github.io/WETOStack/portfolio_analysis/overview.html)
+- [Entry Guide](https://nrel.github.io/WETOStack/_static/entry_guide/index.html)
+- [Techno-Economic Modeling Workshop](https://nrel.github.io/WETOStack/workshops/user_workshops_2024.html#tea-and-cost-modeling)
+- [Systems Engineering Workshop](https://nrel.github.io/WETOStack/workshops/user_workshops_2024.html#systems-engineering)
+
+
 ## User Guides
 
 First, read the technical report to understand the big picture of LandBOSSE. In the technical report, you will find process diagrams, equations and the modules that implement them. Then, come back to this documentation and read the user guide.
