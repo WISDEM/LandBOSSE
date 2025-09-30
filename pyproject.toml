@@ -3,8 +3,8 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "landbosse"
-version = "2.5.0"
+name = "NREL-landbosse"
+dynamic = ["version"]
 description = "Wind-Plant Integrated System Design & Engineering Model"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -36,6 +36,7 @@ classifiers = [  # Optional
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: C",
   "Programming Language :: Fortran",
@@ -78,8 +79,8 @@ docs = ["sphinx", "sphinx_rtd_theme"]
 [tool.setuptools]
 include-package-data = true
 
-#[tool.setuptools.packages]
-#find = {}
+[tool.setuptools.dynamic]
+version = {attr = "landbosse.__version__"}
 
 [tool.setuptools.packages.find]
 #where = ["wisdem"]
