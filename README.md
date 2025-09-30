@@ -37,6 +37,10 @@ The user guide comes in three parts:
 
 ### Software Installation
 
+```bash
+pip install NREL-landbosse
+```
+
 There are two options depending on whether you are a developer or an end user and what operating system you are running.
 
 - **Windows end-user**: If you run the Microsoft Windows operating system and aren't setting up as a developer who is going to be modifying the core library, these instructions are for you. [Find out how to configure Windows for end users.](installation_instructions/windows_end_user.md)
