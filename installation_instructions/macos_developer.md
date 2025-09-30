@@ -95,7 +95,7 @@ pip install -e .
 
 By installing it in developer mode with `pip` you have two benefits:
 
-1. It can be uninstalled with `pip uninstall landbosse` (you don't need to uninstall it right now)
+1. It can be uninstalled with `pip uninstall NREL-landbosse` (you don't need to uninstall it right now)
 1. You can update the source code with re-installing the package because `pip` uses symbolic links (aka symlinks) to reference your source code directory.
 
 ## Step 6: Copy your input data
