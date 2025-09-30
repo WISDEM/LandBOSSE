@@ -63,10 +63,19 @@
 
 ## 2.2.7
 
-+ Chnaged construction duration functionality.
++ Changed construction duration functionality.
 
 + Weather window can now be extended to an arbitrarily long length by duplicating the underlying wind data.
 
 + All modules now report the actual construction time they require to perform the scope of work they model.
 
 + ManagementCost now keeps the management crew onsite for only the time necessary to complete all scope of work.
+
+
+## 2.6.0 (February 12 2025)
+
++ Add basic API to integrate LandBOSSE into WAVES
+
++ Tidy up of code to remove warnings
+
++ Update to continuous integration script
