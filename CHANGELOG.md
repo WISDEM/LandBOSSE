@@ -4,6 +4,7 @@
 
 + Fixes a bug in the collection cost where the array cable length to the substation does not convert
   the distance in number of rotor diameters to meters.
++ Updates the minimum Python to 3.11 for 3.10 EOL.
 
 ## 2.6.3 (May 7, 2026)
 
