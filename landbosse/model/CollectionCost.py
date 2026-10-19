@@ -380,7 +380,7 @@ class ArraySystem(CostModule):
     # TODO: change length_to_substation calculation as a user defined input?
     @staticmethod
     def calc_cable_len_to_substation(
-            distance_to_grid, turbine_spacing_rotor_diameters, row_spacing_rotor_diameters, num_strings, rotor_diameter_m,
+        distance_to_grid, turbine_spacing_rotor_diameters, row_spacing_rotor_diameters, num_strings, rotor_diameter_m,
     ):
         """
         Calculate the distance for the largest cable run to substation
