@@ -1,5 +1,10 @@
 # LandBOSSE Changelog
 
+## Unreleased
+
++ Fixes a bug in the collection cost where the array cable length to the substation does not convert
+  the distance in number of rotor diameters to meters.
+
 ## 2.6.3 (May 7, 2026)
 
 + Corrects an error in multiple names defined for `LandBOSSERunner`s data connection to project
