@@ -1,5 +1,11 @@
 # LandBOSSE Changelog
 
+## 2.6.4 (October 21, 2026)
+
++ Fixes a bug in the collection cost where the array cable length to the substation does not convert
+  the distance in number of rotor diameters to meters.
++ Updates the minimum Python to 3.11 for 3.10 EOL and enables Python 3.15
+
 ## 2.6.3 (May 7, 2026)
 
 + Corrects an error in multiple names defined for `LandBOSSERunner`s data connection to project

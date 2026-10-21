@@ -380,7 +380,7 @@ class ArraySystem(CostModule):
     # TODO: change length_to_substation calculation as a user defined input?
     @staticmethod
     def calc_cable_len_to_substation(
-        distance_to_grid, turbine_spacing_rotor_diameters, row_spacing_rotor_diameters, num_strings
+        distance_to_grid, turbine_spacing_rotor_diameters, row_spacing_rotor_diameters, num_strings, rotor_diameter_m,
     ):
         """
         Calculate the distance for the largest cable run to substation
@@ -395,6 +395,8 @@ class ArraySystem(CostModule):
             Spacing between rows in wind plant, # of rotor diameters
         num_strings : int
             Total number of strings
+        rotor_diameter_m : int or float
+            Rotor diameter, m
 
         Returns
         -------
@@ -437,7 +439,7 @@ class ArraySystem(CostModule):
             string_to_substation_length.append(distance_to_grid)
 
         # Sum up total length to substation
-        len_to_substation = np.sum(string_to_substation_length)
+        len_to_substation = np.sum(string_to_substation_length) * rotor_diameter_m * 1e-3
 
         return len_to_substation
 
@@ -610,6 +612,7 @@ class ArraySystem(CostModule):
                 self.input_dict["turbine_spacing_rotor_diameters"],
                 self.input_dict["row_spacing_rotor_diameters"],
                 self.output_dict["num_strings"],
+                self.input_dict["rotor_diameter_m"],
             )
         else:
             self.output_dict["distance_to_grid_connection_km"] = self.input_dict["distance_to_grid_connection_km"]
